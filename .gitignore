@@ -1,1 +1,6 @@
 doc/notes.md
+virtualenv/*
+!virtualenv/pyvenv.cfg
+!virtualenv/development
+!virtualenv/requirements.txt
+
