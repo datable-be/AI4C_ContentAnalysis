@@ -1,0 +1,11 @@
+{
+    "application": {
+        "port": 5000
+    },
+    "object-detector": {
+        "URI_type": "wikidata"
+    },
+    "color-detector": {
+        "URI_type": "wikidata"
+    }
+}
