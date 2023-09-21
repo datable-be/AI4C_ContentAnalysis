@@ -1,2 +1,2 @@
 #!/bin/bash
-docker build -t AI4C .
+sudo docker-compose up --build
