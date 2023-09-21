@@ -1,0 +1,8 @@
+{
+    "object_detection": {
+        "URI_type": "wikidata"
+    },
+    "color_detection": {
+        "URI_type": "wikidata"
+    }
+}
