@@ -6,7 +6,11 @@
 
 ### Docker
 
-This API runs inside a [Docker](https://www.docker.com/) container, so you need a working installation of the [Docker Engine](https://docs.docker.com/engine/install/). Verify your installation with the following command. Notice that `docker` commands always need to be run with root privileges.
+This API runs inside a [Docker](https://www.docker.com/) container, so you need a working installation of the [Docker Engine](https://docs.docker.com/engine/install/). 
+
+Verify your installation with the following command. 
+
+Note that `docker` commands always need to be run with root privileges!
 
 ```bash
 sudo docker info
@@ -92,8 +96,7 @@ git clone https://github.com/datable-be/AI4C_ContentAnalysis
 Build the Docker image and run the container with the following command (which runs `docker compose up --build` under the hood):
 
 ```bash
-cd AI4C_ContentAnalysis/venv/development
-source build.sh
+source AI4C_ContentAnalysis/development/build.sh
 ```
 
 ### Test
@@ -151,15 +154,16 @@ sudo docker compose up --build
 
 The development directory also contains a shortcut for this command: `build.sh`, while the shortcut `up.sh` can be used to run the container, if you have already built it.
 
-You can list the most recently created Docker images with the following command:
+You can list the most recent Docker image builds with the following command:
 
 ```bash
 sudo docker images
 ```
 
-The output should look like this:
+The output should contain a line like this:
 ```text
 REPOSITORY               TAG             IMAGE ID       CREATED         SIZE
+...
 development_ai4c         latest          ef5362fd7d4d   3 hours ago     1.03GB
 ```
 
@@ -176,7 +180,9 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED          STAT
 
 ### Uvicorn
 
-As seen in the above output, the Docker container now uses [uvicorn](https://www.uvicorn.org/) to serve the API. Uvicorn is an [ASGI](https://asgi.readthedocs.io/en/latest/), i.e. Asynchronous Server Gateway Interface, web server implementation for Python. 
+As seen in the above output, the Docker container now uses [uvicorn](https://www.uvicorn.org/) to serve the API. Uvicorn is an [ASGI](https://asgi.readthedocs.io/en/latest/) (Asynchronous Server Gateway Interface) web server implementation for Python. Alternatives are [Hypercorn](https://pgjones.gitlab.io/hypercorn/) or [Daphne](https://github.com/django/daphne).
+
+For deployment, one can also configure a web server like [Apache](https://httpd.apache.org/) or [NGINX](https://www.nginx.com/) to act as a reverse proxy for the Docker application. In simple terms, a reverse proxy is a server that sits between a client and one or more servers, forwarding client requests to the appropriate server. Using a reverse proxy can provide several benefits, such as improved security, load balancing, and caching.
 
 ### FastAPI
 
@@ -184,11 +190,11 @@ The API is built with the [FastAPI](https://fastapi.tiangolo.com/) framework. Fa
 
 Although there are alternatives (Django REST, Flask), FastAPI is the best choice for the project because of its high [performance](https://fastapi.tiangolo.com/#performance) and bceause it is based on (and fully compatible with) the open standards for APIs: [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) (previously known as Swagger) and [JSON Schema](https://json-schema.org/).
 
-This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
+This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://127.0.0.1:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
 
 ![Docs](/doc/img/docs.png "Example of API documentation with Swagger UI")
 
-And because the generated schema is from the OpenAPI standard, there are many compatible tools. Because of this, FastAPI itself provides an alternative API documentation (using [ReDoc](https://redocly.com/redoc/)), which you can access at [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc):
+And because the generated schema is from the OpenAPI standard, there are many compatible tools. Because of this, FastAPI itself provides an alternative API documentation (using [ReDoc](https://redocly.com/redoc/)), which you can access at [http://127.0.0.1:8000/redoc](http://0.0.0.0:8000/redoc):
 
 ![ReDoc](/doc/img/redoc.png "Example of API documentation with ReDoc")
 
