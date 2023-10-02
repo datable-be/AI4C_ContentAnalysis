@@ -104,13 +104,13 @@ source AI4C_ContentAnalysis/development/build.sh
 Verify that the API is accessible with the following command:
 
 ```bash
-curl http://0.0.0.0:8000/?q=info
+curl http://0.0.0.0:8000/?q=version
 ```
 
 This should generate a JSON response like this:
 
 ```json
-{"title":"AI4C Content Analysis Tools","summary":"AI4Culture - Content analysis tools","description":"This API offers object and color detection tools for images","termsOfService":"http://www.datable.be/","contact":{"name":"./Datable","url":"http://www.datable.be/","email":"info@datable.be"},"license":{"name":"MIT","url":"https://opensource.org/license/mit/"},"version":"1.0.1"}
+{"version":"1.0.1"}
 ```
 
 ## Architecture
@@ -188,7 +188,7 @@ For deployment, one can also configure a web server like [Apache](https://httpd.
 
 The API is built with the [FastAPI](https://fastapi.tiangolo.com/) framework. FastAPI is a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints.
 
-Although there are alternatives (Django REST, Flask), FastAPI is the best choice for the project because of its high [performance](https://fastapi.tiangolo.com/#performance) and bceause it is based on (and fully compatible with) the open standards for APIs: [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) (previously known as Swagger) and [JSON Schema](https://json-schema.org/).
+Although there are alternatives (Django REST, Flask), FastAPI is the best choice for the project because of its high [performance](https://fastapi.tiangolo.com/#performance), its type safety with [Pydantic](https://docs.pydantic.dev/latest/), which allows for automatic input validation, and because it is based on (and fully compatible with) the open standards for APIs: [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) (previously known as Swagger) and [JSON Schema](https://json-schema.org/).
 
 This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://127.0.0.1:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
 
@@ -198,6 +198,255 @@ And because the generated schema is from the OpenAPI standard, there are many co
 
 ![ReDoc](/doc/img/redoc.png "Example of API documentation with ReDoc")
 
+## Usage
+
+### GET requests
+
+This API accepts a few basic GET requests to get information about the application:
+
+```bash
+curl http://0.0.0.0:8000/?q=version
+```
+
+Expected output:
+
+```json
+{"version":"1.0.1"}
+```
+
+and:
+
+```bash
+curl http://0.0.0.0:8000/?q=info
+```
+
+Expected output:
+
+```json
+{"title":"AI4C Content Analysis Tools","summary":"AI4Culture - Content analysis tools","description":"This API offers object and color detection tools for images","termsOfService":"http://www.datable.be/","contact":{"name":"./Datable","url":"http://www.datable.be/","email":"info@datable.be"},"license":{"name":"MIT","url":"https://opensource.org/license/mit/"},"version":"1.0.1"}
+```
+
+Error handling is done by FastAPI, as you can see with the following invalid request:
+
+```bash
+curl http://0.0.0.0:8000/invalid_path
+```
+
+Expected output:
+
+```json
+{"detail":"Not Found"}
+```
+
+An invalid query returns an empty response:
+
+```bash
+curl http://0.0.0.0:8000/?q=invalid_query
+```
+
+Expected output:
+
+```json
+{}
+```
+
+### POST requests
+
+The main usage of the API is via POST requests with the following basic JSON body:
+
+```json
+{"requestType":"...","data":{}}
+```
+
+Since these are typically longer requests, the software repository contains an example request for both detection tools:
+
+```bash
+py3 development/app/examples/object_detect.py
+```
+
+Expected output:
+
+```text
+POST http://0.0.0.0:8000/v1
+REQUEST =
+{
+    "requestType": "object",
+    "data": {
+        "id": "http://example.com/images/123",
+        "min_confidence": 0.8,
+        "max_objects": 1,
+        "source": "http://example.com/images/123.jpg",
+        "service": "GoogleVision",
+        "service_key": "****"
+    }
+}
+RESPONSE =
+{
+    "@context": {},
+    "@graph": [
+        {
+            "id": "http://datable.be/color-annotations/123",
+            "type": "Annotation",
+            "created": "2023-09-30",
+            "creator": {
+                "id": "https://github.com/hvanstappen/AI4C_object-detector",
+                "type": "Software",
+                "name": "AI4C object detector"
+            },
+            "body": [
+                {
+                    "source": "http://www.wikidata.org/entity/Q200539"
+                },
+                {
+                    "type": "TextualBody",
+                    "purpose": "tagging",
+                    "value": "dress",
+                    "language": "en"
+                }
+            ],
+            "target": {
+                "source": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
+                "selector": {
+                    "type": "FragmentSelector",
+                    "conformsTo": "http://www.w3.org/TR/media-frags/",
+                    "value": "xywh=percent:87,63,9,21"
+                }
+            },
+            "confidence": 0.8
+        },
+        {}
+    ]
+}
+```
+
+Or:
+
+```bash
+py3 development/app/examples/color_detect.py
+```
+
+Expected output:
+
+```text
+POST http://0.0.0.0:8000/v1
+REQUEST =
+{
+    "requestType": "color",
+    "data": {
+        "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
+        "max_colors": 3,
+        "min_area": 0.15,
+        "foreground_detection": true,
+        "selector": {
+            "type": "FragmentSelector",
+            "conformsTo": "http://www.w3.org/TR/media-frags/",
+            "value": "xywh=percent:87,63,9,21"
+        },
+        "source": "http://example.com/images/123.jpg"
+    }
+}
+RESPONSE =
+{
+    "@context": {
+        "as": "https://www.w3.org/ns/activitystreams#",
+        "dc": "http://purl.org/dc/terms/",
+        "dce": "http://purl.org/dc/elements/1.1/",
+        "foaf": "http://xmlns.com/foaf/0.1/",
+        "oa": "http://www.w3.org/ns/oa#",
+        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+        "xsd": "http://www.w3.org/2001/XMLSchema#",
+        "soa": "http://sw.islab.ntua.gr/annotation/",
+        "id": {
+            "@id": "@id",
+            "@type": "@id"
+        },
+        "type": {
+            "@id": "@type",
+            "@type": "@id"
+        },
+        "value": "rdf:value",
+        "created": {
+            "@id": "dc:created",
+            "@type": "xsd:dateTime"
+        },
+        "creator": {
+            "@id": "dc:creator",
+            "@type": "@id"
+        },
+        "language": "dc:language",
+        "Software": "as:Application",
+        "name": "foaf:name",
+        "Annotation": "oa:Annotation",
+        "TextPositionSelector": "oa:TextPositionSelector",
+        "TextualBody": "oa:TextualBody",
+        "body": {
+            "@id": "oa:hasBody",
+            "@type": "@id"
+        },
+        "scope": {
+            "@id": "oa:hasScope",
+            "@type": "@id"
+        },
+        "selector": {
+            "@id": "oa:hasSelector",
+            "@type": "@id"
+        },
+        "source": {
+            "@id": "oa:hasSource",
+            "@type": "@id"
+        },
+        "target": {
+            "@id": "oa:hasTarget",
+            "@type": "@id"
+        },
+        "Literal": "soa: Literal "
+    },
+    "@graph": [
+        {
+            "id": "http://datable.be/color-annotations/123",
+            "type": "Annotation",
+            "created": "2023-09-30",
+            "creator": {
+                "id": "https://github.com/hvanstappen/AI4C_color-detector",
+                "type": "Software",
+                "name": "AI4C color detector"
+            },
+            "body": [
+                "http://thesaurus.europeanafashion.eu/thesaurus/10403",
+                "http://thesaurus.europeanafashion.eu/thesaurus/11098",
+                "http://thesaurus.europeanafashion.eu/thesaurus/10404"
+            ],
+            "target": {
+                "source": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081"
+            }
+        }
+    ]
+}
+```
+
+As with the GET requests, errors in the JSON body are handled by FastAPI, e.g.:
+
+```bash
+curl -H "Content-Type: application/json" -X POST -d '{}' http://0.0.0.0:8000/v1
+```
+
+Expected output:
+
+```json
+{"detail":[{"type":"missing","loc":["body","requestType"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","data"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
+```
+
+Or:
+
+```bash
+curl -H "Content-Type: application/json" -X POST -d '{"requestType":"invalid"}' http://0.0.0.0:8000/v1
+```
+
+Expected output:
+
+```json
+{"detail":[{"type":"missing","loc":["body","data"],"msg":"Field required","input":{"requestType":"invalid"},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
+```
 
 ## Read more
 
