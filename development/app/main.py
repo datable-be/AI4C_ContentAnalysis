@@ -1,5 +1,5 @@
 import json
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from api.v1.object import detect as object_detect
@@ -17,7 +17,7 @@ with open("settings.json", "r") as f:
 
 class DetectionRequest(BaseModel):
     requestType: str
-    data: dict  # to do: when API is fixed, replace with ObjectRequest | ColorRequest
+    data: dict  # to do: when API is of fixed form, replace with ObjectRequest | ColorRequest
 
 
 # CREATE API
@@ -32,20 +32,23 @@ app = FastAPI()
 @app.get("/")
 async def read_root(q: str | None = None) -> dict:
 
+    if not q:
+        return INFO
+
     if q == "version":
         return {"version": INFO["version"]}
     elif q == "info":
         return INFO
-
-    return {}
+    else:
+        raise HTTPException(status_code=404, detail="Invalid query")
 
 
 @app.post("/v1")
 async def route(request: DetectionRequest) -> dict:
 
     if request.requestType == "color":
-        reponse = color_detect.detection()
+        return color_detect.detection()
     elif request.requestType == "object":
-        reponse = object_detect.detection()
-
-    return reponse
+        return object_detect.detection()
+    else:
+        raise HTTPException(status_code=404, detail="Invalid requestType")
