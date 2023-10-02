@@ -1,0 +1,16 @@
+{
+    "title": "AI4C Content Analysis Tools",
+    "summary": "AI4Culture - Content analysis tools",
+    "description": "This API offers object and color detection tools for images",
+    "termsOfService": "http://www.datable.be/",
+    "contact": {
+        "name": "./Datable",
+        "url": "http://www.datable.be/",
+        "email": "info@datable.be"
+    },
+    "license": {
+        "name": "MIT",
+        "url": "https://opensource.org/license/mit/"
+    },
+    "version": "1.0.1"
+}
