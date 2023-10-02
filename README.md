@@ -14,6 +14,7 @@ sudo docker info
 
 This should generate a YAML response like this:
 
+```yaml
 client: Docker Engine - Community
  Version:    24.0.6
  Context:    default
@@ -75,6 +76,7 @@ Server:
  Insecure Registries:
   127.0.0.0/8
  Live Restore Enabled: false
+```
 
 
 ### Source code
@@ -188,7 +190,7 @@ This means FastAPI offers built-in documentation. When you run the container and
 
 And because the generated schema is from the OpenAPI standard, there are many compatible tools. Because of this, FastAPI itself provides an alternative API documentation (using [ReDoc](https://redocly.com/redoc/)), which you can access at [http://127.0.0.1:8000/redoc](http://127.0.0.1:8000/redoc):
 
-![ReDoc](/doc/img/docs.png "Example of API documentation with ReDoc")
+![ReDoc](/doc/img/redoc.png "Example of API documentation with ReDoc")
 
 
 ## Read more
