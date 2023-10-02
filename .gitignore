@@ -1,7 +1,7 @@
 doc/notes.md
-virtualenv/*
-!virtualenv/pyvenv.cfg
-!virtualenv/development
-!virtualenv/requirements.txt
+venv/*
+!venv/pyvenv.cfg
+!venv/development
+!venv/requirements.txt
 **/__pycache__/*
 

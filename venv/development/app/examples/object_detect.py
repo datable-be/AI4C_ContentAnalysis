@@ -1,7 +1,7 @@
 import requests
 import sys
 
-response = requests.post("http://localhost:8000/v1/object/detect", {})
+response = requests.post("http://localhost:8000/v1/color/detect", {})
 if response.status_code == 200:
     print(response.text)
 else:

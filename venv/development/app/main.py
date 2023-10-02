@@ -5,8 +5,8 @@ from api.v1.color import detect as color_detect
 
 # CONSTANTS
 
-with open("metadata.json", "r") as f:
-    METADATA = json.load(f)
+with open("info.json", "r") as f:
+    INFO = json.load(f)
 with open("settings.json", "r") as f:
     SETTINGS = json.load(f)
 
@@ -22,11 +22,11 @@ app = FastAPI()
 @app.get("/")
 async def read_root(q: str | None = None):
     if q == "version":
-        return {"version": METADATA["version"]}
-    elif q == "explain":
-        return METADATA
+        return {"version": INFO["version"]}
+    elif q == "info":
+        return INFO
     else:
-        return {"Hello": "World"}
+        return {}
 
 
 @app.post("/v1/color/detect")
