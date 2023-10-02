@@ -1,5 +1,7 @@
 import json
 from fastapi import FastAPI
+from pydantic import BaseModel
+
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
 
@@ -10,8 +12,16 @@ with open("info.json", "r") as f:
 with open("settings.json", "r") as f:
     SETTINGS = json.load(f)
 
+# CLASSES
+
+
+class DetectionRequest(BaseModel):
+    requestType: str
+    data: dict  # to do: when API is fixed, replace with ObjectRequest | ColorRequest
+
 
 # CREATE API
+
 
 app = FastAPI()
 
@@ -20,20 +30,22 @@ app = FastAPI()
 
 
 @app.get("/")
-async def read_root(q: str | None = None):
+async def read_root(q: str | None = None) -> dict:
+
     if q == "version":
         return {"version": INFO["version"]}
     elif q == "info":
         return INFO
-    else:
-        return {}
+
+    return {}
 
 
-@app.post("/v1/color/detect")
-async def detect_color(q: str | None = None):
-    return color_detect.detection()
+@app.post("/v1")
+async def route(request: DetectionRequest) -> dict:
 
+    if request.requestType == "color":
+        reponse = color_detect.detection()
+    elif request.requestType == "object":
+        reponse = object_detect.detection()
 
-@app.post("/v1/object/detect")
-async def detect_object(q: str | None = None):
-    return object_detect.detection()
+    return reponse
