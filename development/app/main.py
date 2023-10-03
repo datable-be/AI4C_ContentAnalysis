@@ -1,30 +1,10 @@
-from enum import Enum
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, Field
 
 from constants import INFO, SETTINGS, DESCRIPTION
+from classes import DetectionRequest, RequestType
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
-
-# CLASSES
-
-
-class RequestType(str, Enum):
-    object = "object"
-    color = "color"
-
-
-class DetectionRequest(BaseModel):
-    requestType: RequestType = Field(
-        default=None, title="Type of detection request"
-    )
-    data: dict  # to do: when API is of fixed form, replace with submodel ObjectRequest | ColorRequest
-
-
-class ResponseModel(BaseModel):
-    # to do when API response is fixed
-    ...
 
 
 # CREATE API
