@@ -1,3 +1,4 @@
+from enum import Enum
 import json
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
@@ -15,9 +16,15 @@ with open("settings.json", "r") as f:
 # CLASSES
 
 
+class RequestType(str, Enum):
+    object = "object"
+    color = "color"
+
+
 class DetectionRequest(BaseModel):
-    requestType: str = Field(default=None, title="Type of detection request")
-    data: dict  # to do: when API is of fixed form, replace with ObjectRequest | ColorRequest
+    requestType: RequestType = Field(
+        default=None, title="Type of detection request")
+    data: dict  # to do: when API is of fixed form, replace with submodel ObjectRequest | ColorRequest
 
 
 # CREATE API
@@ -46,9 +53,9 @@ async def read_root(q: str | None = None) -> dict:
 @app.post("/v1")
 async def detection(request: DetectionRequest) -> dict:
 
-    if request.requestType == "color":
+    if request.requestType == RequestType.color:
         return color_detect.detection()
-    elif request.requestType == "object":
+    elif request.requestType == RequestType.object:
         return object_detect.detection()
     else:
         raise HTTPException(status_code=404, detail="Invalid requestType")
