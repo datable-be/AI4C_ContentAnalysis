@@ -62,7 +62,8 @@ git clone https://github.com/datable-be/AI4C_ContentAnalysis
 Build the Docker image and run the container with the following command (which runs `docker compose up --build` under the hood):
 
 ```bash
-source AI4C_ContentAnalysis/development/build.sh
+cd AI4C_ContentAnalysis/development
+source build.sh
 ```
 
 ### Test
