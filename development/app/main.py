@@ -1,18 +1,11 @@
 from enum import Enum
-import json
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
+from constants import INFO, SETTINGS, DESCRIPTION
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
-
-# CONSTANTS
-
-with open("info.json", "r") as f:
-    INFO = json.load(f)
-with open("settings.json", "r") as f:
-    SETTINGS = json.load(f)
 
 # CLASSES
 
@@ -36,26 +29,16 @@ class ResponseModel(BaseModel):
 
 # CREATE API
 
-description = """
-AI4C API helps you detect objects and colors in images. 🚀
-
-## Object
-
-...
-
-## Color
-
-...
-"""
 
 app = FastAPI(
     title=INFO["title"],
-    description=description,
+    description=DESCRIPTION,
     summary=INFO["summary"],
     version=INFO["version"],
     terms_of_service=INFO["termsOfService"],
     contact=INFO["contact"],
-    license_info=INFO["license"])
+    license_info=INFO["license"],
+)
 
 
 # API REQUESTS
@@ -87,8 +70,8 @@ async def detection(
     """
 
     if request.requestType == RequestType.color:
-        return color_detect.detection()
+        return color_detect.detection(SETTINGS)
     elif request.requestType == RequestType.object:
-        return object_detect.detection()
+        return object_detect.detection(SETTINGS)
     else:
         raise HTTPException(status_code=404, detail="Invalid requestType")

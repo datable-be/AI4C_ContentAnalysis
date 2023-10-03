@@ -49,5 +49,5 @@ DUMMY_RESPONSE = {
 }
 
 
-def detection():
+def detection(settings: dict):
     return DUMMY_RESPONSE
