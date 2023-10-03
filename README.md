@@ -157,13 +157,15 @@ The API is built with the [FastAPI](https://fastapi.tiangolo.com/) framework. Fa
 
 Although there are alternatives (Django REST, Flask), FastAPI is the best choice for the project because of its high [performance](https://fastapi.tiangolo.com/#performance), its type safety with [Pydantic](https://docs.pydantic.dev/latest/), which allows for automatic input validation, and because it is based on (and fully compatible with) the open standards for APIs: [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) (previously known as Swagger) and [JSON Schema](https://json-schema.org/).
 
-This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://127.0.0.1:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
+This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
 
 ![Docs](/doc/img/docs.png "Example of API documentation with Swagger UI")
 
-And because the generated schema is from the OpenAPI standard, there are many compatible tools. Because of this, FastAPI itself provides an alternative API documentation (using [ReDoc](https://redocly.com/redoc/)), which you can access at [http://127.0.0.1:8000/redoc](http://0.0.0.0:8000/redoc):
+And because the generated schema is from the OpenAPI standard, there are many compatible tools. Because of this, FastAPI itself provides an alternative API documentation (using [ReDoc](https://redocly.com/redoc/)), which you can access at [http://0.0.0.0:8000/redoc](http://0.0.0.0:8000/redoc):
 
 ![ReDoc](/doc/img/redoc.png "Example of API documentation with ReDoc")
+
+You can also directly see the OpenAPI schema at [http://0.0.0.0:8000/openapi.json](http://0.0.0.0:8000/openapi.json).
 
 ## Usage
 
