@@ -13,73 +13,39 @@ Verify your installation with the following command.
 Note that `docker` commands always need to be run with root privileges!
 
 ```bash
-sudo docker info
+sudo docker version
 ```
 
 This should generate a YAML response like this:
 
 ```yaml
-client: Docker Engine - Community
- Version:    24.0.6
- Context:    default
- Debug Mode: false
- Plugins:
-  buildx: Docker Buildx (Docker Inc.)
-    Version:  v0.11.2
-    Path:     /usr/libexec/docker/cli-plugins/docker-buildx
-  compose: Docker Compose (Docker Inc.)
-    Version:  v2.21.0
-    Path:     /usr/libexec/docker/cli-plugins/docker-compose
-  scan: Docker Scan (Docker Inc.)
-    Version:  v0.23.0
-    Path:     /usr/libexec/docker/cli-plugins/docker-scan
+Client: Docker Engine - Community
+ Version:           24.0.6
+ API version:       1.43
+ Go version:        go1.20.7
+ Git commit:        ed223bc
+ Built:             Mon Sep  4 12:32:12 2023
+ OS/Arch:           linux/amd64
+ Context:           default
 
-Server:
- Containers: 1
-  Running: 1
-  Paused: 0
-  Stopped: 0
- Images: 11
- Server Version: 24.0.6
- Storage Driver: overlay2
-  Backing Filesystem: extfs
-  Supports d_type: true
-  Using metacopy: false
-  Native Overlay Diff: true
-  userxattr: false
- Logging Driver: json-file
- Cgroup Driver: systemd
- Cgroup Version: 2
- Plugins:
-  Volume: local
-  Network: bridge host ipvlan macvlan null overlay
-  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
- Swarm: inactive
- Runtimes: io.containerd.runc.v2 runc
- Default Runtime: runc
- Init Binary: docker-init
- containerd version: 61f9fd88f79f081d64d6fa3bb1a0dc71ec870523
- runc version: v1.1.9-0-gccaecfc
- init version: de40ad0
- Security Options:
-  apparmor
-  seccomp
-   Profile: builtin
-  cgroupns
- Kernel Version: 5.15.0-78-generic
- Operating System: Linux Mint 21.2
- OSType: linux
- Architecture: x86_64
- CPUs: 8
- Total Memory: 15.34GiB
- Name: XPS-13-9370
- ID: UNSD:2TZE:5IDV:CPJ3:VVAB:RXVP:XIGT:NBRS:E3WF:ZNVX:HWZT:BVXC
- Docker Root Dir: /var/lib/docker
- Debug Mode: false
- Experimental: false
- Insecure Registries:
-  127.0.0.0/8
- Live Restore Enabled: false
+Server: Docker Engine - Community
+ Engine:
+  Version:          24.0.6
+  API version:      1.43 (minimum version 1.12)
+  Go version:       go1.20.7
+  Git commit:       1a79695
+  Built:            Mon Sep  4 12:32:12 2023
+  OS/Arch:          linux/amd64
+  Experimental:     false
+ containerd:
+  Version:          1.6.24
+  GitCommit:        61f9fd88f79f081d64d6fa3bb1a0dc71ec870523
+ runc:
+  Version:          1.1.9
+  GitCommit:        v1.1.9-0-gccaecfc
+ docker-init:
+  Version:          0.19.0
+  GitCommit:        de40ad0
 ```
 
 
@@ -226,29 +192,6 @@ Expected output:
 {"title":"AI4C Content Analysis Tools","summary":"AI4Culture - Content analysis tools","description":"This API offers object and color detection tools for images","termsOfService":"http://www.datable.be/","contact":{"name":"./Datable","url":"http://www.datable.be/","email":"info@datable.be"},"license":{"name":"MIT","url":"https://opensource.org/license/mit/"},"version":"1.0.1"}
 ```
 
-Error handling is done by FastAPI, as you can see with the following invalid request:
-
-```bash
-curl http://0.0.0.0:8000/invalid_path
-```
-
-Expected output:
-
-```json
-{"detail":"Not Found"}
-```
-
-An invalid query returns an empty response:
-
-```bash
-curl http://0.0.0.0:8000/?q=invalid_query
-```
-
-Expected output:
-
-```json
-{}
-```
 
 ### POST requests
 
@@ -424,7 +367,35 @@ RESPONSE =
 }
 ```
 
-As with the GET requests, errors in the JSON body are handled by FastAPI, e.g.:
+### Error handling
+
+Error handling for both GET and POST requests is done by FastAPI, as you can see in the following examples.
+
+Invalid URL path:
+
+```bash
+curl http://0.0.0.0:8000/invalid_path
+```
+
+Expected output:
+
+```json
+{"detail":"Not Found"}
+```
+
+An invalid query returns an empty response:
+
+```bash
+curl http://0.0.0.0:8000/?q=invalid_query
+```
+
+Expected output:
+
+```json
+{"detail":"Invalid query"}
+```
+
+Invalid JSON body in a POST request:
 
 ```bash
 curl -H "Content-Type: application/json" -X POST -d '{}' http://0.0.0.0:8000/v1
@@ -436,16 +407,33 @@ Expected output:
 {"detail":[{"type":"missing","loc":["body","requestType"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","data"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
 ```
 
-Or:
+If, however, there is an error in generating the response, the client will receive an "Internal Server Error" with a HTTP status code 500. We do not catch these, as these are bugs in the code that would otherwise remain undetected. If you notice any such bug, please report it to us via the GitHub [issue tracker](https://github.com/datable-be/AI4C_ContentAnalysis/issues).
+
+## Benchmarks
+
+The following benchmarks were run on a local development machine with the following specifications:
+
+```text
+Operating system:       Linux Mint 21.2 Cinnamon
+Linux Kernel:           5.15.0-78-generic
+Processor:              Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz x 4
+RAM memory:             15.3 GiB
+Hard Drives:            518.3 GB
+System:                 Dell XPS 13 9370
+``` 
+
+The following command times performing 1,000 GET requests with maximum 10 parallel processes:
 
 ```bash
-curl -H "Content-Type: application/json" -X POST -d '{"requestType":"invalid"}' http://0.0.0.0:8000/v1
+time seq 1 1000 | xargs -Iname -P10 curl "http://0.0.0.0:8000/?q=version"
 ```
 
-Expected output:
+Output:
 
-```json
-{"detail":[{"type":"missing","loc":["body","data"],"msg":"Field required","input":{"requestType":"invalid"},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
+```text
+real    0m2.092s
+user    0m5.062s
+sys     0m5.096s
 ```
 
 ## Read more
