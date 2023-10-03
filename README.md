@@ -425,7 +425,7 @@ Hard Drives:            518.3 GB
 System:                 Dell XPS 13 9370
 ``` 
 
-The following command benchmarks 50,000 GET requests with 1000 concurrent requests:
+The following command benchmarks 50,000 GET requests with 1,000 concurrent requests:
 
 ```bash
 ab -k -c1000 -n50000 -S "http://0.0.0.0:8000/?q=version"
@@ -490,7 +490,78 @@ Percentage of the requests served within a certain time (ms)
  100%   1511 (longest request)
 ```
 
-Since the API's POST request currently only returns a dummy response, we will delay benchmarking that to a later time.
+The following command benchmarks 50,000 POST requests with 1,000 concurrent requests.
+
+*Please note that the POST request currently yields a dummy request, so these numbers are not yet representative of the real performance.*
+
+```bash
+echo '{"requestType":"color","data":{}}' > post.txt
+ab -k -p post.txt -T application/json -c1000 -n50000 -S "http://0.0.0.0:8000/v1"
+rm post.txt
+```
+
+Output:
+
+```text
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 0.0.0.0 (be patient)
+Completed 5000 requests
+Completed 10000 requests
+Completed 15000 requests
+Completed 20000 requests
+Completed 25000 requests
+Completed 30000 requests
+Completed 35000 requests
+Completed 40000 requests
+Completed 45000 requests
+Completed 50000 requests
+Finished 50000 requests
+
+
+Server Software:        uvicorn
+Server Hostname:        0.0.0.0
+Server Port:            8000
+
+Document Path:          /v1
+Document Length:        1443 bytes
+
+Concurrency Level:      1000
+Time taken for tests:   47.672 seconds
+Complete requests:      50000
+Failed requests:        0
+Keep-Alive requests:    0
+Total transferred:      79450000 bytes
+Total body sent:        9650000
+HTML transferred:       72150000 bytes
+Requests per second:    1048.84 [#/sec] (mean)
+Time per request:       953.435 [ms] (mean)
+Time per request:       0.953 [ms] (mean, across all concurrent requests)
+Transfer rate:          1627.54 [Kbytes/sec] received
+                        197.68 kb/s sent
+                        1825.23 kb/s total
+
+Connection Times (ms)
+              min   avg   max
+Connect:        0     8   31
+Processing:    12   939 1091
+Waiting:        1   748 1067
+Total:         44   948 1093
+
+Percentage of the requests served within a certain time (ms)
+  50%    952
+  66%    967
+  75%    974
+  80%    985
+  90%   1017
+  95%   1039
+  98%   1044
+  99%   1067
+ 100%   1093 (longest request)
+```
+
 
 ## Read more
 
