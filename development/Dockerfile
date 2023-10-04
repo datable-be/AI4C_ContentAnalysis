@@ -7,6 +7,9 @@ WORKDIR /app
 # Copy Python requirements to container
 COPY ./requirements.txt /code/requirements.txt
 
+# Install opencv system dependencies
+RUN apt-get update && apt-get install ffmpeg libsm6 libxext6  -y
+
 # Install dependencies
 # Using --no-cache-dir flag to avoid caching downloaded packages on the system 
 # This reduces Docker image size
