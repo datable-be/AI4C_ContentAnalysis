@@ -198,11 +198,7 @@ Expected output:
 
 ### POST requests
 
-The main usage of the API is via POST requests with the following basic JSON body:
-
-```json
-{"requestType":"...","data":{}}
-```
+The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/object``.
 
 Since these are typically longer requests, the software repository contains an example request for both detection tools:
 
@@ -213,18 +209,15 @@ py3 development/app/examples/object_detect.py
 Expected output:
 
 ```text
-POST http://0.0.0.0:8000/v1
+POST http://0.0.0.0:8000/v1/object
 REQUEST =
 {
-    "requestType": "object",
-    "data": {
-        "id": "http://example.com/images/123",
-        "min_confidence": 0.8,
-        "max_objects": 1,
-        "source": "http://example.com/images/123.jpg",
-        "service": "GoogleVision",
-        "service_key": "****"
-    }
+    "id": "http://example.com/images/123",
+    "min_confidence": 0.8,
+    "max_objects": 1,
+    "source": "http://example.com/images/123.jpg",
+    "service": "GoogleVision",
+    "service_key": "****"
 }
 RESPONSE =
 {
@@ -274,22 +267,19 @@ py3 development/app/examples/color_detect.py
 Expected output:
 
 ```text
-POST http://0.0.0.0:8000/v1
+POST http://0.0.0.0:8000/v1/color
 REQUEST =
 {
-    "requestType": "color",
-    "data": {
-        "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-        "max_colors": 3,
-        "min_area": 0.15,
-        "foreground_detection": true,
-        "selector": {
-            "type": "FragmentSelector",
-            "conformsTo": "http://www.w3.org/TR/media-frags/",
-            "value": "xywh=percent:87,63,9,21"
-        },
-        "source": "http://example.com/images/123.jpg"
-    }
+    "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
+    "max_colors": 3,
+    "min_area": 0.15,
+    "foreground_detection": true,
+    "selector": {
+        "type": "FragmentSelector",
+        "conformsTo": "http://www.w3.org/TR/media-frags/",
+        "value": "xywh=percent:87,63,9,21"
+    },
+    "source": "http://example.com/images/123.jpg"
 }
 RESPONSE =
 {
@@ -401,13 +391,13 @@ Expected output:
 Invalid JSON body in a POST request:
 
 ```bash
-curl -H "Content-Type: application/json" -X POST -d '{}' http://0.0.0.0:8000/v1
+curl -H "Content-Type: application/json" -X POST -d '{}' http://0.0.0.0:8000/v1/object
 ```
 
 Expected output:
 
 ```json
-{"detail":[{"type":"missing","loc":["body","requestType"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","data"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
+{"detail":[{"type":"missing","loc":["body","id"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","source"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","service_key"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
 ```
 
 If, however, there is an error in generating the response, the client will receive an "Internal Server Error" with a HTTP status code 500. We do not catch these, as these are bugs in the code that would otherwise remain undetected. If you notice any such bug, please report it to us via the GitHub [issue tracker](https://github.com/datable-be/AI4C_ContentAnalysis/issues).

@@ -2,19 +2,16 @@ import json
 import requests
 import sys
 
-URL = "http://0.0.0.0:8000/v1"
+URL = "http://0.0.0.0:8000/v1/object"
 
 
 REQUEST = """{
-  "requestType": "object",
-  "data": {
     "id": "http://example.com/images/123",
     "min_confidence": 0.8,
     "max_objects": 1,
     "source": "http://example.com/images/123.jpg",
     "service":"GoogleVision",
     "service_key":"****"
-  }
 }
 """
 
@@ -27,9 +24,9 @@ print("POST", URL)
 print("REQUEST = ")
 json_pretty_print(REQUEST)
 
-response = requests.post("http://0.0.0.0:8000/v1", REQUEST)
+response = requests.post(URL, REQUEST)
 if response.status_code == 200:
     print("RESPONSE = ")
     json_pretty_print(response.text)
 else:
-    sys.exit("ERROR")
+    sys.exit("ERROR = " + response.text)

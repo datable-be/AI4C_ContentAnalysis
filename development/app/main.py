@@ -1,8 +1,8 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
+from classes import ObjectRequest, ColorRequest
 from constants import INFO, SETTINGS, DESCRIPTION
-from classes import DetectionRequest, RequestType
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
 
@@ -41,17 +41,23 @@ async def info(q: str | None = None) -> JSONResponse:
         raise HTTPException(status_code=404, detail="Invalid query")
 
 
-@app.post("/v1")
-async def detection(
-    request: DetectionRequest,
+@app.post("/v1/object")
+async def object_detection(
+    request: ObjectRequest,
 ) -> dict:
     """
-    Post a detection request to the API
+    Handle an object detection POST request to the API
     """
 
-    if request.requestType == RequestType.color:
-        return color_detect.detection(SETTINGS)
-    elif request.requestType == RequestType.object:
-        return object_detect.detection(SETTINGS)
-    else:
-        raise HTTPException(status_code=404, detail="Invalid requestType")
+    return object_detect.detection(SETTINGS)
+
+
+@app.post("/v1/color")
+async def color_detection(
+    request: dict,
+) -> dict:
+    """
+    Handle a color detection POST request to the API
+    """
+
+    return color_detect.detection(SETTINGS)

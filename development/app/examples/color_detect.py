@@ -3,11 +3,9 @@ import requests
 import sys
 
 
-URL = "http://0.0.0.0:8000/v1"
+URL = "http://0.0.0.0:8000/v1/color"
 
 REQUEST = """{
-  "requestType": "color",
-  "data": {
     "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
     "max_colors": 3,
     "min_area": 0.15,
@@ -18,7 +16,6 @@ REQUEST = """{
       "value" : "xywh=percent:87,63,9,21"
     },
     "source": "http://example.com/images/123.jpg"
-  }
 }
 """
 
@@ -31,9 +28,9 @@ print("POST", URL)
 print("REQUEST = ")
 json_pretty_print(REQUEST)
 
-response = requests.post("http://0.0.0.0:8000/v1", REQUEST)
+response = requests.post(URL, REQUEST)
 if response.status_code == 200:
     print("RESPONSE = ")
     json_pretty_print(response.text)
 else:
-    sys.exit("ERROR")
+    sys.exit("ERROR = " + response.text)
