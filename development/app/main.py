@@ -2,13 +2,15 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 
 from classes import ObjectRequest, ColorRequest
-from constants import INFO, SETTINGS, DESCRIPTION
+from constants import INFO, SETTINGS, DESCRIPTION, NET
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
 
+# Eagerly load object model (once, at startup)
+
+net = NET
 
 # CREATE API
-
 
 app = FastAPI(
     title=INFO["title"],
@@ -19,7 +21,6 @@ app = FastAPI(
     contact=INFO["contact"],
     license_info=INFO["license"],
 )
-
 
 # API REQUESTS
 
@@ -49,7 +50,7 @@ async def object_detection(
     Handle an object detection POST request to the API
     """
 
-    return object_detect.detection(SETTINGS)
+    return object_detect.detection(request, net, SETTINGS)
 
 
 @app.post("/v1/color")
@@ -60,4 +61,4 @@ async def color_detection(
     Handle a color detection POST request to the API
     """
 
-    return color_detect.detection(SETTINGS)
+    return color_detect.detection(request, SETTINGS)

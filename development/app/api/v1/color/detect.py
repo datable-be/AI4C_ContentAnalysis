@@ -1,3 +1,5 @@
+from classes import ColorRequest
+
 DUMMY_RESPONSE = {
     "@context": {
         "as": "https://www.w3.org/ns/activitystreams#",
@@ -49,5 +51,5 @@ DUMMY_RESPONSE = {
 }
 
 
-def detection(settings: dict):
+def detection(object_request: ColorRequest, settings: dict):
     return DUMMY_RESPONSE
