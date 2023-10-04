@@ -485,8 +485,8 @@ The following command benchmarks 50,000 POST requests with 1,000 concurrent requ
 *Please note that the POST request currently yields a dummy request, so these numbers are not yet representative of the real performance.*
 
 ```bash
-echo '{"requestType":"color","data":{}}' > post.txt
-ab -k -p post.txt -T application/json -c1000 -n50000 -S "http://0.0.0.0:8000/v1"
+echo '{}' > post.txt
+ab -k -p post.txt -T application/json -c1000 -n50000 -S "http://0.0.0.0:8000/v1/object"
 rm post.txt
 ```
 
@@ -515,41 +515,42 @@ Server Software:        uvicorn
 Server Hostname:        0.0.0.0
 Server Port:            8000
 
-Document Path:          /v1
-Document Length:        1443 bytes
+Document Path:          /v1/object
+Document Length:        394 bytes
 
 Concurrency Level:      1000
-Time taken for tests:   47.672 seconds
+Time taken for tests:   44.143 seconds
 Complete requests:      50000
 Failed requests:        0
+Non-2xx responses:      50000
 Keep-Alive requests:    0
-Total transferred:      79450000 bytes
-Total body sent:        9650000
-HTML transferred:       72150000 bytes
-Requests per second:    1048.84 [#/sec] (mean)
-Time per request:       953.435 [ms] (mean)
-Time per request:       0.953 [ms] (mean, across all concurrent requests)
-Transfer rate:          1627.54 [Kbytes/sec] received
-                        197.68 kb/s sent
-                        1825.23 kb/s total
+Total transferred:      27850000 bytes
+Total body sent:        8400000
+HTML transferred:       19700000 bytes
+Requests per second:    1132.69 [#/sec] (mean)
+Time per request:       882.853 [ms] (mean)
+Time per request:       0.883 [ms] (mean, across all concurrent requests)
+Transfer rate:          616.12 [Kbytes/sec] received
+                        185.83 kb/s sent
+                        801.95 kb/s total
 
 Connection Times (ms)
               min   avg   max
-Connect:        0     8   31
-Processing:    12   939 1091
-Waiting:        1   748 1067
-Total:         44   948 1093
+Connect:        0     8   40
+Processing:    13   869 1040
+Waiting:        1   668  948
+Total:         53   877 1054
 
 Percentage of the requests served within a certain time (ms)
-  50%    952
-  66%    967
-  75%    974
-  80%    985
-  90%   1017
-  95%   1039
-  98%   1044
-  99%   1067
- 100%   1093 (longest request)
+  50%    875
+  66%    896
+  75%    907
+  80%    914
+  90%    933
+  95%    947
+  98%    979
+  99%   1042
+ 100%   1054 (longest request)
 ```
 
 

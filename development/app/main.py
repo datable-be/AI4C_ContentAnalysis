@@ -54,7 +54,7 @@ async def object_detection(
 
 @app.post("/v1/color")
 async def color_detection(
-    request: dict,
+    request: ColorRequest,
 ) -> dict:
     """
     Handle a color detection POST request to the API
