@@ -3,7 +3,11 @@ import cv2
 
 from classes import ObjectRequest
 from constants import COCO_LABELS, TEMP_DIR
-from api.v1.object.tools import load_cv2_image_from_url, sanitize_filename, housekeeping
+from api.v1.object.tools import (
+    load_cv2_image_from_url,
+    sanitize_filename,
+    housekeeping,
+)
 
 DUMMY_RESPONSE = {
     "@context": {},
@@ -74,7 +78,7 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     # output[0, 0, :, :] has a shape of: (100, 7)
     objects = []
     for detection in output[0, 0, :, :]:
-        confidence = detection[2]
+        confidence = float(detection[2])
 
         # Continue if the confidence of the model is lower than 40%,
         if confidence < 0.4:
@@ -101,11 +105,14 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         # Extract the ID of the detected object to get its name
         class_id = int(detection[1])
 
-        # Get the object label
         label = f"{COCO_LABELS[class_id - 1].capitalize()}"
 
-        # Add size to object to sublist
-        detected_object = [size, box, label]
+        detected_object = {
+            "confidence": confidence,
+            "size": size,
+            "box": box,
+            "label": label,
+        }
 
         if settings.get("debug"):
             # Draw the name of the predicted object together with the probability
@@ -124,13 +131,11 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
             basename = sanitize_filename(url)
             filename = os.path.join(TEMP_DIR, basename)
             cv2.imwrite(filename, image)
-            detected_object.append(basename)
+            detected_object["annotated_image"] = basename
 
-        # Add to nested list
         objects.append(detected_object)
 
-    if settings.get("debug"):
-        print("Objects: ", objects)
+    #  if settings.get("debug"):
         #  cv2.imshow("Image", image)
         #  cv2.waitKey(10000)
 
@@ -141,4 +146,6 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     #  box = biggest_object[1]
     #  print("box of biggest object: ", box)
 
-    return DUMMY_RESPONSE
+    result = {"result": objects}
+
+    return result
