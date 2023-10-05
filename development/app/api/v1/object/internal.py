@@ -7,7 +7,7 @@ from api.v1.object.tools import (
     load_cv2_image_from_url,
     extension_from_url,
     housekeeping,
-    hash_request
+    hash_object
 )
 
 DUMMY_RESPONSE = {
@@ -57,7 +57,7 @@ DUMMY_RESPONSE = {
 def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Request identifier
-    identifier = hash_request(request)
+    identifier = hash_object(request)
 
     # Read image
     url = str(request.source)
@@ -147,8 +147,6 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
         objects.append(detected_object)
 
-    result = {}
-
     #  if settings.get("debug"):
     #  cv2.imshow("Image", image)
     #  cv2.waitKey(10000)
@@ -159,6 +157,8 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     if len(sorted_objects) > request.max_objects:
         sorted_objects = sorted_objects[0:request.max_objects]
 
+    result = {}
+    result["id"] = identifier
     result["data"] = sorted_objects
 
     return result
