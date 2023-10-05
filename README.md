@@ -195,6 +195,13 @@ Expected output:
 {"title":"AI4C Content Analysis Tools","summary":"AI4Culture - Content analysis tools","description":"This API offers object and color detection tools for images","termsOfService":"http://www.datable.be/","contact":{"name":"./Datable","url":"http://www.datable.be/","email":"info@datable.be"},"license":{"name":"MIT","url":"https://opensource.org/license/mit/"},"version":"1.0.1"}
 ```
 
+It also accepts requests to the ``/image`` path to show an annotated image:
+
+```bash
+curl -O http://0.0.0.0:8000/image?img=4cc4ff8a39925002a25650a89c5de92fdbfeb011_2.png
+```
+
+Please note that these are currently for debugging purposes only and will only be saved if `"debug": true` is set in the `settings.json` file.
 
 ### POST requests
 
