@@ -53,10 +53,10 @@ DUMMY_RESPONSE = {
 #      "service_key":"****"
 
 
-def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
+def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Read image
-    url = str(object_request.source)
+    url = str(request.source)
     image = load_cv2_image_from_url(url)
     # image = cv2.resize(image, (640, 480))
     image_height = image.shape[0]
@@ -80,8 +80,7 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     for detection in output[0, 0, :, :]:
         confidence = float(detection[2])
 
-        # Continue if the confidence of the model is lower than 40%,
-        if confidence < 0.4:
+        if confidence < request.min_confidence:
             continue
 
         # Perform element-wise multiplication to get
@@ -139,13 +138,12 @@ def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         #  cv2.imshow("Image", image)
         #  cv2.waitKey(10000)
 
-    #  # find largest object
-    #  biggest_object = max(objects)
-    #  print(biggest_object)
-    #
-    #  box = biggest_object[1]
-    #  print("box of biggest object: ", box)
+    # Sort result on object size
+    sorted_objects = sorted(objects, key=lambda x: x["size"], reverse=True)
+    # Filter max_objects
+    if len(sorted_objects) > request.max_objects:
+        sorted_objects = sorted_objects[0:request.max_objects-1]
 
-    result = {"result": objects}
+    result = {"result": sorted_objects}
 
     return result
