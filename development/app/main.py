@@ -1,8 +1,10 @@
+import os
+
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 
 from classes import ObjectRequest, ColorRequest
-from constants import INFO, SETTINGS, DESCRIPTION, NET
+from constants import INFO, SETTINGS, DESCRIPTION, NET, TEMP_DIR
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
 
@@ -31,18 +33,35 @@ async def info(q: str | None = None) -> JSONResponse:
     Get descriptive metadata about the API
     """
 
-    if not q:
+    if q:
+        if q == "version":
+            return {"version": INFO["version"]}
+        elif q == "info":
+            return INFO
+        else:
+            raise HTTPException(status_code=404, detail="Invalid query")
+
+    else:
         return INFO
 
-    if q == "version":
-        return {"version": INFO["version"]}
-    elif q == "info":
-        return INFO
+
+@app.get("/image")
+async def image(img: str | None = None) -> FileResponse:
+    """
+    Get image from the API
+    """
+
+    if img:
+        path = os.path.join(TEMP_DIR, img)
+        if os.path.exists(path):
+            return FileResponse(path)
+        else:
+            raise HTTPException(status_code=404, detail="File not found")
     else:
         raise HTTPException(status_code=404, detail="Invalid query")
 
 
-@app.post("/v1/object")
+@ app.post("/v1/object")
 async def object_detection(
     request: ObjectRequest,
 ) -> dict:
@@ -53,7 +72,7 @@ async def object_detection(
     return object_detect.detection(request, net, SETTINGS)
 
 
-@app.post("/v1/color")
+@ app.post("/v1/color")
 async def color_detection(
     request: ColorRequest,
 ) -> dict:
