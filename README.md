@@ -553,6 +553,16 @@ Percentage of the requests served within a certain time (ms)
  100%   1054 (longest request)
 ```
 
+## Analysis
+
+### Object
+
+#### Internal
+
+The built-in object analysis of this API uses the [pre-trained MobileNet-SSD v3 model for object detection](https://github.com/opencv/opencv/wiki/TensorFlow-Object-Detection-API). This model uses the [COCO dataset](https://cocodataset.org/#overview), which consists of 80 classes of images.
+
+Our implementation is based on [https://github.com/zafarRehan/object_detection_COCO](https://github.com/zafarRehan/object_detection_COCO).
+
 
 ## Read more
 
