@@ -4,5 +4,6 @@
     },
     "color_detection": {
         "URI_type": "wikidata"
-    }
+    },
+    "debug": true
 }
