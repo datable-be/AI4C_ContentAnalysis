@@ -16,8 +16,8 @@ REQUEST = """{
 
 REQUEST = """{
     "id": "http://example.com/images/123",
-    "min_confidence": 0.1,
-    "max_objects": 2,
+    "min_confidence": 0.4,
+    "max_objects": 10,
     "source":"https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true",
     "service":"internal",
     "service_key":"****"
