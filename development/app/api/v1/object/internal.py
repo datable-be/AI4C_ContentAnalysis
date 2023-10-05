@@ -1,8 +1,9 @@
-from classes import ObjectRequest
-from constants import COCO_LABELS
-from cv2.dnn import Net
+import os
 import cv2
-from api.v1.object.tools import load_cv2_image_from_url
+
+from classes import ObjectRequest
+from constants import COCO_LABELS, TEMP_DIR
+from api.v1.object.tools import load_cv2_image_from_url, sanitize_filename, housekeeping
 
 DUMMY_RESPONSE = {
     "@context": {},
@@ -48,10 +49,11 @@ DUMMY_RESPONSE = {
 #      "service_key":"****"
 
 
-def detection(object_request: ObjectRequest, net: Net, settings: dict):
+def detection(object_request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Read image
-    image = load_cv2_image_from_url(str(object_request.source))
+    url = str(object_request.source)
+    image = load_cv2_image_from_url(url)
     # image = cv2.resize(image, (640, 480))
     image_height = image.shape[0]
     image_width = image.shape[1]
@@ -105,9 +107,6 @@ def detection(object_request: ObjectRequest, net: Net, settings: dict):
         # Add size to object to sublist
         detected_object = [size, box, label]
 
-        # Add to nested list
-        objects.append(detected_object)
-
         if settings.get("debug"):
             # Draw the name of the predicted object together with the probability
             prediction = f"{label} {confidence * 100:.2f}%"
@@ -121,10 +120,19 @@ def detection(object_request: ObjectRequest, net: Net, settings: dict):
                 2,
             )
 
+            housekeeping(TEMP_DIR)
+            basename = sanitize_filename(url)
+            filename = os.path.join(TEMP_DIR, basename)
+            cv2.imwrite(filename, image)
+            detected_object.append(basename)
+
+        # Add to nested list
+        objects.append(detected_object)
+
     if settings.get("debug"):
         print("Objects: ", objects)
-        cv2.imshow("Image", image)
-        cv2.waitKey(10000)
+        #  cv2.imshow("Image", image)
+        #  cv2.waitKey(10000)
 
     #  # find largest object
     #  biggest_object = max(objects)
