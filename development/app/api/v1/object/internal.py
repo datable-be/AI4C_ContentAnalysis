@@ -5,8 +5,9 @@ from classes import ObjectRequest
 from constants import COCO_LABELS, TEMP_DIR
 from api.v1.object.tools import (
     load_cv2_image_from_url,
-    sanitize_filename,
+    extension_from_url,
     housekeeping,
+    hash_request
 )
 
 DUMMY_RESPONSE = {
@@ -55,6 +56,9 @@ DUMMY_RESPONSE = {
 
 def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
+    # Request identifier
+    identifier = hash_request(request)
+
     # Read image
     url = str(request.source)
     image = load_cv2_image_from_url(url)
@@ -77,11 +81,14 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     # Loop over the number of detected objects
     # output[0, 0, :, :] has a shape of: (100, 7)
     objects = []
+    count = 0
     for detection in output[0, 0, :, :]:
         confidence = float(detection[2])
 
         if confidence < request.min_confidence:
             continue
+
+        count += 1
 
         # Perform element-wise multiplication to get
         # the (x, y) coordinates of the bounding box
@@ -98,8 +105,14 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         size_height = box[3] - box[1]
         size = size_width * size_height
 
+        # Before altering image, make a deep copy,
+        # because cv2 uses pointers under the hood,
+        # so the original image is changed!
+        image_copy = image.copy()
+
         # Draw the bounding box of the object
-        cv2.rectangle(image, box[:2], box[2:], (0, 255, 0), thickness=2)
+        annotated_image = cv2.rectangle(
+            image_copy, box[:2], box[2:], (0, 255, 0), thickness=2)
 
         # Extract the ID of the detected object to get its name
         class_id = int(detection[1])
@@ -116,34 +129,36 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         if settings.get("debug"):
             # Draw the name of the predicted object together with the probability
             prediction = f"{label} {confidence * 100:.2f}%"
-            cv2.putText(
-                image,
-                prediction,
-                (box[0], box[1] + 15),
-                cv2.FONT_HERSHEY_SIMPLEX,
-                0.5,
-                (0, 255, 0),
-                2,
+            annotated_image = cv2.putText(
+                img=annotated_image,
+                text=prediction,
+                org=(box[0], box[1] + 15),
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=0.5,
+                color=(0, 255, 0),
+                thickness=2,
             )
 
             housekeeping(TEMP_DIR)
-            basename = sanitize_filename(url)
-            filename = os.path.join(TEMP_DIR, basename)
-            cv2.imwrite(filename, image)
+            basename = identifier + "_" + str(count) + extension_from_url(url)
+            filepath = os.path.join(TEMP_DIR, basename)
+            cv2.imwrite(filepath, annotated_image)
             detected_object["annotated_image"] = basename
 
         objects.append(detected_object)
 
+    result = {}
+
     #  if settings.get("debug"):
-        #  cv2.imshow("Image", image)
-        #  cv2.waitKey(10000)
+    #  cv2.imshow("Image", image)
+    #  cv2.waitKey(10000)
 
     # Sort result on object size
     sorted_objects = sorted(objects, key=lambda x: x["size"], reverse=True)
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
-        sorted_objects = sorted_objects[0:request.max_objects-1]
+        sorted_objects = sorted_objects[0:request.max_objects]
 
-    result = {"result": sorted_objects}
+    result["data"] = sorted_objects
 
     return result

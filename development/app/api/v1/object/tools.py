@@ -1,13 +1,14 @@
 import os
 import time
-from random import randint
+from hashlib import sha1
 from pathlib import Path
-
 from fastapi import HTTPException
 from numpy import asarray, ndarray
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 from cv2 import imdecode, IMREAD_COLOR
+
+from classes import ObjectRequest
 
 
 def load_cv2_image_from_url(url: str, readFlag=IMREAD_COLOR) -> ndarray:
@@ -27,27 +28,28 @@ def load_cv2_image_from_url(url: str, readFlag=IMREAD_COLOR) -> ndarray:
     return image
 
 
-def sanitize_filename(string: str) -> str:
+def extension_from_url(url: str) -> str:
     """
-    Make sure a given string is safe to use as a filename
+    Get an extension from a URL (including those with ?raw=true and such at the end))
     """
 
-    basename = string
     extension = ""
 
-    if "." in string:
-        parts = string.split(".")
+    if "." in url:
+        parts = url.split(".")
         extension = parts[-1]
-        basename = "".join(parts[0: len(parts) - 1])
         for sep in ["?"]:
             extension = extension.partition(sep)[0]
         if not extension == "":
             extension = "." + extension
 
-    b = bytes(basename, "utf-8")
-    filename = b.hex()[0:10] + "_" + str(randint(0, 1000000)) + extension
+    return extension
 
-    return filename
+
+def hash_request(request: ObjectRequest) -> str:
+    sha_1 = sha1()
+    sha_1.update(str(request).encode())
+    return sha_1.hexdigest()
 
 
 def housekeeping(path: str) -> None:
