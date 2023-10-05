@@ -19,6 +19,12 @@ AI4C API helps you detect objects and colors in images. 🚀
 ...
 """
 
+# Tempdir for saving images
+# (saved on the machine's filesystem, usually in /var/lib/docker)
+# Do not change!
+
+TEMP_DIR = "/tmp"
+
 
 # Load the MobileNet SSD model trained on the COCO dataset
 
