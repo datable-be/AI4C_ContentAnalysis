@@ -1,5 +1,6 @@
 import os
 import time
+from random import randint
 from pathlib import Path
 
 from fastapi import HTTPException
@@ -44,7 +45,7 @@ def sanitize_filename(string: str) -> str:
             extension = "." + extension
 
     b = bytes(basename, "utf-8")
-    filename = b.hex()[0:30] + extension
+    filename = b.hex()[0:10] + "_" + str(randint(0, 1000000)) + extension
 
     return filename
 
