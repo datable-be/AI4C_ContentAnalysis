@@ -198,7 +198,7 @@ Expected output:
 
 ### POST requests
 
-The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/object``.
+The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/color``.
 
 Since these are typically longer requests, the software repository contains an example request for both detection tools:
 
@@ -206,7 +206,7 @@ Since these are typically longer requests, the software repository contains an e
 py3 development/app/examples/object_detect.py
 ```
 
-Expected output:
+Expected output (*current output might differ!*):
 
 ```text
 POST http://0.0.0.0:8000/v1/object
@@ -264,7 +264,7 @@ Or:
 py3 development/app/examples/color_detect.py
 ```
 
-Expected output:
+Expected output (*current output might differ!*):
 
 ```text
 POST http://0.0.0.0:8000/v1/color
