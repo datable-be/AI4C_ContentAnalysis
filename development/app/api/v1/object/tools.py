@@ -3,12 +3,11 @@ import time
 from hashlib import sha1
 from pathlib import Path
 from fastapi import HTTPException
+from typing import Any
 from numpy import asarray, ndarray
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 from cv2 import imdecode, IMREAD_COLOR
-
-from classes import ObjectRequest
 
 
 def load_cv2_image_from_url(url: str, readFlag=IMREAD_COLOR) -> ndarray:
@@ -46,9 +45,9 @@ def extension_from_url(url: str) -> str:
     return extension
 
 
-def hash_request(request: ObjectRequest) -> str:
+def hash_object(my_object: Any) -> str:
     sha_1 = sha1()
-    sha_1.update(str(request).encode())
+    sha_1.update(str(my_object).encode())
     return sha_1.hexdigest()
 
 
