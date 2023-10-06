@@ -1,23 +1,21 @@
 import json
 import cv2
 
-with open("info.json", "r") as f:
-    INFO = json.load(f)
+
+# Application system settings
 
 with open("settings.json", "r") as f:
     SETTINGS = json.load(f)
 
-DESCRIPTION = """
-AI4C API helps you detect objects and colors in images. 🚀
+# Application metadata
 
-## Object
+with open("info.json", "r") as f:
+    INFO = json.load(f)
 
-...
+# Application description
 
-## Color
-
-...
-"""
+with open("description.md", "r") as f:
+    DESCRIPTION = f.read()
 
 # Tempdir for saving images
 # (saved on the machine's filesystem, usually in /var/lib/docker)
