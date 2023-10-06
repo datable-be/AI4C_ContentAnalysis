@@ -164,7 +164,8 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         sorted_objects = sorted_objects[0: request.max_objects]
 
     result = {}
-    result["id"] = identifier
+    result["detection_id"] = identifier
+    result["request_id"] = request.id
     result["data"] = sorted_objects
 
     return result
