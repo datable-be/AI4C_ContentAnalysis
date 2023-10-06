@@ -2,15 +2,17 @@ import os
 import cv2
 
 from classes import ObjectRequest
-from constants import COCO_LABELS, TEMP_DIR
+from constants import COCO_LABELS, COCO_2_WIKIDATA, TEMP_DIR
 from api.v1.object.tools import (
     load_cv2_image_from_url,
     extension_from_url,
     housekeeping,
-    hash_object
+    hash_request,
 )
 
-DUMMY_RESPONSE = {
+ANNOTATION_COLOR = (0, 255, 0)  # bright green
+
+MODEL_RESPONSE = {
     "@context": {},
     "@graph": [
         {
@@ -46,23 +48,21 @@ DUMMY_RESPONSE = {
 }
 
 
+# ObjectRequest =
 #      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
 #      "min_confidence": 0.8,
 #      "max_objects": 1,
 #      "source": "http://example.com/images/123.jpg",
-#      "service":"GoogleVision",
+#      "service":"internal",
 #      "service_key":"****"
-
-
 def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Request identifier
-    identifier = hash_object(request)
+    identifier = hash_request(request)
 
     # Read image
     url = str(request.source)
     image = load_cv2_image_from_url(url)
-    # image = cv2.resize(image, (640, 480))
     image_height = image.shape[0]
     image_width = image.shape[1]
 
@@ -82,6 +82,7 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     # output[0, 0, :, :] has a shape of: (100, 7)
     objects = []
     count = 0
+
     for detection in output[0, 0, :, :]:
         confidence = float(detection[2])
 
@@ -112,18 +113,25 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
         # Draw the bounding box of the object
         annotated_image = cv2.rectangle(
-            image_copy, box[:2], box[2:], (0, 255, 0), thickness=2)
+            img=image_copy,
+            pt1=box[:2],
+            pt2=box[2:],
+            color=ANNOTATION_COLOR,
+            thickness=2,
+        )
 
         # Extract the ID of the detected object to get its name
         class_id = int(detection[1])
 
-        label = f"{COCO_LABELS[class_id - 1].capitalize()}"
+        label = COCO_LABELS[class_id - 1]
 
+        # Add data to result
         detected_object = {
             "confidence": confidence,
             "size": size,
             "box": box,
-            "label": label,
+            "coco_label": label,
+            "wikidata": COCO_2_WIKIDATA.get(label),
         }
 
         if settings.get("debug"):
@@ -135,10 +143,11 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
                 org=(box[0], box[1] + 15),
                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
                 fontScale=0.5,
-                color=(0, 255, 0),
+                color=ANNOTATION_COLOR,
                 thickness=2,
             )
 
+            # Save image
             housekeeping(TEMP_DIR)
             basename = identifier + "_" + str(count) + extension_from_url(url)
             filepath = os.path.join(TEMP_DIR, basename)
@@ -147,15 +156,12 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
         objects.append(detected_object)
 
-    #  if settings.get("debug"):
-    #  cv2.imshow("Image", image)
-    #  cv2.waitKey(10000)
-
     # Sort result on object size
     sorted_objects = sorted(objects, key=lambda x: x["size"], reverse=True)
+
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
-        sorted_objects = sorted_objects[0:request.max_objects]
+        sorted_objects = sorted_objects[0: request.max_objects]
 
     result = {}
     result["id"] = identifier

@@ -45,9 +45,13 @@ def extension_from_url(url: str) -> str:
     return extension
 
 
-def hash_object(my_object: Any) -> str:
+def hash_request(request: Any) -> str:
+    """
+    Create a hash of an object request so it can be used as an identifier
+    """
+
     sha_1 = sha1()
-    sha_1.update(str(my_object).encode())
+    sha_1.update(str(request).encode())
     return sha_1.hexdigest()
 
 
