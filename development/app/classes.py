@@ -70,14 +70,12 @@ class ColorRequest(BaseModel):
         description="Maximum number of colors to retrieve (default=3)",
         default=3,
     )
-    min_area: float = (
-        Field(
-            title="min_area",
-            description="Minimum share of a given color in the total area of the depicted object (default=0.15)",
-            default=0.15,
-            ge=0,
-            le=1,
-        ),
+    min_area: float = Field(
+        title="min_area",
+        description="Minimum share of a given color in the total area of the depicted object (default=0.15)",
+        default=0.15,
+        ge=0.00,
+        le=1.00,
     )
     ld_source: LDSource = Field(
         title="ld_source",
