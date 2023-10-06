@@ -489,13 +489,11 @@ Percentage of the requests served within a certain time (ms)
  100%   1511 (longest request)
 ```
 
-The following command benchmarks 50,000 POST requests with 1,000 concurrent requests.
-
-*Please note that the POST request currently yields a dummy request, so these numbers are not yet representative of the real performance.*
+The following command benchmarks 1,000 POST requests with 10 concurrent requests.
 
 ```bash
-echo '{}' > post.txt
-ab -k -p post.txt -T application/json -c1000 -n50000 -S "http://0.0.0.0:8000/v1/object"
+echo '{"id":"http://example.com/images/123","min_confidence":0.4,"max_objects":10,"source":"https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true","service":"internal","service_key":"****"}' > post.txt
+ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/object"
 rm post.txt
 ```
 
@@ -507,17 +505,17 @@ Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
 Benchmarking 0.0.0.0 (be patient)
-Completed 5000 requests
-Completed 10000 requests
-Completed 15000 requests
-Completed 20000 requests
-Completed 25000 requests
-Completed 30000 requests
-Completed 35000 requests
-Completed 40000 requests
-Completed 45000 requests
-Completed 50000 requests
-Finished 50000 requests
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
 
 
 Server Software:        uvicorn
@@ -525,41 +523,40 @@ Server Hostname:        0.0.0.0
 Server Port:            8000
 
 Document Path:          /v1/object
-Document Length:        394 bytes
+Document Length:        1670 bytes
 
-Concurrency Level:      1000
-Time taken for tests:   44.143 seconds
-Complete requests:      50000
+Concurrency Level:      10
+Time taken for tests:   653.520 seconds
+Complete requests:      1000
 Failed requests:        0
-Non-2xx responses:      50000
 Keep-Alive requests:    0
-Total transferred:      27850000 bytes
-Total body sent:        8400000
-HTML transferred:       19700000 bytes
-Requests per second:    1132.69 [#/sec] (mean)
-Time per request:       882.853 [ms] (mean)
-Time per request:       0.883 [ms] (mean, across all concurrent requests)
-Transfer rate:          616.12 [Kbytes/sec] received
-                        185.83 kb/s sent
-                        801.95 kb/s total
+Total transferred:      1816000 bytes
+Total body sent:        383000
+HTML transferred:       1670000 bytes
+Requests per second:    1.53 [#/sec] (mean)
+Time per request:       6535.197 [ms] (mean)
+Time per request:       653.520 [ms] (mean, across all concurrent requests)
+Transfer rate:          2.71 [Kbytes/sec] received
+                        0.57 kb/s sent
+                        3.29 kb/s total
 
 Connection Times (ms)
               min   avg   max
-Connect:        0     8   40
-Processing:    13   869 1040
-Waiting:        1   668  948
-Total:         53   877 1054
+Connect:        0     0    1
+Processing:   613  6508 8410
+Waiting:      613  5012 8409
+Total:        613  6508 8410
 
 Percentage of the requests served within a certain time (ms)
-  50%    875
-  66%    896
-  75%    907
-  80%    914
-  90%    933
-  95%    947
-  98%    979
-  99%   1042
- 100%   1054 (longest request)
+  50%   6492
+  66%   6659
+  75%   6725
+  80%   6857
+  90%   7139
+  95%   7272
+  98%   7763
+  99%   7902
+ 100%   8410 (longest request)
 ```
 
 ## Analysis
