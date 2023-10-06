@@ -203,6 +203,8 @@ curl -O http://0.0.0.0:8000/image?img=4cc4ff8a39925002a25650a89c5de92fdbfeb011_2
 
 Please note that these are currently for debugging purposes only and will only be saved if `"debug": true` is set in the `settings.json` file.
 
+![Object detection](/doc/img/object.png "Example of API object detection")
+
 ### POST requests
 
 The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/color``.
@@ -568,8 +570,7 @@ Percentage of the requests served within a certain time (ms)
 
 The built-in object analysis of this API uses the [pre-trained MobileNet-SSD v3 model for object detection](https://github.com/opencv/opencv/wiki/TensorFlow-Object-Detection-API). This model uses the [COCO dataset](https://cocodataset.org/#overview), which consists of 80 classes of images.
 
-Our implementation is based on [https://github.com/zafarRehan/object_detection_COCO](https://github.com/zafarRehan/object_detection_COCO).
-
+Our implementation is inspired by [https://github.com/zafarRehan/object_detection_COCO](https://github.com/zafarRehan/object_detection_COCO).
 
 ## Read more
 
