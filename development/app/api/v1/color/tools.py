@@ -97,7 +97,7 @@ def add_URIs(colors: dict) -> dict:
             wikidata = EFT_IDS[color]["wikidata_concept"]
         europeana = None
         if EFT_IDS.get(color):
-            europeana = EFT_IDS[color]["europeana_id"]
+            europeana = EFT_IDS[color]["europeana_concept"]
         result[color]["percentage"] = percentage
         result[color]["wikidata"] = wikidata
         result[color]["europeana"] = europeana
