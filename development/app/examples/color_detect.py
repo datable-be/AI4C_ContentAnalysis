@@ -5,19 +5,25 @@ import sys
 
 URL = "http://0.0.0.0:8000/v1/color"
 
+#  airplane = "https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true"
+#
+#  pink_image = "https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true"
+#
+#  red_manequin ="https://github.com/datable-be/AI4C_colordetector/blob/main/examples/M.PL.0047.01.jpg?raw=true"
+
+
 REQUEST = """{
     "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
     "max_colors": 3,
     "min_area": 0.15,
-    "foreground_detection": true,
+    "foreground_detection": false,
     "selector" : {
       "type" : "FragmentSelector",
       "conformsTo" : "http://www.w3.org/TR/media-frags/",
-      "value" : "xywh=percent:87,63,9,21"
+      "value" : "xywh=percent:0,0,100,100"
     },
-    "source": "http://example.com/images/123.jpg"
-}
-"""
+    "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true"
+}"""
 
 
 def json_pretty_print(json_string: str):
