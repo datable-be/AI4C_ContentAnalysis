@@ -61,7 +61,7 @@ async def image(img: str | None = None) -> FileResponse:
         raise HTTPException(status_code=404, detail="Invalid query")
 
 
-@ app.post("/v1/object")
+@app.post("/v1/object")
 async def object_detection(
     request: ObjectRequest,
 ) -> dict:
@@ -72,7 +72,7 @@ async def object_detection(
     return object_detect.detection(request, net, SETTINGS)
 
 
-@ app.post("/v1/color")
+@app.post("/v1/color")
 async def color_detection(
     request: ColorRequest,
 ) -> dict:
