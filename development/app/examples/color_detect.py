@@ -16,7 +16,7 @@ REQUEST = """{
     "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
     "max_colors": 3,
     "min_area": 0.15,
-    "foreground_detection": false,
+    "foreground_detection": true,
     "selector" : {
       "type" : "FragmentSelector",
       "conformsTo" : "http://www.w3.org/TR/media-frags/",
@@ -34,7 +34,7 @@ print("POST", URL)
 print("REQUEST = ")
 json_pretty_print(REQUEST)
 
-response = requests.post(URL, REQUEST)
+response = requests.post(URL, REQUEST, timeout=10)
 if response.status_code == 200:
     print("RESPONSE = ")
     json_pretty_print(response.text)

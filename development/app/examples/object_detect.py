@@ -33,7 +33,7 @@ print("POST", URL)
 print("REQUEST = ")
 json_pretty_print(REQUEST)
 
-response = requests.post(URL, REQUEST)
+response = requests.post(URL, REQUEST, timeout=10)
 if response.status_code == 200:
     print("RESPONSE = ")
     json_pretty_print(response.text)
