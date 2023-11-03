@@ -43,6 +43,7 @@ def getColorName(rgb: Tuple[int, int, int]) -> str:
         if d <= minimum:
             minimum = d
             color_name = color["color_name"]
+    color_name = color_name.lower()
     return color_name
 
 
