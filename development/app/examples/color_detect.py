@@ -10,19 +10,21 @@ URL = "http://0.0.0.0:8000/v1/color"
 #  pink_image = "https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true"
 #
 #  red_manequin ="https://github.com/datable-be/AI4C_colordetector/blob/main/examples/M.PL.0047.01.jpg?raw=true"
+#
+#  logo_coca_cola = "https://static.independent.co.uk/s3fs-public/thumbnails/image/2018/08/09/10/coco-cola.jpg"
 
 
 REQUEST = """{
     "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
     "max_colors": 3,
     "min_area": 0.15,
-    "foreground_detection": true,
+    "foreground_detection": false,
     "selector" : {
       "type" : "FragmentSelector",
       "conformsTo" : "http://www.w3.org/TR/media-frags/",
       "value" : "xywh=percent:0,0,100,100"
     },
-    "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true"
+    "source":"https://static.independent.co.uk/s3fs-public/thumbnails/image/2018/08/09/10/coco-cola.jpg"
 }"""
 
 

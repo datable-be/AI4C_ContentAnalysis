@@ -63,8 +63,8 @@ def convert_colors_to_EFT(
     return result
 
 
-def merge_colors_with_threshold(
-    colors: List[Tuple[str, int]], total: int, threshold: int
+def merge_colors_with_threshold_and_max(
+    colors: List[Tuple[str, int]], total: int, threshold: int, max: int
 ) -> dict:
     """
     Merge colors with the same name and return the result as percentages,
@@ -85,7 +85,13 @@ def merge_colors_with_threshold(
         if percentage > threshold:
             percentages[color] = percentage
 
-    return percentages
+    sorted_percentages = sorted(percentages.items(), key=lambda x: x[1], reverse=True)
+
+    sorted_percentages = sorted_percentages[0 : (max - 1)]
+
+    sorted_result = {k: v for k, v in sorted_percentages}
+
+    return sorted_result
 
 
 def add_URIs(colors: dict) -> dict:

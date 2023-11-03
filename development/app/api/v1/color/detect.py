@@ -1,55 +1,45 @@
+from pathlib import Path
+from cv2.dnn import Net
+
+from api.v1.tools.color import (
+    detect_main_colors,
+    convert_colors_to_EFT,
+    merge_colors_with_threshold_and_max,
+    add_URIs,
+)
+from api.v1.tools.image import determine_image
 from classes import ColorRequest
 
-DUMMY_RESPONSE = {
-    "@context": {
-        "as": "https://www.w3.org/ns/activitystreams#",
-        "dc": "http://purl.org/dc/terms/",
-        "dce": "http://purl.org/dc/elements/1.1/",
-        "foaf": "http://xmlns.com/foaf/0.1/",
-        "oa": "http://www.w3.org/ns/oa#",
-        "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
-        "xsd": "http://www.w3.org/2001/XMLSchema#",
-        "soa": "http://sw.islab.ntua.gr/annotation/",
-        "id": {"@id": "@id", "@type": "@id"},
-        "type": {"@id": "@type", "@type": "@id"},
-        "value": "rdf:value",
-        "created": {"@id": "dc:created", "@type": "xsd:dateTime"},
-        "creator": {"@id": "dc:creator", "@type": "@id"},
-        "language": "dc:language",
-        "Software": "as:Application",
-        "name": "foaf:name",
-        "Annotation": "oa:Annotation",
-        "TextPositionSelector": "oa:TextPositionSelector",
-        "TextualBody": "oa:TextualBody",
-        "body": {"@id": "oa:hasBody", "@type": "@id"},
-        "scope": {"@id": "oa:hasScope", "@type": "@id"},
-        "selector": {"@id": "oa:hasSelector", "@type": "@id"},
-        "source": {"@id": "oa:hasSource", "@type": "@id"},
-        "target": {"@id": "oa:hasTarget", "@type": "@id"},
-        "Literal": "soa: Literal ",
-    },
-    "@graph": [
-        {
-            "id": "http://datable.be/color-annotations/123",
-            "type": "Annotation",
-            "created": "2023-09-30",
-            "creator": {
-                "id": "https://github.com/hvanstappen/AI4C_color-detector",
-                "type": "Software",
-                "name": "AI4C color detector",
-            },
-            "body": [
-                "http://thesaurus.europeanafashion.eu/thesaurus/10403",
-                "http://thesaurus.europeanafashion.eu/thesaurus/11098",
-                "http://thesaurus.europeanafashion.eu/thesaurus/10404",
-            ],
-            "target": {
-                "source": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081"
-            },
-        }
-    ],
-}
 
+#  ColorRequest =
+#  {
+#      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
+#      "max_colors": 3,
+#      "min_area": 0.15,
+#      "foreground_detection": true,
+#      "selector" : {
+#        "type" : "FragmentSelector",
+#        "conformsTo" : "http://www.w3.org/TR/media-frags/",
+#        "value" : "xywh=percent:87,63,9,21"
+#      },
+#      "source": "http://example.com/images/123.jpg"
+#    }
+def detection(color_request: ColorRequest, net: Net, settings: dict):
+    temp_path = determine_image(color_request, net, settings)
 
-def detection(object_request: ColorRequest, settings: dict):
-    return DUMMY_RESPONSE
+    # Detect colors
+    if not temp_path:
+        return {}
+
+    (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
+    eft_colors = convert_colors_to_EFT(colors)
+    percentages = merge_colors_with_threshold_and_max(
+        eft_colors, total_pixel_count, 5, color_request.max_colors
+    )
+    result = add_URIs(percentages)
+
+    # Remove tempfile
+    if not settings.get("debug"):
+        Path(temp_path).unlink(missing_ok=True)
+
+    return result

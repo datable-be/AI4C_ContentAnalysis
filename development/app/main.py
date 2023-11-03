@@ -80,4 +80,4 @@ async def color_detection(
     Handle a color detection POST request to the API
     """
 
-    return color_detect.detection(request, SETTINGS)
+    return color_detect.detection(request, net, SETTINGS)
