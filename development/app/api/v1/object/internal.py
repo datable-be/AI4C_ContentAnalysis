@@ -3,12 +3,10 @@ import cv2
 
 from classes import ObjectRequest
 from constants import COCO_LABELS, COCO_2_WIKIDATA, TEMP_DIR
-from api.v1.object.tools import (
-    load_cv2_image_from_url,
-    extension_from_url,
-    housekeeping,
-    hash_request,
-)
+from api.v1.tools.url import load_cv2_image_from_url, extension_from_url
+from api.v1.tools.path import housekeeping
+from api.v1.tools.tools import hash_object
+
 
 ANNOTATION_COLOR = (0, 255, 0)  # bright green
 
@@ -56,9 +54,8 @@ MODEL_RESPONSE = {
 #      "service":"internal",
 #      "service_key":"****"
 def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
-
     # Request identifier
-    identifier = hash_request(request)
+    identifier = hash_object(request)
 
     # Read image
     url = str(request.source)
@@ -161,7 +158,7 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
-        sorted_objects = sorted_objects[0: request.max_objects]
+        sorted_objects = sorted_objects[0 : request.max_objects]
 
     result = {}
     result["detection_id"] = identifier

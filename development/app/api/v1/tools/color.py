@@ -87,6 +87,7 @@ def merge_colors_with_threshold(
 
     return percentages
 
+
 def add_URIs(colors: dict) -> dict:
     result = {}
 
@@ -103,9 +104,3 @@ def add_URIs(colors: dict) -> dict:
         result[color]["europeana"] = europeana
 
     return result
-
-(colors, total_pixel_count) = detect_main_colors("test.jpg", 10)
-eft_colors = convert_colors_to_EFT(colors)
-percentages = merge_colors_with_threshold(eft_colors, total_pixel_count, 5)
-result = add_URIs(percentages)
-print(result)
