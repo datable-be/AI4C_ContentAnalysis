@@ -149,7 +149,14 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
             basename = identifier + "_" + str(count) + extension_from_url(url)
             filepath = os.path.join(TEMP_DIR, basename)
             cv2.imwrite(filepath, annotated_image)
-            detected_object["annotated_image"] = basename
+            url = (
+                settings["host"]
+                + ":"
+                + str(settings["port"])
+                + "/image?img="
+                + basename
+            )
+            detected_object["annotated_image"] = url
 
         objects.append(detected_object)
 
