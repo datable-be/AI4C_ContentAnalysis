@@ -16,7 +16,7 @@ def determine_image(
 
     if not color_request.foreground_detection:
         # no cropping needs to be applied
-        return url_to_tempfile(url)
+        return url_to_tempfile(url, resize_pixels=200)
 
     else:
         box = []
@@ -29,7 +29,7 @@ def determine_image(
             result = detection(object_request, net, settings)
             objects_found = result.get("data")
             if not objects_found:
-                return url_to_tempfile(url)
+                return url_to_tempfile(url, resize_pixels=200)
             else:
                 box = objects_found[0]["box"]
 
@@ -47,7 +47,7 @@ def crop_image(url: str, box: list) -> str:
     and return tempfile path to cropped image
     """
 
-    path = url_to_tempfile(url)
+    path = url_to_tempfile(url, resize_pixels=200)
 
     x = box[0]
     y = box[1]

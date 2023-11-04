@@ -59,7 +59,7 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
 
     # Read image
     url = str(request.source)
-    image = load_cv2_image_from_url(url)
+    image = load_cv2_image_from_url(url, resize_pixels=200)
     image_height = image.shape[0]
     image_width = image.shape[1]
 

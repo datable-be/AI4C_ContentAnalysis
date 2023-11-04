@@ -24,7 +24,7 @@ from classes import ColorRequest
 #      },
 #      "source": "http://example.com/images/123.jpg"
 #    }
-def detection(color_request: ColorRequest, net: Net, settings: dict):
+def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     temp_path = determine_image(color_request, net, settings)
 
     # Detect colors
