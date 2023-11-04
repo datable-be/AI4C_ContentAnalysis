@@ -20,9 +20,10 @@ def detect_main_colors(
 
     # remove (0,0,0) background color
     for color in detected_colors:
-        (rgb, _) = color
+        (rgb, pixel_count) = color
         if rgb == (0, 0, 0):
             detected_colors.remove(color)
+            total_pixel_count -= pixel_count
 
     return (detected_colors, total_pixel_count)
 
