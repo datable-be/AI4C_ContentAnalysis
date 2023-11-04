@@ -4,21 +4,20 @@ import sys
 
 URL = "http://0.0.0.0:8000/v1/object"
 
-REQUEST = """{
-    "id": "http://example.com/images/123",
-    "min_confidence": 0.8,
-    "max_objects": 3,
-    "source": "https://github.com/datable-be/AI4C_ContentAnalysis/blob/da9995b6a2a2795bb2d2cce0695417efc5b674f3/scripts/color-detector/examples/39355scr_0ed48a9fe99bfe5_e183b86fc24d9855178e546b5f96c28a.jpg?raw=true",
-    "service":"internal",
-    "service_key":"****"
+EXAMPLES = {
+    "airplane": "https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true",
+    "pink_image": "https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true",
+    "red_manequin": "https://github.com/datable-be/AI4C_colordetector/blob/main/examples/M.PL.0047.01.jpg?raw=true",
+    "logo_coca_cola": "https://static.independent.co.uk/s3fs-public/thumbnails/image/2018/08/09/10/coco-cola.jpg",
+    "dog_and_horse": "https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true",
+    "sheep_in_a_meadow": "https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg",
 }
-"""
 
 REQUEST = """{
     "id": "http://example.com/images/123",
     "min_confidence": 0.4,
     "max_objects": 10,
-    "source":"https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true",
+    "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true",
     "service":"internal",
     "service_key":"****"
 }
