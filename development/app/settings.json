@@ -5,5 +5,7 @@
     "color_detection": {
         "URI_type": "wikidata"
     },
-    "debug": true
+    "debug": true,
+    "host": "http://localhost",
+    "port": 8000
 }
