@@ -1,17 +1,21 @@
-import cv2 as cv
+from cv2 import imwrite, imread, grabCut, GC_INIT_WITH_RECT
+from cv2.dnn import Net
 import numpy as np
-from random import randint
-import os
 
-from constants import TEMP_DIR
 from classes import ColorRequest, ObjectRequest
-from api.v1.tools.url import url_to_tempfile
+from api.v1.tools.url import url_to_tempfile, url_to_temppath
 from api.v1.object.internal import detection
 
 
-def determine_image(
-    color_request: ColorRequest, net: cv.dnn.Net, settings: dict
-) -> str:
+def determine_image(color_request: ColorRequest, net: Net, settings: dict) -> str:
+    """
+    Determine which image to use for color detection:
+        1. full image
+        2. auto-crop to object
+        3. crop using specified box coordinates
+    Returns a path to a temporary file where the image is saved
+    """
+
     url = str(color_request.source)
 
     if not color_request.foreground_detection:
@@ -21,8 +25,8 @@ def determine_image(
     else:
         box = []
         if color_request.selector.value == "xywh=percent:0,0,100,100":
-            # use internal object detection to detect box coordinates
-            # min_confidence is set to 0.5 because default of 0.8 is too strict
+            # Use internal object detection to detect box coordinates
+            # Min_confidence is set to 0.5 because default of 0.8 is too strict
             object_request = ObjectRequest(
                 id=color_request.id, source=color_request.source, min_confidence=0.5
             )
@@ -56,28 +60,24 @@ def crop_image(url: str, box: list) -> str:
     width = x2 - x
     height = y2 - y
 
-    # create mask
-    image = cv.imread(path)
+    # Create mask
+    image = imread(path)
     mask = np.zeros(image.shape[:2], np.uint8)
     bgdModel = np.zeros((1, 65), np.float64)
     fgdModel = np.zeros((1, 65), np.float64)
 
-    # define box with object
+    # Define box with object
     rect = (x, y, width, height)
 
-    # remove background
-    # to do: this hangs for image https://github.com/datable-be/AI4C_colordetector/blob/main/examples/RS41124_T3796_0004-hpr_8_enhanced.jpg?raw=true
-    cv.grabCut(image, mask, rect, bgdModel, fgdModel, 5, cv.GC_INIT_WITH_RECT)
+    # Cut and apply uniform background (which can later be removed)
+    grabCut(image, mask, rect, bgdModel, fgdModel, 5, GC_INIT_WITH_RECT)
     mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype("uint8")
     image = image * mask2[:, :, np.newaxis]
-
     foreground_img = image.copy()
-    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype(
-        "uint8"
-    )  # this allows you to change the background color after grabcut
+    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype("uint8")
 
-    basename = str(randint(0, 1000000)) + os.path.basename(path)
-    tempfile = os.path.join(TEMP_DIR, basename)
-    cv.imwrite(tempfile, foreground_img)
+    # Save image
+    temppath = url_to_temppath(url)
+    imwrite(temppath, foreground_img)
 
-    return tempfile
+    return temppath

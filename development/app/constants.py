@@ -1,5 +1,5 @@
 import json
-import cv2
+from cv2.dnn import readNetFromTensorflow
 
 
 # Application system settings
@@ -26,9 +26,10 @@ TEMP_DIR = "/tmp"
 
 # Load the MobileNet SSD model trained on the COCO dataset
 
-weights = "ssd_mobilenet/frozen_inference_graph.pb"
-model = "ssd_mobilenet/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt"
-NET = cv2.dnn.readNetFromTensorflow(weights, model)
+NET = readNetFromTensorflow(
+    "ssd_mobilenet/frozen_inference_graph.pb",
+    "ssd_mobilenet/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt",
+)
 
 
 # load the class labels the model was trained on

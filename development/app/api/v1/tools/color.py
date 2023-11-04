@@ -1,4 +1,4 @@
-import extcolors
+from extcolors import extract_from_path
 from typing import List, Tuple
 from constants import EFT_COLORS, EFT_IDS
 
@@ -13,12 +13,10 @@ def detect_main_colors(
     Tolerance = grouping of detected colors (smaller is better, but slower)
     """
 
-    # no limit set, this will be done after grouping
-    detected_colors, total_pixel_count = extcolors.extract_from_path(
-        path, tolerance=tolerance
-    )
+    # No limit set, this will be done after grouping
+    detected_colors, total_pixel_count = extract_from_path(path, tolerance=tolerance)
 
-    # remove (0,0,0) background color
+    # Remove (0,0,0) background color
     for color in detected_colors:
         (rgb, pixel_count) = color
         if rgb == (0, 0, 0):
@@ -36,11 +34,7 @@ def getColorName(rgb: Tuple[int, int, int]) -> str:
     minimum = 10000
     color_name = "unknown"
     for color in EFT_COLORS:
-        d = (
-            abs(r - int(color["R"]))
-            + abs(g - int(color["G"]))
-            + abs(b - int(color["B"]))
-        )
+        d = abs(r - color["R"]) + abs(g - color["G"]) + abs(b - color["B"])
         if d <= minimum:
             minimum = d
             color_name = color["color_name"]
@@ -52,7 +46,7 @@ def convert_colors_to_EFT(
     colors: List[Tuple[Tuple[int, int, int], int]]
 ) -> List[Tuple[str, int]]:
     """
-    Converts detected colors to EFT colors
+    Converts detected colors to Europeana Fashion Thesaurus colors
     """
 
     result = []
@@ -70,7 +64,8 @@ def merge_colors_with_threshold_and_max(
 ) -> dict:
     """
     Merge colors with the same name and return the result as percentages,
-    if it exceeds the threshold.
+    if it exceeds the threshold. Apply max colors parameter.
+    (Note: this function does several things at once for efficiency)
     """
 
     result = {}
@@ -89,7 +84,7 @@ def merge_colors_with_threshold_and_max(
 
     sorted_percentages = sorted(percentages.items(), key=lambda x: x[1], reverse=True)
 
-    sorted_percentages = sorted_percentages[0 : (max - 1)]
+    sorted_percentages = sorted_percentages[0:max]
 
     sorted_result = {k: v for k, v in sorted_percentages}
 
@@ -97,15 +92,17 @@ def merge_colors_with_threshold_and_max(
 
 
 def add_URIs(colors: dict) -> dict:
+    """
+    Add Wikidata and Europeana URIs to the color names
+    """
     result = {}
 
     for color, percentage in colors.items():
         result[color] = {}
         wikidata = None
-        if EFT_IDS.get(color):
-            wikidata = EFT_IDS[color]["wikidata_concept"]
         europeana = None
         if EFT_IDS.get(color):
+            wikidata = EFT_IDS[color]["wikidata_concept"]
             europeana = EFT_IDS[color]["europeana_concept"]
         result[color]["percentage"] = percentage
         result[color]["wikidata"] = wikidata

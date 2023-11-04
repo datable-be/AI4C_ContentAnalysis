@@ -1,4 +1,4 @@
-import os
+from os.path import join
 from fastapi import HTTPException
 from numpy import asarray, ndarray
 from urllib.request import urlopen
@@ -49,6 +49,15 @@ def load_cv2_image_from_url(
     return image
 
 
+def url_to_temppath(url: str) -> str:
+    """
+    Transform a URL into a temporary file path
+    """
+    basename = hash_object(url) + extension_from_url(url)
+    temppath = join(TEMP_DIR, basename)
+    return temppath
+
+
 def url_to_tempfile(
     url: str,
     resize_pixels: int | None,
@@ -56,8 +65,8 @@ def url_to_tempfile(
     """
     Download an image and save it to a tempfile location. Resize if necessary.
     """
-    basename = hash_object(url) + extension_from_url(url)
-    temppath = os.path.join(TEMP_DIR, basename)
+
+    temppath = url_to_temppath(url)
 
     if resize_pixels:
         image = load_cv2_image_from_url(url, resize_pixels=resize_pixels)

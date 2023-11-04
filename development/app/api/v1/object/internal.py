@@ -1,5 +1,6 @@
-import os
-import cv2
+from os.path import join
+from cv2 import rectangle, putText, imwrite, FONT_HERSHEY_SIMPLEX
+from cv2.dnn import blobFromImage, Net
 
 from classes import ObjectRequest
 from constants import COCO_LABELS, COCO_2_WIKIDATA, TEMP_DIR
@@ -53,7 +54,7 @@ MODEL_RESPONSE = {
 #      "source": "http://example.com/images/123.jpg",
 #      "service":"internal",
 #      "service_key":"****"
-def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
+def detection(request: ObjectRequest, net: Net, settings: dict):
     # Request identifier
     identifier = hash_object(request)
 
@@ -64,7 +65,7 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
     image_width = image.shape[1]
 
     # Create a blob from the image
-    blob = cv2.dnn.blobFromImage(
+    blob = blobFromImage(
         image=image,
         scalefactor=1.0 / 127.5,
         size=(320, 320),
@@ -109,7 +110,7 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         image_copy = image.copy()
 
         # Draw the bounding box of the object
-        annotated_image = cv2.rectangle(
+        annotated_image = rectangle(
             img=image_copy,
             pt1=box[:2],
             pt2=box[2:],
@@ -134,11 +135,11 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
         if settings.get("debug"):
             # Draw the name of the predicted object together with the probability
             prediction = f"{label} {confidence * 100:.2f}%"
-            annotated_image = cv2.putText(
+            annotated_image = putText(
                 img=annotated_image,
                 text=prediction,
                 org=(box[0], box[1] + 15),
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontFace=FONT_HERSHEY_SIMPLEX,
                 fontScale=0.5,
                 color=ANNOTATION_COLOR,
                 thickness=2,
@@ -147,8 +148,8 @@ def detection(request: ObjectRequest, net: cv2.dnn.Net, settings: dict):
             # Save image
             housekeeping(TEMP_DIR)
             basename = identifier + "_" + str(count) + extension_from_url(url)
-            filepath = os.path.join(TEMP_DIR, basename)
-            cv2.imwrite(filepath, annotated_image)
+            filepath = join(TEMP_DIR, basename)
+            imwrite(filepath, annotated_image)
             url = (
                 settings["host"]
                 + ":"

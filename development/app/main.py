@@ -1,4 +1,4 @@
-import os
+from os.path import join, exists
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
@@ -52,8 +52,8 @@ async def image(img: str | None = None) -> FileResponse:
     """
 
     if img:
-        path = os.path.join(TEMP_DIR, img)
-        if os.path.exists(path):
+        path = join(TEMP_DIR, img)
+        if exists(path):
             return FileResponse(path)
         else:
             raise HTTPException(status_code=404, detail="File not found")
