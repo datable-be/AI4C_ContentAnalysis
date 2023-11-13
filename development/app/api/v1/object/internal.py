@@ -55,6 +55,9 @@ MODEL_RESPONSE = {
 #      "service":"internal",
 #      "service_key":"****"
 def detection(request: ObjectRequest, net: Net, settings: dict):
+    if settings.get("dummy"):
+        return MODEL_RESPONSE
+
     # Request identifier
     identifier = hash_object(request)
 
