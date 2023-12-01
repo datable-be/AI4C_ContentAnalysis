@@ -1,3 +1,4 @@
+from typing import List
 from enum import Enum
 from pydantic import BaseModel, Field, HttpUrl
 
@@ -7,12 +8,23 @@ class LDSource(str, Enum):
     wd = "Wikidata"
 
 
+class RequestService(str, Enum):
+    internal = "internal"
+    googlevision = "GoogleVision"
+
+
 class SelectorType(str, Enum):
     fragment = "FragmentSelector"
 
 
 class SelectorStandard(str, Enum):
     w3 = "http://www.w3.org/TR/media-frags/"
+
+
+class GoogleFeatureType(str, Enum):
+    localization = "OBJECT_LOCALIZATION"
+    label = "LABEL_DETECTION"
+    properties = "IMAGE_PROPERTIES"
 
 
 class Selector(BaseModel):
@@ -50,10 +62,10 @@ class ObjectRequest(BaseModel):
         default=1,
     )
     source: HttpUrl = Field(title="source", description="HTTP(S) URL to image")
-    service: str = Field(
+    service: RequestService = Field(
         title="service",
         description="Name of the object detection service",
-        default="internal",
+        default=RequestService.internal,
     )
     service_key: str = Field(
         title="service_key",
@@ -89,6 +101,36 @@ class ColorRequest(BaseModel):
         default=True,
     )
     selector: Selector = Field(title="selector", description="Selector for the image")
+
+
+class GoogleSource(BaseModel):
+    imageUri: HttpUrl = Field(
+        title="Google Image source URI", description="Source URI of the image"
+    )
+
+
+class GoogleImage(BaseModel):
+    source: GoogleSource = Field(
+        title="Google Image source", description="Source of the image"
+    )
+
+
+class GoogleFeature(BaseModel):
+    maxResults: int = Field(
+        title="Maximum results", description="Maximum results to be retrieved"
+    )
+    type: GoogleFeatureType = Field(
+        title="Feature type", description="Type of feature to be retrieved"
+    )
+
+
+class GoogleVisionRequest(BaseModel):
+    image: GoogleImage = Field(
+        title="Google Image", description="Meta data of the image"
+    )
+    features: List[GoogleFeature] = Field(
+        title="Features", description="Features to be applied"
+    )
 
 
 class ResponseModel(BaseModel):

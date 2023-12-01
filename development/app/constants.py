@@ -31,8 +31,9 @@ NET = readNetFromTensorflow(
     "ssd_mobilenet/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt",
 )
 
+GOOGLE_VISION_URL = "https://vision.googleapis.com/v1/images:annotate?key="
 
-# load the class labels the model was trained on
+# Load the class labels the object model was trained on
 
 COCO_LABELS = [
     "person",
