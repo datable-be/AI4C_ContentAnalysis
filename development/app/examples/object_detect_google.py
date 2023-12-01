@@ -13,8 +13,8 @@ with open("/home/tdeneire/Dropbox/code/python/AI4C/doc/google-api/key", "r") as 
 
 REQUEST = f"""{{
     "id": "http://example.com/images/123",
-    "min_confidence": 0.4,
-    "max_objects": 10,
+    "min_confidence": 0.9,
+    "max_objects": 3,
     "source":"https://cloud.google.com/vision/docs/images/bicycle_example.png",
     "service":"GoogleVision",
     "service_key":"{KEY}"
