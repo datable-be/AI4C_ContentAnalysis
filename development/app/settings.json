@@ -6,7 +6,7 @@
         "URI_type": "wikidata"
     },
     "debug": true,
-    "dummy": true,
+    "dummy": false,
     "host": "http://localhost",
     "port": 8000
 }
