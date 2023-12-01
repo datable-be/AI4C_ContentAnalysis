@@ -1,6 +1,6 @@
 from pytest import mark
 
-from tools import extension_from_url
+from api.v1.tools.url import extension_from_url
 
 
 @mark.parametrize(
