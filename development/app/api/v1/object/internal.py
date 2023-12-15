@@ -67,6 +67,13 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
     image_height = image.shape[0]
     image_width = image.shape[1]
 
+    # Pre-crop if necessary [top%fromtop:bottom%fromtop, leftpxfromleft:right%fromleft]
+    #  top = image_height / crop_top * 100
+    #  bottom = image_height / crop_bottom * 100
+    #  left = image_height / crop_left * 100
+    #  right = image_height / crop_right * 100
+    #  image = image[top:bottom, left:right]
+
     # Create a blob from the image
     blob = blobFromImage(
         image=image,
@@ -94,6 +101,7 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
         # Perform element-wise multiplication to get
         # the (x, y) coordinates of the bounding box
+        # box = [left in px from left, right in px from left, top in px from top, bottom in px from top]
         box = [
             int(a * b)
             for a, b in zip(
@@ -101,6 +109,11 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
                 [image_width, image_height, image_width, image_height],
             )
         ]
+        left = round((box[0] / image_width * 100), 2)
+        right = round((box[1] / image_width * 100), 2)
+        top = round((box[2] / image_height * 100), 2)
+        bottom = round((box[3] / image_height * 100), 2)
+        percentages = [left, right, top, bottom]
 
         # Calculate box size
         size_width = box[2] - box[0]
@@ -130,7 +143,8 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
         detected_object = {
             "confidence": confidence,
             "size": size,
-            "box": box,
+            "box (px)": box,
+            "box (%)": percentages,
             "coco_label": label,
             "wikidata": COCO_2_WIKIDATA.get(label),
         }
