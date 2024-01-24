@@ -80,6 +80,27 @@ This should generate a JSON response like this:
 {"version":"1.0.1"}
 ```
 
+### Settings
+
+Various aspects of the application can be configured in the `settings.json` file, including the host name and port the API is listening on.
+
+This is an example of the settings file for installation in a local testing environment:
+
+```json
+{
+    "object_detection": {
+        "URI_type": "wikidata"
+    },
+    "color_detection": {
+        "URI_type": "wikidata"
+    },
+    "debug": true,
+    "dummy": false,
+    "host": "http://localhost",
+    "port": 8000
+}
+```
+
 ## Architecture
 
 ### Python virtual environment
