@@ -74,7 +74,8 @@ def crop_image(url: str, box: list) -> str:
     mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype("uint8")
     image = image * mask2[:, :, np.newaxis]
     foreground_img = image.copy()
-    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype("uint8")
+    foreground_img[np.where((mask2 == 0))] = np.array(
+        [0, 0, 0]).astype("uint8")
 
     # Save image
     temppath = url_to_temppath(url)

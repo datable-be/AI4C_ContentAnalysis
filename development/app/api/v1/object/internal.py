@@ -183,7 +183,7 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
-        sorted_objects = sorted_objects[0 : request.max_objects]
+        sorted_objects = sorted_objects[0:request.max_objects]
 
     result = {}
     result["detection_id"] = identifier

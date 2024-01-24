@@ -102,7 +102,8 @@ def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     # Remove tempfile
     if settings.get("debug"):
         basename = Path(temp_path).name
-        url = settings["host"] + ":" + str(settings["port"]) + "/image?img=" + basename
+        url = settings["host"] + ":" + \
+            str(settings["port"]) + "/image?img=" + basename
         result["cropped_image"] = url
     else:
         Path(temp_path).unlink(missing_ok=True)

@@ -48,7 +48,8 @@ class Selector(BaseModel):
 
 class ObjectRequest(BaseModel):
     # to revise when API request has definite form
-    id: str = Field(title="id", description="Identifier of the resource to be tagged")
+    id: str = Field(
+        title="id", description="Identifier of the resource to be tagged")
     min_confidence: float = Field(
         title="min_confidence",
         description="Confidence threshold (default=0.8)",
@@ -100,7 +101,8 @@ class ColorRequest(BaseModel):
         description="Whether the tool should apply foreground detection for the given area (default=True)",
         default=True,
     )
-    selector: Selector = Field(title="selector", description="Selector for the image")
+    selector: Selector = Field(
+        title="selector", description="Selector for the image")
 
 
 class GoogleSource(BaseModel):

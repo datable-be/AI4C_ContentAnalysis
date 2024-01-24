@@ -68,7 +68,6 @@ async def object_detection(
     """
     Handle an object detection POST request to the API
     """
-
     return object_detect.detection(request, net, SETTINGS)
 
 
