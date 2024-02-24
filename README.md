@@ -304,7 +304,7 @@ REQUEST =
     "max_objects": 3,
     "source": "https://cloud.google.com/vision/docs/images/bicycle_example.png",
     "service": "GoogleVision",
-    "service_key": "AIzaSyDh8CI_R7z49txscX8-r9340PHL0xynOwc"
+    "service_key":"****"
 }
 RESPONSE =
 {
