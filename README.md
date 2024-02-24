@@ -20,29 +20,29 @@ This should generate a YAML response like this:
 
 ```yaml
 Client: Docker Engine - Community
- Version:           24.0.6
- API version:       1.43
- Go version:        go1.20.7
- Git commit:        ed223bc
- Built:             Mon Sep  4 12:32:12 2023
+ Version:           25.0.3
+ API version:       1.44
+ Go version:        go1.21.6
+ Git commit:        4debf41
+ Built:             Tue Feb  6 21:13:09 2024
  OS/Arch:           linux/amd64
  Context:           default
 
 Server: Docker Engine - Community
  Engine:
-  Version:          24.0.6
-  API version:      1.43 (minimum version 1.12)
-  Go version:       go1.20.7
-  Git commit:       1a79695
-  Built:            Mon Sep  4 12:32:12 2023
+  Version:          25.0.3
+  API version:      1.44 (minimum version 1.24)
+  Go version:       go1.21.6
+  Git commit:       f417435
+  Built:            Tue Feb  6 21:13:09 2024
   OS/Arch:          linux/amd64
   Experimental:     false
  containerd:
-  Version:          1.6.24
-  GitCommit:        61f9fd88f79f081d64d6fa3bb1a0dc71ec870523
+  Version:          1.6.28
+  GitCommit:        ae07eda36dd25f8a1b98dfbf587313b99c0190bb
  runc:
-  Version:          1.1.9
-  GitCommit:        v1.1.9-0-gccaecfc
+  Version:          1.1.12
+  GitCommit:        v1.1.12-0-g51d5e94
  docker-init:
   Version:          0.19.0
   GitCommit:        de40ad0
@@ -230,7 +230,7 @@ Please note that these are currently for debugging purposes only and will only b
 
 The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/color``.
 
-Since these are typically longer requests, the software repository contains an example request for both detection tools:
+Since these are typically longer requests, the software repository contains an example requests for both detection tools:
 
 ```bash
 py3 development/app/examples/object_detect.py
@@ -246,8 +246,8 @@ REQUEST =
     "min_confidence": 0.8,
     "max_objects": 1,
     "source": "http://example.com/images/123.jpg",
-    "service": "GoogleVision",
-    "service_key": "****"
+    "service":"internal",
+    "service_key":"****"
 }
 RESPONSE =
 {
@@ -288,7 +288,108 @@ RESPONSE =
 }
 ```
 
-Or:
+Or (using Google Vision object detection):
+
+```bash
+py3 development/app/examples/object_detect_google.py
+```
+
+Expected output (*current output might differ!*):
+
+```text
+REQUEST =
+{
+    "id": "http://example.com/images/123",
+    "min_confidence": 0.9,
+    "max_objects": 3,
+    "source": "https://cloud.google.com/vision/docs/images/bicycle_example.png",
+    "service": "GoogleVision",
+    "service_key": "AIzaSyDh8CI_R7z49txscX8-r9340PHL0xynOwc"
+}
+RESPONSE =
+{
+    "data": [
+        {
+            "labelAnnotations": [
+                {
+                    "mid": "/m/0199g",
+                    "description": "Bicycle",
+                    "score": 0.9825226,
+                    "topicality": 0.9825226
+                },
+                {
+                    "mid": "/m/083wq",
+                    "description": "Wheel",
+                    "score": 0.97521895,
+                    "topicality": 0.97521895
+                },
+                {
+                    "mid": "/m/0h9mv",
+                    "description": "Tire",
+                    "score": 0.97497916,
+                    "topicality": 0.97497916
+                }
+            ],
+            "localizedObjectAnnotations": [
+                {
+                    "mid": "/m/01bqk0",
+                    "name": "Bicycle wheel",
+                    "score": 0.9423431,
+                    "boundingPoly": {
+                        "normalizedVertices": [
+                            {
+                                "x": 0.31524897,
+                                "y": 0.78658724
+                            },
+                            {
+                                "x": 0.44186485,
+                                "y": 0.78658724
+                            },
+                            {
+                                "x": 0.44186485,
+                                "y": 0.9692919
+                            },
+                            {
+                                "x": 0.31524897,
+                                "y": 0.9692919
+                            }
+                        ]
+                    }
+                },
+                {
+                    "mid": "/m/01bqk0",
+                    "name": "Bicycle wheel",
+                    "score": 0.9337022,
+                    "boundingPoly": {
+                        "normalizedVertices": [
+                            {
+                                "x": 0.50342137,
+                                "y": 0.7553652
+                            },
+                            {
+                                "x": 0.6289583,
+                                "y": 0.7553652
+                            },
+                            {
+                                "x": 0.6289583,
+                                "y": 0.9428141
+                            },
+                            {
+                                "x": 0.50342137,
+                                "y": 0.9428141
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ],
+    "error": [],
+    "request_id": "http://example.com/images/123"
+}
+```
+
+Or for color detection:
 
 ```bash
 py3 development/app/examples/color_detect.py
@@ -589,6 +690,12 @@ Percentage of the requests served within a certain time (ms)
 The built-in object analysis of this API uses the [pre-trained MobileNet-SSD v3 model for object detection](https://github.com/opencv/opencv/wiki/TensorFlow-Object-Detection-API). This model uses the [COCO dataset](https://cocodataset.org/#overview), which consists of 80 classes of images.
 
 Our implementation is inspired by [https://github.com/zafarRehan/object_detection_COCO](https://github.com/zafarRehan/object_detection_COCO).
+
+#### Google Vision
+
+Alternatively, one can call the [Google Cloud Vision API](https://cloud.google.com/vision), which actually combines two services, namely [label detection](https://cloud.google.com/vision/docs/labels) and [object localization](https://cloud.google.com/vision/docs/object-localizer).
+
+If, however, the user uses this service, without supplying an API key, the internal service is called.
 
 ## Read more
 
