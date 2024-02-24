@@ -7,10 +7,9 @@ from classes import (
     GoogleImage,
     GoogleSource,
     GoogleFeature,
+    RequestService,
 )
 from constants import GOOGLE_VISION_URL
-
-from api.v1.tools.tools import hash_object
 
 
 def Object2GoogleVisionRequest(object_request: ObjectRequest) -> GoogleVisionRequest:
