@@ -15,6 +15,7 @@ class AnnotationType(str, Enum):
 class RequestService(str, Enum):
     internal = "internal"
     googlevision = "GoogleVision"
+    huggingface = "HuggingFace"
 
 
 class SelectorType(str, Enum):
@@ -102,6 +103,11 @@ class ColorRequest(BaseModel):
         title="ld_source",
         description="LD source from which the color URIs are given: Fashion Thesaurus or Wikidata (default = FT)",
         default=LDSource.ft,
+    )
+    service: RequestService = Field(
+        title="service",
+        description="Name of the color detection service",
+        default=RequestService.internal,
     )
     source: HttpUrl = Field(title="source", description="HTTP(S) URL to image")
     foreground_detection: bool = Field(

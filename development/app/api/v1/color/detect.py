@@ -8,7 +8,7 @@ from api.v1.tools.color import (
     add_URIs,
 )
 from api.v1.tools.image import determine_image
-from classes import ColorRequest
+from classes import ColorRequest, RequestService
 
 MODEL_RESPONSE = {
     "@context": "...",
@@ -86,26 +86,38 @@ def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     if settings.get("dummy"):
         return MODEL_RESPONSE
 
-    temp_path = determine_image(color_request, net, settings)
+    result = {}
 
-    # Detect colors
-    if not temp_path:
-        return {}
+    if color_request.service == RequestService.internal:
+        temp_path = determine_image(color_request, net, settings)
 
-    (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
-    eft_colors = convert_colors_to_EFT(colors)
-    percentages = merge_colors_with_threshold_and_max(
-        eft_colors, total_pixel_count, 5, color_request.max_colors
-    )
-    result = add_URIs(percentages)
+        # Detect colors
+        if not temp_path:
+            return result
 
-    # Remove tempfile
-    if settings.get("debug"):
-        basename = Path(temp_path).name
-        url = settings["host"] + ":" + \
-            str(settings["port"]) + "/image?img=" + basename
-        result["cropped_image"] = url
-    else:
-        Path(temp_path).unlink(missing_ok=True)
+        (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
+        eft_colors = convert_colors_to_EFT(colors)
+        percentages = merge_colors_with_threshold_and_max(
+            eft_colors, total_pixel_count, 5, color_request.max_colors
+        )
+        result = add_URIs(percentages)
+
+        # Remove tempfile
+        if settings.get("debug"):
+            basename = Path(temp_path).name
+            url = (
+                settings["host"]
+                + ":"
+                + str(settings["port"])
+                + "/image?img="
+                + basename
+            )
+            result["cropped_image"] = url
+        else:
+            Path(temp_path).unlink(missing_ok=True)
+
+    elif color_request.service == RequestService.huggingface:
+        # to do (including example and documenation!)
+        pass
 
     return result
