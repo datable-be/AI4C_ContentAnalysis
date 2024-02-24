@@ -1,6 +1,10 @@
 from pytest import mark
 
 from api.v1.tools.url import extension_from_url
+from api.v1.tools.color import (
+    convert_colors_to_EFT,
+    getColorName,
+)
 
 
 @mark.parametrize(
@@ -16,3 +20,23 @@ from api.v1.tools.url import extension_from_url
 )
 def test_sanitize_filename(given: str, expected: str) -> None:
     assert extension_from_url(given) == expected
+
+
+def test_getColorName():
+    assert getColorName((255, 0, 0)) == "red"
+    assert getColorName((0, 255, 0)) == "green"
+
+
+def test_convert_colors_to_EFT():
+    input_colors = [
+        ((255, 0, 0), 10),  # Red color with 10 pixels
+        ((0, 255, 0), 20),  # Green color with 20 pixels
+        # Add more color tuples as needed
+    ]
+
+    result = convert_colors_to_EFT(input_colors)
+
+    assert result == [("red", 10), ("green", 20)]
+
+
+test_convert_colors_to_EFT()

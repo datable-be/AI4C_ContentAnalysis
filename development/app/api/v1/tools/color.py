@@ -14,8 +14,7 @@ def detect_main_colors(
     """
 
     # No limit set, this will be done after grouping
-    detected_colors, total_pixel_count = extract_from_path(
-        path, tolerance=tolerance)
+    detected_colors, total_pixel_count = extract_from_path(path, tolerance=tolerance)
 
     # Remove (0,0,0) background color
     for color in detected_colors:
@@ -44,7 +43,7 @@ def getColorName(rgb: Tuple[int, int, int]) -> str:
 
 
 def convert_colors_to_EFT(
-    colors: List[Tuple[Tuple[int, int, int], int]]
+    colors: List[Tuple[Tuple[int, int, int], int]],
 ) -> List[Tuple[str, int]]:
     """
     Converts detected colors to Europeana Fashion Thesaurus colors
@@ -83,8 +82,7 @@ def merge_colors_with_threshold_and_max(
         if percentage > threshold:
             percentages[color] = percentage
 
-    sorted_percentages = sorted(
-        percentages.items(), key=lambda x: x[1], reverse=True)
+    sorted_percentages = sorted(percentages.items(), key=lambda x: x[1], reverse=True)
 
     sorted_percentages = sorted_percentages[0:max]
 
