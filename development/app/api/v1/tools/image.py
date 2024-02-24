@@ -35,12 +35,15 @@ def determine_image(color_request: ColorRequest, net: Net, settings: dict) -> st
             if not objects_found:
                 return url_to_tempfile(url, resize_pixels=200)
             else:
-                box = objects_found[0]["box"]
+                box = objects_found[0].get("box_px")
 
         else:
             # to do: use supplied box coordinates
             box = [0, 0, 0, 0]
             pass
+
+        if not box:
+            box = [0, 0, 0, 0]
 
         return crop_image(url, box)
 
@@ -74,8 +77,7 @@ def crop_image(url: str, box: list) -> str:
     mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype("uint8")
     image = image * mask2[:, :, np.newaxis]
     foreground_img = image.copy()
-    foreground_img[np.where((mask2 == 0))] = np.array(
-        [0, 0, 0]).astype("uint8")
+    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype("uint8")
 
     # Save image
     temppath = url_to_temppath(url)

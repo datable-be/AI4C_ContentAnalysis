@@ -143,8 +143,8 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
         detected_object = {
             "confidence": confidence,
             "size": size,
-            "box (px)": box,
-            "box (%)": percentages,
+            "box_px": box,
+            "box_%": percentages,
             "coco_label": label,
             "wikidata": COCO_2_WIKIDATA.get(label),
         }
@@ -183,7 +183,7 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
-        sorted_objects = sorted_objects[0:request.max_objects]
+        sorted_objects = sorted_objects[0 : request.max_objects]
 
     result = {}
     result["detection_id"] = identifier
