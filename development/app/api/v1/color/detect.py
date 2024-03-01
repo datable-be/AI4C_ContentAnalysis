@@ -1,13 +1,8 @@
-from pathlib import Path
 from cv2.dnn import Net
+from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from api.v1.tools.color import (
-    detect_main_colors,
-    convert_colors_to_EFT,
-    merge_colors_with_threshold_and_max,
-    add_URIs,
-)
-from api.v1.tools.image import determine_image
+from api.v1.color.internal import detection as internal_detection
+from api.v1.color.huggingface import detection as huggingface_detection
 from classes import ColorRequest, RequestService
 
 MODEL_RESPONSE = {
@@ -82,42 +77,20 @@ MODEL_RESPONSE = {
 #      },
 #      "source": "http://example.com/images/123.jpg"
 #    }
-def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
+def detection(
+    color_request: ColorRequest,
+    net: Net,
+    color_model: BlipForQuestionAnswering,
+    color_processor: BlipProcessor,
+    settings: dict,
+) -> dict:
     if settings.get("dummy"):
         return MODEL_RESPONSE
 
-    result = {}
-
     if color_request.service == RequestService.internal:
-        temp_path = determine_image(color_request, net, settings)
-
-        # Detect colors
-        if not temp_path:
-            return result
-
-        (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
-        eft_colors = convert_colors_to_EFT(colors)
-        percentages = merge_colors_with_threshold_and_max(
-            eft_colors, total_pixel_count, 5, color_request.max_colors
-        )
-        result = add_URIs(percentages)
-
-        # Remove tempfile
-        if settings.get("debug"):
-            basename = Path(temp_path).name
-            url = (
-                settings["host"]
-                + ":"
-                + str(settings["port"])
-                + "/image?img="
-                + basename
-            )
-            result["cropped_image"] = url
-        else:
-            Path(temp_path).unlink(missing_ok=True)
+        return internal_detection(color_request, net, settings)
 
     elif color_request.service == RequestService.huggingface:
-        # to do (including example and documenation!)
-        pass
-
-    return result
+        return huggingface_detection(
+            color_request, color_model, color_processor, settings
+        )

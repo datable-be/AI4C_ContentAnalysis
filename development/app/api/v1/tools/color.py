@@ -1,5 +1,7 @@
+import string
 from extcolors import extract_from_path
 from typing import List, Tuple
+
 from constants import EFT_COLORS, EFT_IDS
 
 
@@ -107,5 +109,22 @@ def add_URIs(colors: dict) -> dict:
         result[color]["percentage"] = percentage
         result[color]["wikidata"] = wikidata
         result[color]["europeana"] = europeana
+
+    return result
+
+
+def extract_colors_from_sentence(sentence: str) -> List[str]:
+    """
+    Extract EFT colors from a sentence
+    """
+    result = []
+
+    sentence = sentence.lower()
+    for char in string.punctuation:
+        sentence = sentence.replace(char, "")
+
+    words = sentence.split(" ")
+
+    result = list(set([word for word in words if word in EFT_IDS]))
 
     return result

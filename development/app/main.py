@@ -4,13 +4,23 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 
 from classes import ObjectRequest, ColorRequest
-from constants import INFO, SETTINGS, DESCRIPTION, NET, TEMP_DIR
+from constants import (
+    INFO,
+    SETTINGS,
+    DESCRIPTION,
+    NET,
+    TEMP_DIR,
+    COLOR_MODEL,
+    COLOR_PROCESSOR,
+)
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
 
-# Eagerly load object model (once, at startup)
+# Eagerly load models (once, at startup)
 
 net = NET
+color_model = COLOR_MODEL
+color_processor = COLOR_PROCESSOR
 
 # CREATE API
 
@@ -79,4 +89,4 @@ async def color_detection(
     Handle a color detection POST request to the API
     """
 
-    return color_detect.detection(request, net, SETTINGS)
+    return color_detect.detection(request, net, color_model, color_processor, SETTINGS)

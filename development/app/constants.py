@@ -1,5 +1,29 @@
 import json
 from cv2.dnn import readNetFromTensorflow
+from transformers import BlipProcessor, BlipForQuestionAnswering
+
+
+def _get_mobilenet_ssd():
+    """
+    Load the MobileNet SSD model trained on the COCO dataset
+    """
+    print("Getting MobileNet SSD")
+    return readNetFromTensorflow(
+        "ssd_mobilenet/frozen_inference_graph.pb",
+        "ssd_mobilenet/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt",
+    )
+
+
+def _get_salseforce_blip_vqa_base():
+    """
+    Load https://huggingface.co/Salesforce/blip-vqa-base model
+    """
+    print("Getting Salesforce/blip-vqa-base model")
+
+    processor_model = "Salesforce/blip-vqa-base"
+    processor = BlipProcessor.from_pretrained(processor_model)
+    model = BlipForQuestionAnswering.from_pretrained(processor_model)
+    return (model, processor)
 
 
 # Application system settings
@@ -24,12 +48,14 @@ with open("description.md", "r") as f:
 TEMP_DIR = "/tmp"
 
 
-# Load the MobileNet SSD model trained on the COCO dataset
+# Object neural net
 
-NET = readNetFromTensorflow(
-    "ssd_mobilenet/frozen_inference_graph.pb",
-    "ssd_mobilenet/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt",
-)
+NET = _get_mobilenet_ssd()
+
+# Color model
+
+COLOR_MODEL, COLOR_PROCESSOR = _get_salseforce_blip_vqa_base()
+
 
 GOOGLE_VISION_URL = "https://vision.googleapis.com/v1/images:annotate?key="
 
@@ -695,6 +721,126 @@ EFT_IDS = {
         "wikidata_concepturi": "http://www.wikidata.org/entity/Q429220",
         "europeana_concept": "10412",
         "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10412",
+    },
+    "pale blue": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10402",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10402",
+    },
+    "tan": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10403",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10403",
+    },
+    "dark green": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10404",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10404",
+    },
+    "teal": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10404",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10404",
+    },
+    "gray": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10405",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10405",
+    },
+    "metallic": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10406",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10406",
+    },
+    "silver": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10408",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10408",
+    },
+    "multicolor": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10410",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10410",
+    },
+    "multi": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10410",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10410",
+    },
+    "multicolored": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10410",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10410",
+    },
+    "rainbow": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10410",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10410",
+    },
+    "salmon": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10412",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10412",
+    },
+    "rose": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10412",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10412",
+    },
+    "dark red": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10414",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10414",
+    },
+    "bordeaux": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10414",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10414",
+    },
+    "transparent": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10415",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10415",
+    },
+    "camouflage": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10404",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10404",
+    },
+    "maroon": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "10403",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/10403",
+    },
+    "peach": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "11085",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/11085",
+    },
+    "bronze": {
+        "wikidata_concept": "",
+        "wikidata_concepturi": "",
+        "europeana_concept": "11085",
+        "europeana_concepturi": "http://thesaurus.europeanafashion.eu/thesaurus/11085",
     },
 }
 
