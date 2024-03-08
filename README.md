@@ -697,6 +697,16 @@ Alternatively, one can call the [Google Cloud Vision API](https://cloud.google.c
 
 If, however, the user uses this service, without supplying an API key, the internal service is called.
 
+### Color
+
+#### Internal
+
+The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/extcolors/) library to extract colors, pixels and percentages from an image. If the request sets `foreground_detection` to true, the algorithm will either try to autodetermine the object (with `xywh=percent:0,0,100,100`) or crop to the specified region.
+
+#### HuggingFace
+
+Alternatively, one can use the [HuggingFace blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specied region). Next, it determines the colors in the image.
+
 ## Read more
 
 - [Python virtual environments with venv](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment)
