@@ -3,7 +3,11 @@ from cv2.dnn import Net
 import numpy as np
 
 from classes import ColorRequest, ObjectRequest
-from api.v1.tools.url import url_to_tempfile, url_to_temppath
+from api.v1.tools.url import (
+    url_to_tempfile,
+    url_to_temppath,
+    load_cv2_image_from_url,
+)
 from api.v1.object.internal import detection
 
 
@@ -25,7 +29,6 @@ def determine_image(
         return url_to_tempfile(url, resize_pixels=resize)
 
     else:
-        box = []
         if color_request.selector.value == 'xywh=percent:0,0,100,100':
             # Use internal object detection to detect box coordinates
             # Min_confidence is set to 0.5 because default of 0.8 is too strict
@@ -40,53 +43,64 @@ def determine_image(
                 return url_to_tempfile(url, resize_pixels=200)
             else:
                 box = objects_found[0].get('box_px')
+                return crop_image(url, box, resize, mode='px', foreground=True)
 
         else:
-            # to do: Use supplied box coordinates
-            box = [0, 0, 0, 0]
-            pass
+            # Use supplied box coordinates
+            box = [
+                int(x)
+                for x in color_request.selector.value.partition('percent:')[
+                    2
+                ].split(',')
+            ]
+            return crop_image(url, box, resize, mode='pc', foreground=False)
 
-        if not box:
-            box = [0, 0, 0, 0]
 
-        return crop_image(url, box)
-
-
-def crop_image(url: str, box: list) -> str:
+def crop_image(
+    url: str,
+    box: list[int],
+    resize_pixels: int | None,
+    mode: str,
+    foreground: bool,
+) -> str:
     """
     Crop an image from URL using specified box coordinates
     and return tempfile path to cropped image
     """
 
-    path = url_to_tempfile(url, resize_pixels=200)
+    image = load_cv2_image_from_url(url, resize_pixels=resize_pixels)
 
-    x = box[0]
-    y = box[1]
-    x2 = box[2]
-    y2 = box[3]
-    width = x2 - x
-    height = y2 - y
+    # Convert box percentages to box coordinates
 
-    # Create mask
-    image = imread(path)
-    mask = np.zeros(image.shape[:2], np.uint8)
-    bgdModel = np.zeros((1, 65), np.float64)
-    fgdModel = np.zeros((1, 65), np.float64)
+    height = image.shape[0]
+    width = image.shape[1]
 
-    # Define box with object
-    rect = (x, y, width, height)
+    if mode == 'pc':
+        x = int(width * box[0] / 100)
+        y = int(height * box[1] / 100)
+        x2 = int(width * box[2] / 100)
+        y2 = int(height * box[3] / 100)
+        box = [x, y, x2, y2]
 
-    # Cut and apply uniform background (which can later be removed)
-    grabCut(image, mask, rect, bgdModel, fgdModel, 5, GC_INIT_WITH_RECT)
-    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
-    image = image * mask2[:, :, np.newaxis]
-    foreground_img = image.copy()
-    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype(
-        'uint8'
-    )
+    if foreground:
+        # Create mask
+        mask = np.zeros(image.shape[:2], np.uint8)
+        bgdModel = np.zeros((1, 65), np.float64)
+        fgdModel = np.zeros((1, 65), np.float64)
+
+        # Cut and apply uniform background (which can later be removed)
+        grabCut(image, mask, box, bgdModel, fgdModel, 5, GC_INIT_WITH_RECT)
+        mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
+        image = image * mask2[:, :, np.newaxis]
+        cropped_image = image.copy()
+        cropped_image[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype(
+            'uint8'
+        )
+    else:
+        cropped_image = image[box[1] : box[3], box[0] : box[2]]
 
     # Save image
     temppath = url_to_temppath(url)
-    imwrite(temppath, foreground_img)
+    imwrite(temppath, cropped_image)
 
     return temppath

@@ -40,7 +40,7 @@ def load_cv2_image_from_url(
 
     response = download(url)
 
-    image_array = asarray(bytearray(response), dtype="uint8")
+    image_array = asarray(bytearray(response), dtype='uint8')
     image = imdecode(image_array, readFlag)
 
     if resize_pixels:
@@ -73,7 +73,7 @@ def url_to_tempfile(
         imwrite(temppath, image)
     else:
         response = download(url)
-        with open(temppath, "wb") as file:
+        with open(temppath, 'wb') as file:
             file.write(response)
 
     return temppath
@@ -84,14 +84,14 @@ def extension_from_url(url: str) -> str:
     Get an extension from a URL (including those with ?raw=true and such at the end))
     """
 
-    extension = ""
+    extension = ''
 
-    if "." in url:
-        parts = url.split(".")
+    if '.' in url:
+        parts = url.split('.')
         extension = parts[-1]
-        for sep in ["?"]:
+        for sep in ['?']:
             extension = extension.partition(sep)[0]
-        if not extension == "":
-            extension = "." + extension
+        if not extension == '':
+            extension = '.' + extension
 
     return extension

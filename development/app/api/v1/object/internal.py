@@ -61,18 +61,11 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
     # Request identifier
     identifier = hash_object(request)
 
-    # Read image
+    # Read image, resize (height value)
     url = str(request.source)
     image = load_cv2_image_from_url(url, resize_pixels=200)
     image_height = image.shape[0]
     image_width = image.shape[1]
-
-    # Pre-crop if necessary [top%fromtop:bottom%fromtop, leftpxfromleft:right%fromleft]
-    #  top = image_height / crop_top * 100
-    #  bottom = image_height / crop_bottom * 100
-    #  left = image_height / crop_left * 100
-    #  right = image_height / crop_right * 100
-    #  image = image[top:bottom, left:right]
 
     # Create a blob from the image
     blob = blobFromImage(
@@ -101,7 +94,11 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
         # Perform element-wise multiplication to get
         # the (x, y) coordinates of the bounding box
-        # box = [left in px from left, right in px from left, top in px from top, bottom in px from top]
+        # Meaning of box [0, 1, 2, 3] indices
+        # 0 = horizontal position (left-to-right) of the top-left corner (in px)
+        # 1 = vertical position (top-to-bottom) of the top-left corner (in px)
+        # 2 = horizontal position (left-to-right) of the bottom-right corner (in px)
+        # 3 = vertical position (top-to-bottom) of the bottom-right corner (in px)
         box = [
             int(a * b)
             for a, b in zip(
@@ -109,11 +106,11 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
                 [image_width, image_height, image_width, image_height],
             )
         ]
-        left = round((box[0] / image_width * 100), 2)
-        right = round((box[1] / image_width * 100), 2)
-        top = round((box[2] / image_height * 100), 2)
-        bottom = round((box[3] / image_height * 100), 2)
-        percentages = [left, right, top, bottom]
+        horizontal_top_left = round((box[0] / image_width * 100), 2)
+        vertical_top_left = round((box[1] / image_height * 100), 2)
+        horizontal_bottom_right = round((box[2] / image_width * 100), 2)
+        vertical_bottom_right = round((box[3] / image_height * 100), 2)
+        percentages = [horizontal_top_left, vertical_top_left, horizontal_bottom_right, vertical_bottom_right]
 
         # Calculate box size
         size_width = box[2] - box[0]
@@ -126,6 +123,7 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
         image_copy = image.copy()
 
         # Draw the bounding box of the object
+        # pt1 represents the top-left corner, and pt2 represents the bottom-right corner of the rectangle.
         annotated_image = rectangle(
             img=image_copy,
             pt1=box[:2],

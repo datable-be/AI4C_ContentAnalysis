@@ -1,14 +1,14 @@
 # AI4C: Content Analysis Tools
 
-*This API and documentation are currently in development!*
+_This API and documentation are currently in development!_
 
 ## Quickstart
 
 ### Docker
 
-This API runs inside a [Docker](https://www.docker.com/) container, so you need a working installation of the [Docker Engine](https://docs.docker.com/engine/install/). 
+This API runs inside a [Docker](https://www.docker.com/) container, so you need a working installation of the [Docker Engine](https://docs.docker.com/engine/install/).
 
-Verify your installation with the following command. 
+Verify your installation with the following command.
 
 Note that `docker` commands always need to be run with root privileges!
 
@@ -48,7 +48,6 @@ Server: Docker Engine - Community
   GitCommit:        de40ad0
 ```
 
-
 ### Source code
 
 Download the source code from [Github](https://github.com/datable-be/AI4C_ContentAnalysis):
@@ -77,7 +76,7 @@ curl http://0.0.0.0:8000/?q=version
 This should generate a JSON response like this:
 
 ```json
-{"version":"1.0.1"}
+{ "version": "1.0.1" }
 ```
 
 ### Settings
@@ -88,16 +87,16 @@ This is an example of the settings file for installation in a local testing envi
 
 ```json
 {
-    "object_detection": {
-        "URI_type": "wikidata"
-    },
-    "color_detection": {
-        "URI_type": "wikidata"
-    },
-    "debug": true,
-    "dummy": false,
-    "host": "http://localhost",
-    "port": 8000
+  "object_detection": {
+    "URI_type": "wikidata"
+  },
+  "color_detection": {
+    "URI_type": "wikidata"
+  },
+  "debug": true,
+  "dummy": false,
+  "host": "http://localhost",
+  "port": 8000
 }
 ```
 
@@ -124,6 +123,7 @@ source venv/bin/activate
 ```
 
 Install the project pacakages with the following command:
+
 ```bash
 python3 -m pip install -r development/requirements.txt
 ```
@@ -149,6 +149,7 @@ sudo docker images
 ```
 
 The output should contain a line like this:
+
 ```text
 REPOSITORY               TAG             IMAGE ID       CREATED         SIZE
 ...
@@ -178,7 +179,7 @@ The API is built with the [FastAPI](https://fastapi.tiangolo.com/) framework. Fa
 
 Although there are alternatives (Django REST, Flask), FastAPI is the best choice for the project because of its high [performance](https://fastapi.tiangolo.com/#performance), its type safety with [Pydantic](https://docs.pydantic.dev/latest/), which allows for automatic input validation, and because it is based on (and fully compatible with) the open standards for APIs: [OpenAPI](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.1.0.md) (previously known as Swagger) and [JSON Schema](https://json-schema.org/).
 
-This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)): 
+This means FastAPI offers built-in documentation. When you run the container and open your browser at [http://0.0.0.0:8000/docs](http://0.0.0.0:8000/docs), you will see an automatic, interactive, API documentation (integrating [Swagger UI](https://swagger.io/tools/swagger-ui/)):
 
 ![Docs](/doc/img/docs.png "Example of API documentation with Swagger UI")
 
@@ -201,7 +202,7 @@ curl http://0.0.0.0:8000/?q=version
 Expected output:
 
 ```json
-{"version":"1.0.1"}
+{ "version": "1.0.1" }
 ```
 
 and:
@@ -213,10 +214,22 @@ curl http://0.0.0.0:8000/?q=info
 Expected output:
 
 ```json
-{"title":"AI4C Content Analysis Tools","summary":"AI4Culture - Content analysis tools","description":"This API offers object and color detection tools for images","termsOfService":"http://www.datable.be/","contact":{"name":"./Datable","url":"http://www.datable.be/","email":"info@datable.be"},"license":{"name":"MIT","url":"https://opensource.org/license/mit/"},"version":"1.0.1"}
+{
+  "title": "AI4C Content Analysis Tools",
+  "summary": "AI4Culture - Content analysis tools",
+  "description": "This API offers object and color detection tools for images",
+  "termsOfService": "http://www.datable.be/",
+  "contact": {
+    "name": "./Datable",
+    "url": "http://www.datable.be/",
+    "email": "info@datable.be"
+  },
+  "license": { "name": "MIT", "url": "https://opensource.org/license/mit/" },
+  "version": "1.0.1"
+}
 ```
 
-It also accepts requests to the ``/image`` path to show an annotated image:
+It also accepts requests to the `/image` path to show an annotated image:
 
 ```bash
 curl -O http://0.0.0.0:8000/image?img=4cc4ff8a39925002a25650a89c5de92fdbfeb011_2.png
@@ -228,7 +241,7 @@ Please note that these are currently for debugging purposes only and will only b
 
 ### POST requests
 
-The main usage of the API is via POST requests to the URL paths ``/v1/object`` and/or ``/v1/color``.
+The main usage of the API is via POST requests to the URL paths `/v1/object` and/or `/v1/color`.
 
 Since these are typically longer requests, the software repository contains an example requests for both detection tools:
 
@@ -236,7 +249,7 @@ Since these are typically longer requests, the software repository contains an e
 py3 development/app/examples/object_detect.py
 ```
 
-Expected output (*current output might differ!*):
+Expected output (_current output might differ!_):
 
 ```text
 POST http://0.0.0.0:8000/v1/object
@@ -294,7 +307,7 @@ Or (using Google Vision object detection):
 py3 development/app/examples/object_detect_google.py
 ```
 
-Expected output (*current output might differ!*):
+Expected output (_current output might differ!_):
 
 ```text
 REQUEST =
@@ -395,7 +408,7 @@ Or for color detection:
 py3 development/app/examples/color_detect.py
 ```
 
-Expected output (*current output might differ!*):
+Expected output (_current output might differ!_):
 
 ```text
 POST http://0.0.0.0:8000/v1/color
@@ -504,7 +517,7 @@ curl http://0.0.0.0:8000/invalid_path
 Expected output:
 
 ```json
-{"detail":"Not Found"}
+{ "detail": "Not Found" }
 ```
 
 An invalid query returns an empty response:
@@ -516,7 +529,7 @@ curl http://0.0.0.0:8000/?q=invalid_query
 Expected output:
 
 ```json
-{"detail":"Invalid query"}
+{ "detail": "Invalid query" }
 ```
 
 Invalid JSON body in a POST request:
@@ -528,7 +541,31 @@ curl -H "Content-Type: application/json" -X POST -d '{}' http://0.0.0.0:8000/v1/
 Expected output:
 
 ```json
-{"detail":[{"type":"missing","loc":["body","id"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","source"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"},{"type":"missing","loc":["body","service_key"],"msg":"Field required","input":{},"url":"https://errors.pydantic.dev/2.3/v/missing"}]}
+{
+  "detail": [
+    {
+      "type": "missing",
+      "loc": ["body", "id"],
+      "msg": "Field required",
+      "input": {},
+      "url": "https://errors.pydantic.dev/2.3/v/missing"
+    },
+    {
+      "type": "missing",
+      "loc": ["body", "source"],
+      "msg": "Field required",
+      "input": {},
+      "url": "https://errors.pydantic.dev/2.3/v/missing"
+    },
+    {
+      "type": "missing",
+      "loc": ["body", "service_key"],
+      "msg": "Field required",
+      "input": {},
+      "url": "https://errors.pydantic.dev/2.3/v/missing"
+    }
+  ]
+}
 ```
 
 If, however, there is an error in generating the response, the client will receive an "Internal Server Error" with a HTTP status code 500. We do not catch these, as these are bugs in the code that would otherwise remain undetected. If you notice any such bug, please report it to us via the GitHub [issue tracker](https://github.com/datable-be/AI4C_ContentAnalysis/issues).
@@ -544,7 +581,7 @@ Processor:              Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz x 4
 RAM memory:             15.3 GiB
 Hard Drives:            518.3 GB
 System:                 Dell XPS 13 9370
-``` 
+```
 
 The following command benchmarks 50,000 GET requests with 1,000 concurrent requests:
 
@@ -701,7 +738,7 @@ If, however, the user uses this service, without supplying an API key, the inter
 
 #### Internal
 
-The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/extcolors/) library to extract colors, pixels and percentages from an image. If the request sets `foreground_detection` to true, the algorithm will either try to autodetermine the object (with `xywh=percent:0,0,100,100`) or crop to the specified region.
+The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/extcolors/) library to extract colors, pixels and percentages from an image. If the request sets `foreground_detection` to true, the algorithm will either try to autodetermine the object (with `xywh=percent:0,0,100,100`) or crop to the specified region. In case of autodetection of the object, the model will also extract the foreground colors of the image, in case of user-specified cropping it makes more sense to just detect all colors in the supplied region.
 
 #### HuggingFace
 
