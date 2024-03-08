@@ -7,7 +7,9 @@ from api.v1.tools.url import url_to_tempfile, url_to_temppath
 from api.v1.object.internal import detection
 
 
-def determine_image(color_request: ColorRequest, net: Net, settings: dict) -> str:
+def determine_image(
+    color_request: ColorRequest, net: Net, settings: dict, resize: int | None
+) -> str:
     """
     Determine which image to use for color detection:
         1. full image
@@ -19,26 +21,28 @@ def determine_image(color_request: ColorRequest, net: Net, settings: dict) -> st
     url = str(color_request.source)
 
     if not color_request.foreground_detection:
-        # no cropping needs to be applied
-        return url_to_tempfile(url, resize_pixels=200)
+        # No cropping needs to be applied
+        return url_to_tempfile(url, resize_pixels=resize)
 
     else:
         box = []
-        if color_request.selector.value == "xywh=percent:0,0,100,100":
+        if color_request.selector.value == 'xywh=percent:0,0,100,100':
             # Use internal object detection to detect box coordinates
             # Min_confidence is set to 0.5 because default of 0.8 is too strict
             object_request = ObjectRequest(
-                id=color_request.id, source=color_request.source, min_confidence=0.5
+                id=color_request.id,
+                source=color_request.source,
+                min_confidence=0.5,
             )
             result = detection(object_request, net, settings)
-            objects_found = result.get("data")
+            objects_found = result.get('data')
             if not objects_found:
                 return url_to_tempfile(url, resize_pixels=200)
             else:
-                box = objects_found[0].get("box_px")
+                box = objects_found[0].get('box_px')
 
         else:
-            # to do: use supplied box coordinates
+            # to do: Use supplied box coordinates
             box = [0, 0, 0, 0]
             pass
 
@@ -74,10 +78,12 @@ def crop_image(url: str, box: list) -> str:
 
     # Cut and apply uniform background (which can later be removed)
     grabCut(image, mask, rect, bgdModel, fgdModel, 5, GC_INIT_WITH_RECT)
-    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype("uint8")
+    mask2 = np.where((mask == 2) | (mask == 0), 0, 1).astype('uint8')
     image = image * mask2[:, :, np.newaxis]
     foreground_img = image.copy()
-    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype("uint8")
+    foreground_img[np.where((mask2 == 0))] = np.array([0, 0, 0]).astype(
+        'uint8'
+    )
 
     # Save image
     temppath = url_to_temppath(url)

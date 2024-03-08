@@ -13,7 +13,7 @@ from classes import ColorRequest
 
 def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     result = {}
-    temp_path = determine_image(color_request, net, settings)
+    temp_path = determine_image(color_request, net, settings, resize=200)
 
     # Detect colors
     if not temp_path:
@@ -27,10 +27,16 @@ def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     result = add_URIs(percentages)
 
     # Remove tempfile
-    if settings.get("debug"):
+    if settings.get('debug'):
         basename = Path(temp_path).name
-        url = settings["host"] + ":" + str(settings["port"]) + "/image?img=" + basename
-        result["cropped_image"] = url
+        url = (
+            settings['host']
+            + ':'
+            + str(settings['port'])
+            + '/image?img='
+            + basename
+        )
+        result['cropped_image'] = url
     else:
         Path(temp_path).unlink(missing_ok=True)
 
