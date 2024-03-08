@@ -25,37 +25,37 @@ color_processor = COLOR_PROCESSOR
 # CREATE API
 
 app = FastAPI(
-    title=INFO["title"],
+    title=INFO['title'],
     description=DESCRIPTION,
-    summary=INFO["summary"],
-    version=INFO["version"],
-    terms_of_service=INFO["termsOfService"],
-    contact=INFO["contact"],
-    license_info=INFO["license"],
+    summary=INFO['summary'],
+    version=INFO['version'],
+    terms_of_service=INFO['termsOfService'],
+    contact=INFO['contact'],
+    license_info=INFO['license'],
 )
 
 # API REQUESTS
 
 
-@app.get("/")
+@app.get('/')
 async def info(q: str | None = None) -> JSONResponse:
     """
     Get descriptive metadata about the API
     """
 
     if q:
-        if q == "version":
-            return {"version": INFO["version"]}
-        elif q == "info":
+        if q == 'version':
+            return {'version': INFO['version']}
+        elif q == 'info':
             return INFO
         else:
-            raise HTTPException(status_code=404, detail="Invalid query")
+            raise HTTPException(status_code=404, detail='Invalid query')
 
     else:
         return INFO
 
 
-@app.get("/image")
+@app.get('/image')
 async def image(img: str | None = None) -> FileResponse:
     """
     Get image from the API
@@ -66,22 +66,25 @@ async def image(img: str | None = None) -> FileResponse:
         if exists(path):
             return FileResponse(path)
         else:
-            raise HTTPException(status_code=404, detail="File not found")
+            raise HTTPException(status_code=404, detail='File not found')
     else:
-        raise HTTPException(status_code=404, detail="Invalid query")
+        raise HTTPException(status_code=404, detail='Invalid query')
 
 
-@app.post("/v1/object")
+@app.post('/v1/object')
 async def object_detection(
     request: ObjectRequest,
 ) -> dict:
     """
     Handle an object detection POST request to the API
     """
-    return object_detect.detection(request, net, SETTINGS)
+    try:
+        return object_detect.detection(request, net, SETTINGS)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=repr(e))
 
 
-@app.post("/v1/color")
+@app.post('/v1/color')
 async def color_detection(
     request: ColorRequest,
 ) -> dict:
@@ -89,4 +92,9 @@ async def color_detection(
     Handle a color detection POST request to the API
     """
 
-    return color_detect.detection(request, net, color_model, color_processor, SETTINGS)
+    try:
+        return color_detect.detection(
+            request, net, color_model, color_processor, SETTINGS
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=repr(e))
