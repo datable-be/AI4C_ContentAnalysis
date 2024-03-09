@@ -12,35 +12,35 @@ from api.v1.tools.tools import hash_object
 ANNOTATION_COLOR = (0, 255, 0)  # bright green
 
 MODEL_RESPONSE = {
-    "@context": {},
-    "@graph": [
+    '@context': {},
+    '@graph': [
         {
-            "id": "http://datable.be/color-annotations/123",
-            "type": "Annotation",
-            "created": "2023-09-30",
-            "creator": {
-                "id": "https://github.com/hvanstappen/AI4C_object-detector",
-                "type": "Software",
-                "name": "AI4C object detector",
+            'id': 'http://datable.be/color-annotations/123',
+            'type': 'Annotation',
+            'created': '2023-09-30',
+            'creator': {
+                'id': 'https://github.com/hvanstappen/AI4C_object-detector',
+                'type': 'Software',
+                'name': 'AI4C object detector',
             },
-            "body": [
-                {"source": "http://www.wikidata.org/entity/Q200539"},
+            'body': [
+                {'source': 'http://www.wikidata.org/entity/Q200539'},
                 {
-                    "type": "TextualBody",
-                    "purpose": "tagging",
-                    "value": "dress",
-                    "language": "en",
+                    'type': 'TextualBody',
+                    'purpose': 'tagging',
+                    'value': 'dress',
+                    'language': 'en',
                 },
             ],
-            "target": {
-                "source": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-                "selector": {
-                    "type": "FragmentSelector",
-                    "conformsTo": "http://www.w3.org/TR/media-frags/",
-                    "value": "xywh=percent:87,63,9,21",
+            'target': {
+                'source': 'http://mint-projects.image.ntua.gr/europeana-fashion/500208081',
+                'selector': {
+                    'type': 'FragmentSelector',
+                    'conformsTo': 'http://www.w3.org/TR/media-frags/',
+                    'value': 'xywh=percent:87,63,9,21',
                 },
             },
-            "confidence": 0.8,
+            'confidence': 0.8,
         },
         {},
     ],
@@ -54,8 +54,8 @@ MODEL_RESPONSE = {
 #      "source": "http://example.com/images/123.jpg",
 #      "service":"internal",
 #      "service_key":"****"
-def detection(request: ObjectRequest, net: Net, settings: dict):
-    if settings.get("dummy"):
+def detection(request: ObjectRequest, net: Net, settings: dict) -> dict:
+    if settings.get('dummy'):
         return MODEL_RESPONSE
 
     # Request identifier
@@ -110,7 +110,12 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
         vertical_top_left = round((box[1] / image_height * 100), 2)
         horizontal_bottom_right = round((box[2] / image_width * 100), 2)
         vertical_bottom_right = round((box[3] / image_height * 100), 2)
-        percentages = [horizontal_top_left, vertical_top_left, horizontal_bottom_right, vertical_bottom_right]
+        percentages = [
+            horizontal_top_left,
+            vertical_top_left,
+            horizontal_bottom_right,
+            vertical_bottom_right,
+        ]
 
         # Calculate box size
         size_width = box[2] - box[0]
@@ -139,17 +144,17 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
         # Add data to result
         detected_object = {
-            "confidence": confidence,
-            "size": size,
-            "box_px": box,
-            "box_%": percentages,
-            "coco_label": label,
-            "wikidata": COCO_2_WIKIDATA.get(label),
+            'confidence': confidence,
+            'size': size,
+            'box_px': box,
+            'box_%': percentages,
+            'coco_label': label,
+            'wikidata': COCO_2_WIKIDATA.get(label),
         }
 
-        if settings.get("debug"):
+        if settings.get('debug'):
             # Draw the name of the predicted object together with the probability
-            prediction = f"{label} {confidence * 100:.2f}%"
+            prediction = f'{label} {confidence * 100:.2f}%'
             annotated_image = putText(
                 img=annotated_image,
                 text=prediction,
@@ -162,30 +167,30 @@ def detection(request: ObjectRequest, net: Net, settings: dict):
 
             # Save image
             housekeeping(TEMP_DIR)
-            basename = identifier + "_" + str(count) + extension_from_url(url)
+            basename = identifier + '_' + str(count) + extension_from_url(url)
             filepath = join(TEMP_DIR, basename)
             imwrite(filepath, annotated_image)
             url = (
-                settings["host"]
-                + ":"
-                + str(settings["port"])
-                + "/image?img="
+                settings['host']
+                + ':'
+                + str(settings['port'])
+                + '/image?img='
                 + basename
             )
-            detected_object["annotated_image"] = url
+            detected_object['annotated_image'] = url
 
         objects.append(detected_object)
 
     # Sort result on object size
-    sorted_objects = sorted(objects, key=lambda x: x["size"], reverse=True)
+    sorted_objects = sorted(objects, key=lambda x: x['size'], reverse=True)
 
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
         sorted_objects = sorted_objects[0 : request.max_objects]
 
     result = {}
-    result["detection_id"] = identifier
-    result["request_id"] = request.id
-    result["data"] = sorted_objects
+    result['detection_id'] = identifier
+    result['request_id'] = request.id
+    result['data'] = sorted_objects
 
     return result

@@ -3,7 +3,12 @@ from os.path import join, exists
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
 
-from classes import ObjectRequest, ColorRequest
+from classes import (
+    NtuaResponse,
+    ObjectRequest,
+    ColorRequest,
+    EuropeanaResponse,
+)
 from constants import (
     INFO,
     SETTINGS,
@@ -74,9 +79,11 @@ async def image(img: str | None = None) -> FileResponse:
 @app.post('/v1/object')
 async def object_detection(
     request: ObjectRequest,
-) -> dict:
+) -> dict | EuropeanaResponse | NtuaResponse:
     """
     Handle an object detection POST request to the API
+    Return a dict, or a response serialized as EuropeanaResponse or NtuaResponse
+    Note: Order of the return types is important!
     """
     try:
         return object_detect.detection(request, net, SETTINGS)
@@ -87,9 +94,11 @@ async def object_detection(
 @app.post('/v1/color')
 async def color_detection(
     request: ColorRequest,
-) -> dict:
+) -> dict | EuropeanaResponse | NtuaResponse:
     """
     Handle a color detection POST request to the API
+    Return a dict, or a response serialized as EuropeanaResponse or NtuaResponse
+    Note: Order of the return types is important!
     """
 
     try:
