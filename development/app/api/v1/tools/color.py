@@ -16,7 +16,9 @@ def detect_main_colors(
     """
 
     # No limit set, this will be done after grouping
-    detected_colors, total_pixel_count = extract_from_path(path, tolerance=tolerance)
+    detected_colors, total_pixel_count = extract_from_path(
+        path, tolerance=tolerance
+    )
 
     # Remove (0,0,0) background color
     for color in detected_colors:
@@ -34,12 +36,12 @@ def getColorName(rgb: Tuple[int, int, int]) -> str:
     """
     r, g, b = rgb
     minimum = 10000
-    color_name = "unknown"
+    color_name = 'unknown'
     for color in EFT_COLORS:
-        d = abs(r - color["R"]) + abs(g - color["G"]) + abs(b - color["B"])
+        d = abs(r - color['R']) + abs(g - color['G']) + abs(b - color['B'])
         if d <= minimum:
             minimum = d
-            color_name = color["color_name"]
+            color_name = color['color_name']
     color_name = color_name.lower()
     return color_name
 
@@ -84,7 +86,9 @@ def merge_colors_with_threshold_and_max(
         if percentage > threshold:
             percentages[color] = percentage
 
-    sorted_percentages = sorted(percentages.items(), key=lambda x: x[1], reverse=True)
+    sorted_percentages = sorted(
+        percentages.items(), key=lambda x: x[1], reverse=True
+    )
 
     sorted_percentages = sorted_percentages[0:max]
 
@@ -103,12 +107,18 @@ def add_URIs(colors: dict) -> dict:
         result[color] = {}
         wikidata = None
         europeana = None
+        wikidata_uri = None
+        europeana_uri = None
         if EFT_IDS.get(color):
-            wikidata = EFT_IDS[color]["wikidata_concept"]
-            europeana = EFT_IDS[color]["europeana_concept"]
-        result[color]["percentage"] = percentage
-        result[color]["wikidata"] = wikidata
-        result[color]["europeana"] = europeana
+            wikidata = EFT_IDS[color]['wikidata_concept']
+            europeana = EFT_IDS[color]['europeana_concept']
+            wikidata_uri = EFT_IDS[color]['wikidata_concepturi']
+            europeana_uri = EFT_IDS[color]['europeana_concepturi']
+        result[color]['percentage'] = percentage
+        result[color]['wikidata'] = wikidata
+        result[color]['europeana'] = europeana
+        result[color]['wikidata_uri'] = wikidata_uri
+        result[color]['europeana_uri'] = europeana_uri
 
     return result
 
@@ -121,9 +131,9 @@ def extract_colors_from_sentence(sentence: str) -> List[str]:
 
     sentence = sentence.lower()
     for char in string.punctuation:
-        sentence = sentence.replace(char, "")
+        sentence = sentence.replace(char, '')
 
-    words = sentence.split(" ")
+    words = sentence.split(' ')
 
     result = list(set([word for word in words if word in EFT_IDS]))
 
