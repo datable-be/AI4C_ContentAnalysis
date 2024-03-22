@@ -17,7 +17,6 @@ EXAMPLES = {
 
 
 REQUEST = """{
-    "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
     "max_colors": 3,
     "min_area": 0.15,
     "foreground_detection": false,

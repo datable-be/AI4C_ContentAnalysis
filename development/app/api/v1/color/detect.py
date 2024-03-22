@@ -1,6 +1,8 @@
+from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
+from constants import APP_URL
 from api.v1.color.internal import detection as internal_detection
 from api.v1.color.huggingface import detection as huggingface_detection
 from api.v1.annotation.conversion import convert
@@ -38,6 +40,10 @@ def detection(
         return MODEL_RESPONSE
 
     result = {}
+
+    # make id if not provided
+    if color_request.id == '':
+        color_request.id = APP_URL + '/object-annotations/' + str(uuid4())
 
     if color_request.service == RequestService.internal:
         result = internal_detection(color_request, net, settings)

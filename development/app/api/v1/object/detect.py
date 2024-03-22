@@ -1,5 +1,7 @@
+from uuid import uuid4
 from cv2.dnn import Net
 
+from constants import APP_URL
 from classes import (
     ObjectRequest,
     RequestService,
@@ -19,6 +21,10 @@ def detection(object_request: ObjectRequest, net: Net, settings: dict) -> dict:
         return MODEL_RESPONSE
 
     result = {}
+
+    # make id if not provided
+    if object_request.id == '':
+        object_request.id = APP_URL + '/object-annotations/' + str(uuid4())
 
     # internal service if key is invalid
     if object_request.service_key == '' or not object_request.service_key:

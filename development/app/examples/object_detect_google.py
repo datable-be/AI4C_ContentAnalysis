@@ -14,7 +14,6 @@ with open(
     KEY = reader.read().strip()
 
 REQUEST = f"""{{
-    "id": "http://example.com/images/123",
     "min_confidence": 0.9,
     "max_objects": 3,
     "source":"https://cloud.google.com/vision/docs/images/bicycle_example.png",

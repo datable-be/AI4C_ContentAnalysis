@@ -76,7 +76,9 @@ class ColorSelector(BaseModel):
 class ObjectRequest(BaseModel):
     # to do: revise when API request has definite form
     id: str = Field(
-        title='id', description='Identifier of the resource to be tagged'
+        title='id',
+        description='Identifier of the request. If empty, a UUID will be generated',
+        default='',
     )
     min_confidence: float = Field(
         title='min_confidence',
@@ -110,7 +112,11 @@ class ObjectRequest(BaseModel):
 
 class ColorRequest(BaseModel):
     # to do: revise when API request has definite form
-    id: str = Field(title='id', description='Identifier of the request')
+    id: str = Field(
+        title='id',
+        description='Identifier of the request. If empty, a UUID will be generated',
+        default='',
+    )
     max_colors: int = Field(
         title='max_colors',
         description='Maximum number of colors to retrieve (default=3)',
