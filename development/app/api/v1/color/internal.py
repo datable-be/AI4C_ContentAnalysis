@@ -24,7 +24,7 @@ def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
     percentages = merge_colors_with_threshold_and_max(
         eft_colors, total_pixel_count, 5, color_request.max_colors
     )
-    result = add_URIs(percentages)
+    result['colors'] = add_URIs(percentages)
 
     # Remove tempfile
     if settings.get('debug'):

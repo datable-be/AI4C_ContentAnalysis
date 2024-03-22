@@ -75,7 +75,7 @@ def detection(
         # HuggingFace does not allow to determine percentages
         colors_with_fake_percentages = {color: None for color in colors}
 
-        result = add_URIs(colors_with_fake_percentages)
+        result['colors'] = add_URIs(colors_with_fake_percentages)
 
     except Exception as e:
         # to do (see also object error handling?)
