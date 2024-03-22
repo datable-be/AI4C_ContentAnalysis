@@ -12,15 +12,60 @@ from classes import (
     RequestService,
 )
 
+from constants import GOOGLE_KG_URL
+
 from api.v1.annotation.tools import get_utc_timestamp
 
 
 def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
+
+    creator = NtuaCreator(name='AI4C object detector')
+
+    annotations = []
+
     if request.service == RequestService.internal:
-        pass
+        for item in data['data']:
+
+            # to do: check selector (see 'box' key)
+            selector = NtuaSelector()
+            target = NtuaTarget(source=request.source, selector=selector)
+
+            annotation = NtuaAnnotation(
+                # to do: is this correct? always same id?
+                id=request.id,
+                created=get_utc_timestamp(),
+                creator=creator,
+                # to do: Datable docs conflict specification?
+                body=[item['wikidata']['wikidata_concepturi']],
+                confidence=item['confidence'],
+                target=target,
+                review=NtuaValidationReview(),
+            )
+            annotations.append(annotation)
+
     elif request.service == RequestService.googlevision:
-        pass
-    return data
+        for item in data['data'][0]['labelAnnotations']:
+
+            # to do: check selector (see 'box' key)
+            selector = NtuaSelector()
+            target = NtuaTarget(source=request.source, selector=selector)
+
+            annotation = NtuaAnnotation(
+                # to do: is this correct? always same id?
+                id=request.id,
+                created=get_utc_timestamp(),
+                creator=creator,
+                # to do: Datable docs conflict specification? + uri?
+                body=[GOOGLE_KG_URL + item['mid']],
+                confidence=item['score'],
+                target=target,
+                review=NtuaValidationReview(),
+            )
+            annotations.append(annotation)
+
+    result = NtuaResponse(graph=annotations)
+
+    return result.model_dump(by_alias=True)
 
 
 def color_to_ntua(data: dict, request: ColorRequest) -> dict:
@@ -43,6 +88,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
         body=body,
         # to do: what should this be?
         confidence=0.5,
+        # to do: check selector
         target=target,
         review=review,
     )

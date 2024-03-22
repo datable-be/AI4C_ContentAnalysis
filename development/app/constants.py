@@ -25,9 +25,14 @@ def _get_salseforce_blip_vqa_base():
     model = BlipForQuestionAnswering.from_pretrained(processor_model)
     return (model, processor)
 
+
 # Application URL
 
-APP_URL = "https://github.com/datable-be/AI4C_ContentAnalysis"
+APP_URL = 'https://github.com/datable-be/AI4C_ContentAnalysis'
+
+# Google Knowledge Graph
+
+GOOGLE_KG_URL = 'https://www.google.com/search?kgmid='
 
 # Application system settings
 

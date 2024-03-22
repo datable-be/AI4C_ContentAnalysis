@@ -19,7 +19,7 @@ REQUEST = f"""{{
     "source":"https://cloud.google.com/vision/docs/images/bicycle_example.png",
     "service":"GoogleVision",
     "service_key":"{KEY}",
-    "annotation_type": "internal"
+    "annotation_type": "ntua"
 }}
 """
 
