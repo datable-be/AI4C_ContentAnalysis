@@ -74,7 +74,7 @@ class ColorSelector(BaseModel):
 
 
 class ObjectRequest(BaseModel):
-    # to revise when API request has definite form
+    # to do: revise when API request has definite form
     id: str = Field(
         title='id', description='Identifier of the resource to be tagged'
     )
@@ -109,7 +109,7 @@ class ObjectRequest(BaseModel):
 
 
 class ColorRequest(BaseModel):
-    # to revise when API request has definite form
+    # to do: revise when API request has definite form
     id: str = Field(title='id', description='Identifier of the request')
     max_colors: int = Field(
         title='max_colors',
@@ -183,10 +183,10 @@ class NtuaCreator(BaseModel):
     id: HttpUrl = Field(
         title='id',
         description='Creator IRI (optional)',
+        default=HttpUrl('https://github.com/datable-be/AI4C_ContentAnalysis'),
     )
     type: NtuaEntity = Field(
-        title='type',
-        description='Creator type',
+        title='type', description='Creator type', default=NtuaEntity.software
     )
     name: str = Field(
         title='name',
@@ -305,13 +305,13 @@ class NtuaAnnotation(BaseModel):
 class NtuaResponse(BaseModel):
     context: Dict = Field(
         title='context',
-        alias='@context',
+        serialization_alias='@context',
         description='Context',
         default=NTUA_CONTEXT,
     )
     graph: List[NtuaAnnotation] = Field(
         title='graph',
-        alias='@graph',
+        serialization_alias='@graph',
         description='Annotation objects',
     )
 
