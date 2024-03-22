@@ -27,7 +27,8 @@ REQUEST = """{
       "conformsTo" : "http://www.w3.org/TR/media-frags/",
       "value" : "xywh=percent:0,0,100,100"
     },
-    "source":"https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
+    "source":"https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg",
+    "annotation_type": "internal"
 }"""
 
 

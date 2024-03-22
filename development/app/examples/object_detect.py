@@ -19,7 +19,8 @@ REQUEST = """{
     "max_objects": 10,
     "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true",
     "service":"internal",
-    "service_key":"****"
+    "service_key":"****",
+    "annotation_type": "internal"
 }
 """
 
