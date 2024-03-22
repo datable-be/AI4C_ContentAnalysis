@@ -30,7 +30,7 @@ def detection(
     color_model: BlipForQuestionAnswering,
     color_processor: BlipProcessor,
     settings: dict,
-) -> dict | EuropeanaResponse | NtuaResponse:
+) -> dict:
 
     if settings.get('dummy'):
         from constants import MODEL_RESPONSE

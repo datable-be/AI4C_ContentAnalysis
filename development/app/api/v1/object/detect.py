@@ -11,9 +11,7 @@ from api.v1.object.google import detection as google_detection
 from api.v1.annotation.conversion import convert
 
 
-def detection(
-    object_request: ObjectRequest, net: Net, settings: dict
-) -> dict | EuropeanaResponse | NtuaResponse:
+def detection(object_request: ObjectRequest, net: Net, settings: dict) -> dict:
 
     if settings.get('dummy'):
         from constants import MODEL_RESPONSE

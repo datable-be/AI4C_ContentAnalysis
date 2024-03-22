@@ -1,4 +1,5 @@
 from os.path import join, exists
+from typing import Union
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse
@@ -76,14 +77,16 @@ async def image(img: str | None = None) -> FileResponse:
         raise HTTPException(status_code=404, detail='Invalid query')
 
 
-@app.post('/v1/object')
+@app.post(
+    '/v1/object', response_model=Union[dict, EuropeanaResponse, NtuaResponse]
+)
 async def object_detection(
     request: ObjectRequest,
-) -> dict | EuropeanaResponse | NtuaResponse:
+) -> dict:
     """
     Handle an object detection POST request to the API
-    Return a dict, or a response serialized as EuropeanaResponse or NtuaResponse
-    Note: Order of the return types is important!
+    Note: always returns a dict(), but response_model declared with types
+    so that Pydantic documents the possible return structures
     """
     try:
         return object_detect.detection(request, net, SETTINGS)
@@ -91,19 +94,22 @@ async def object_detection(
         raise HTTPException(status_code=500, detail=repr(e))
 
 
-@app.post('/v1/color')
+@app.post(
+    '/v1/color', response_model=Union[dict, EuropeanaResponse, NtuaResponse]
+)
 async def color_detection(
     request: ColorRequest,
-) -> dict | EuropeanaResponse | NtuaResponse:
+) -> dict:
     """
     Handle a color detection POST request to the API
-    Return a dict, or a response serialized as EuropeanaResponse or NtuaResponse
-    Note: Order of the return types is important!
+    Note: always returns a dict(), but response_model declared with types
+    so that Pydantic documents the possible return structures
     """
 
     try:
-        return color_detect.detection(
+        data = color_detect.detection(
             request, net, color_model, color_processor, SETTINGS
         )
+        return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
