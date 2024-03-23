@@ -1,4 +1,5 @@
 from classes import (
+    LDSource,
     AnnotationType,
     NtuaAnnotation,
     NtuaCreator,
@@ -76,7 +77,10 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
     body = []
 
     for key in data['colors']:
-        url = data['colors'][key]['europeana_uri']
+        if request.ld_source == LDSource.wd:
+            url = data['colors'][key]['wikidata_uri']
+        else:
+            url = data['colors'][key]['europeana_uri']
         body.append(url)
 
     review = NtuaValidationReview()

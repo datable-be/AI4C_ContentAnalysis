@@ -26,6 +26,7 @@ REQUEST = """{
       "conformsTo" : "http://www.w3.org/TR/media-frags/",
       "value" : "xywh=percent:50,50,100,100"
     },
+    "ld_source": "Wikidata",
     "source":"https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg",
     "annotation_type": "ntua"
 }"""
