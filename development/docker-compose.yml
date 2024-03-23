@@ -7,5 +7,6 @@ services:
       - "8000:8000"
     volumes:
       - ./app:/app
+      - /home/tdeneire/tmp:/images
     command:
       ["uvicorn", "--host", "0.0.0.0", "--port", "8000", "main:app", "--reload"]
