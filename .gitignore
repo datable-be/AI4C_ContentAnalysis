@@ -1,8 +1,5 @@
 doc/notes.md
 doc/google-api
 venv/*
-!venv/pyvenv.cfg
-!venv/development
-!venv/requirements.txt
 **/__pycache__/*
 
