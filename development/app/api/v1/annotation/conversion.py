@@ -90,7 +90,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
         created=get_utc_timestamp(),
         creator=creator,
         body=body,
-        # to do: what should this be?
+        # default confidence of 0.5 as this is not supplied by the APIs
         confidence=0.5,
         # to do: check selector
         target=target,
@@ -119,8 +119,6 @@ def color_to_europeana(data: dict, request: ColorRequest) -> dict:
 
 
 def convert(data: dict, request: ObjectRequest | ColorRequest) -> dict:
-
-    # to do: conversion logic + other formats?
 
     if isinstance(request, ObjectRequest):
         if request.annotation_type == AnnotationType.ntua:

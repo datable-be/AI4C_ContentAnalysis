@@ -74,7 +74,6 @@ class ColorSelector(BaseModel):
 
 
 class ObjectRequest(BaseModel):
-    # to do: revise when API request has definite form
     id: str = Field(
         title='id',
         description='Identifier of the request. If empty, a UUID will be generated',
@@ -111,7 +110,6 @@ class ObjectRequest(BaseModel):
 
 
 class ColorRequest(BaseModel):
-    # to do: revise when API request has definite form
     id: str = Field(
         title='id',
         description='Identifier of the request. If empty, a UUID will be generated',
@@ -301,7 +299,6 @@ class NtuaAnnotation(BaseModel):
         description='Provides information about the annotation validation status',
     )
     scope: str = Field(
-        # to do: how to use this?
         title='scope',
         description='The property the annotation should be encoded as. Should be an IRI',
         default='dc:spatial',
