@@ -1,8 +1,8 @@
 from os.path import join, exists
-from typing import Union
+from typing import Union, Annotated
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse, FileResponse
+from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 
 from classes import (
     NtuaResponse,
@@ -59,6 +59,12 @@ async def info(q: str | None = None) -> JSONResponse:
 
     else:
         return INFO
+
+
+@app.get('/ui/color')
+async def ui_color():
+    with open('ui_color.html', 'r') as reader:
+        return HTMLResponse(content=reader.read())
 
 
 @app.get('/image')

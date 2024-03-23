@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Color Detection Parameters</title>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h1 class="mb-4">Color Detection Parameters</h1>
+      <form id="colorForm">
+        <div class="form-group">
+          <label for="maxColors">Max Colors:</label>
+          <input
+            type="text"
+            id="maxColors"
+            name="max_colors"
+            size="150"
+            value="3"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="minArea">Min Area:</label>
+          <input
+            type="text"
+            id="minArea"
+            name="min_area"
+            value="0.15"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="foregroundDetection">Foreground Detection:</label>
+          <input
+            type="checkbox"
+            id="foregroundDetection"
+            name="foreground_detection"
+            checked
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="service">Service:</label>
+          <select class="form-control" id="service" name="service">
+            <option value="internal">internal</option>
+            <option value="HuggingFace">HuggingFace</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="selectorType">Selector Type:</label>
+          <input
+            type="text"
+            id="selectorType"
+            name="selector.type"
+            value="FragmentSelector"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="selectorConformsTo">Selector Conforms To:</label>
+          <input
+            type="text"
+            id="selectorConformsTo"
+            name="selector.conformsTo"
+            value="http://www.w3.org/TR/media-frags/"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="selectorValue">Selector Value:</label>
+          <input
+            type="text"
+            id="selectorValue"
+            name="selector.value"
+            value="xywh=percent:50,50,100,100"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="ldSource">LD Source:</label>
+          <select class="form-control" id="ldSource" name="ld_source">
+            <option value="Wikidata">Wikidata</option>
+            <option value="FT">Europeana Fashion Thesaurus</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="source">Source URL:</label>
+          <input
+            type="url"
+            id="source"
+            name="source"
+            value="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="annotationType">Annotation Type:</label>
+          <select
+            class="form-control"
+            id="annotationType"
+            name="annotation_type"
+          >
+            <option value="internal">internal</option>
+            <option value="ntua">NTUA</option>
+            <option value="europeana">Europeana</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="submitForm()">
+          Submit
+        </button>
+      </form>
+
+      <pre id="result"></pre>
+      <script>
+        function submitForm() {
+          const form = document.getElementById("colorForm");
+          const formData = new FormData(form);
+
+          // Convert FormData to a JSON object
+          const jsonObject = { selector: {} };
+          formData.forEach((value, key) => {
+            if (
+              key == "selector.type" ||
+              key == "selector.conformsTo" ||
+              key == "selector.value"
+            ) {
+              jsonObject["selector"][key.split(".")[1]] = value;
+            } else {
+              jsonObject[key] = value;
+            }
+          });
+
+          console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging);
+
+          // Send the JSON object to your API
+          fetch("/v1/color", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonObject),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Display the result on the screen
+              document.getElementById("result").textContent = JSON.stringify(
+                data,
+                null,
+                2,
+              );
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      </script>
+    </div>
+  </body>
+</html>
