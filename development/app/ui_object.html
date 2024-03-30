@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <title>Object Detection Parameters</title>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <h1 class="mb-4">Object Detection Parameters</h1>
+      <form id="objectForm">
+        <div class="form-group">
+          <label for="minConfidence">Min Confidence:</label>
+          <input
+            type="text"
+            id="minConfidence"
+            name="min_confidence"
+            value="0.8"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="maxObjects">Max Objects:</label>
+          <input
+            type="text"
+            id="maxObjects"
+            name="max_objects"
+            size="150"
+            value="1"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="service">Service:</label>
+          <select class="form-control" id="service" name="service">
+            <option value="internal">internal</option>
+            <option value="GoogleVision">GoogleVision</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="service_key">Service Key:</label>
+          <input
+            type="text"
+            id="service_key"
+            name="service_key"
+            value=""
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="source">Source URL:</label>
+          <input
+            type="url"
+            id="source"
+            name="source"
+            value="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
+            size="150"
+          /><br />
+        </div>
+
+        <div class="form-group">
+          <label for="annotationType">Annotation Type:</label>
+          <select
+            class="form-control"
+            id="annotationType"
+            name="annotation_type"
+          >
+            <option value="internal">internal</option>
+            <option value="ntua">NTUA</option>
+            <option value="europeana">Europeana</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn btn-primary" onclick="submitForm()">
+          Submit
+        </button>
+      </form>
+
+      <pre id="result"></pre>
+      <script>
+        function submitForm() {
+          const form = document.getElementById("objectForm");
+          const formData = new FormData(form);
+
+          // Convert FormData to a JSON object
+          const jsonObject = {};
+          formData.forEach((value, key) => {
+            jsonObject[key] = value;
+          });
+
+          console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging);
+
+          // Send the JSON object to your API
+          fetch("/v1/object", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(jsonObject),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              // Display the result on the screen
+              document.getElementById("result").textContent = JSON.stringify(
+                data,
+                null,
+                2,
+              );
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+            });
+        }
+      </script>
+    </div>
+  </body>
+</html>

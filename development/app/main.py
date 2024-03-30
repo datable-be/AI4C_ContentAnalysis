@@ -63,7 +63,19 @@ async def info(q: str | None = None) -> JSONResponse:
 
 @app.get('/ui/color')
 async def ui_color():
+    """
+    Color detection user interface
+    """
     with open('ui_color.html', 'r') as reader:
+        return HTMLResponse(content=reader.read())
+
+
+@app.get('/ui/object')
+async def ui_object():
+    """
+    Object detection user interface
+    """
+    with open('ui_object.html', 'r') as reader:
         return HTMLResponse(content=reader.read())
 
 
