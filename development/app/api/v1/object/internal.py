@@ -169,6 +169,7 @@ def detection(request: ObjectRequest, net: Net, settings: dict) -> dict:
             housekeeping(TEMP_DIR)
             basename = identifier + '_' + str(count) + extension_from_url(url)
             filepath = join(TEMP_DIR, basename)
+            print(filepath, ' saved')
             imwrite(filepath, annotated_image)
             url = (
                 settings['host']

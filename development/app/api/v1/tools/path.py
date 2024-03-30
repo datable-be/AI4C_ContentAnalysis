@@ -9,7 +9,7 @@ def housekeeping(directory: str) -> None:
 
     directory_path = Path(directory)
 
-    check_file = directory_path / ".housekeeping"
+    check_file = directory_path / '.housekeeping'
 
     # Create check_file if it does not exist
     if not check_file.exists():
@@ -22,10 +22,10 @@ def housekeeping(directory: str) -> None:
         return None
 
     for filename in directory_path.iterdir():
-        print(filename)
-        if str(filename) == ".housekeeping":
+        if str(filename) == '.housekeeping':
             continue
         filepath = directory_path / filename
+        print(f'housekeeping: {filepath} removed')
 
         # Remove if the file is older than one day
         if filepath.stat().st_mtime < now - 24 * 60 * 60:
