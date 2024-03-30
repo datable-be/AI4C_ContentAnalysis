@@ -50,10 +50,12 @@ with open('description.md', 'r') as f:
     DESCRIPTION = f.read()
 
 # Tempdir for saving images
-# (saved on the machine's filesystem, usually in /var/lib/docker)
-# Do not change!
 
-TEMP_DIR = '/tmp'
+TEMP_DIR = 'tmp'
+
+# Tempdir for local images
+
+IMAGE_DIR = 'images'
 
 
 # Object neural net
