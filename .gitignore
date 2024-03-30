@@ -2,4 +2,6 @@ doc/notes.md
 doc/google-api
 venv/*
 **/__pycache__/*
+development/app/images/*
+!development/app/images/example.jpg
 
