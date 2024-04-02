@@ -83,7 +83,7 @@
             type="text"
             id="selectorValue"
             name="selector.value"
-            value="xywh=percent:50,50,100,100"
+            value="xywh=percent:0,0,100,100"
             size="150"
           /><br />
         </div>
@@ -97,14 +97,17 @@
         </div>
 
         <div class="form-group">
-          <label for="source">Source URL:</label>
+          <label for="source">Source:</label>
           <input
-            type="url"
+            list="sourcedata"
             id="source"
             name="source"
             value="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
             size="150"
           /><br />
+          <datalist id="sourcedata">
+            <option></option>
+          </datalist>
         </div>
 
         <div class="form-group">

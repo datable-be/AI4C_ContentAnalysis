@@ -21,15 +21,14 @@ def housekeeping(directory: str) -> None:
     if check_file.stat().st_mtime > now - 24 * 60 * 60:
         return None
 
-    for filename in directory_path.iterdir():
-        if str(filename) == '.housekeeping':
+    for filepath in directory_path.iterdir():
+        if str(filepath.name) == '.housekeeping':
             continue
-        filepath = directory_path / filename
-        print(f'housekeeping: {filepath} removed')
 
         # Remove if the file is older than one day
         if filepath.stat().st_mtime < now - 24 * 60 * 60:
             filepath.unlink()
+            print(f'housekeeping: {filepath} removed')
 
     # Update checkfile
     check_file.touch()

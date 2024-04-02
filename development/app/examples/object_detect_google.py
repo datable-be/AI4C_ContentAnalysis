@@ -5,7 +5,8 @@ import sys
 URL = 'http://0.0.0.0:8000/v1/object'
 
 EXAMPLES = {
-    'bicycle': 'https://cloud.google.com/vision/docs/images/bicycle_example.png'
+    'bicycle': 'https://cloud.google.com/vision/docs/images/bicycle_example.png',
+    'local_file': 'example.jpg',
 }
 
 with open(
@@ -16,12 +17,14 @@ with open(
 REQUEST = f"""{{
     "min_confidence": 0.9,
     "max_objects": 3,
-    "source":"https://cloud.google.com/vision/docs/images/bicycle_example.png",
+    "source":"example.jpg",
     "service":"GoogleVision",
     "service_key":"{KEY}",
-    "annotation_type": "ntua"
+    "annotation_type": "internal"
 }}
 """
+
+# to do: local image does not work with ntua annotation type
 
 
 def json_pretty_print(json_string: str):

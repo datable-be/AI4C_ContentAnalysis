@@ -11,6 +11,7 @@ EXAMPLES = {
     'logo_coca_cola': 'https://static.independent.co.uk/s3fs-public/thumbnails/image/2018/08/09/10/coco-cola.jpg',
     'dog_and_horse': 'https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true',
     'sheep_in_a_meadow': 'https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg',
+    'local_file': 'example.jpg',
 }
 
 REQUEST = """{

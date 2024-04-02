@@ -1,5 +1,8 @@
 from os.path import join, exists
+from threading import local
 from typing import Union, Annotated
+from pathlib import Path
+from pydantic_core._pydantic_core import Url
 
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
@@ -21,6 +24,7 @@ from constants import (
 )
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
+from api.v1.tools.tools import ui_template
 
 # Eagerly load models (once, at startup)
 
@@ -66,8 +70,8 @@ async def ui_color():
     """
     Color detection user interface
     """
-    with open('ui_color.html', 'r') as reader:
-        return HTMLResponse(content=reader.read())
+
+    return ui_template('ui_color.html')
 
 
 @app.get('/ui/object')
@@ -75,8 +79,8 @@ async def ui_object():
     """
     Object detection user interface
     """
-    with open('ui_object.html', 'r') as reader:
-        return HTMLResponse(content=reader.read())
+
+    return ui_template('ui_object.html')
 
 
 @app.get('/image')
@@ -107,7 +111,9 @@ async def object_detection(
     so that Pydantic documents the possible return structures
     """
     try:
-        return object_detect.detection(request, net, SETTINGS)
+        return object_detect.detection(
+            request, net, SETTINGS, isinstance(request.source, Url)
+        )
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
 
@@ -125,9 +131,13 @@ async def color_detection(
     """
 
     try:
-        data = color_detect.detection(
-            request, net, color_model, color_processor, SETTINGS
+        return color_detect.detection(
+            request,
+            net,
+            color_model,
+            color_processor,
+            SETTINGS,
+            isinstance(request.source, Url),
         )
-        return data
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))

@@ -2,7 +2,7 @@ from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from constants import APP_URL
+from constants import APP_URL, IMAGE_DIR
 from api.v1.color.internal import detection as internal_detection
 from api.v1.color.huggingface import detection as huggingface_detection
 from api.v1.annotation.conversion import convert
@@ -32,6 +32,7 @@ def detection(
     color_model: BlipForQuestionAnswering,
     color_processor: BlipProcessor,
     settings: dict,
+    url_source: bool,
 ) -> dict:
 
     if settings.get('dummy'):
@@ -45,12 +46,24 @@ def detection(
     if color_request.id == '':
         color_request.id = APP_URL + '/color-annotations/' + str(uuid4())
 
+    # source to string
+    color_request.source = str(color_request.source)
+
+    # determine correct path for local image files
+    if not url_source:
+        color_request.source = f'{IMAGE_DIR}/' + color_request.source
+
     if color_request.service == RequestService.internal:
-        result = internal_detection(color_request, net, settings)
+        result = internal_detection(color_request, net, settings, url_source)
 
     elif color_request.service == RequestService.huggingface:
         result = huggingface_detection(
-            color_request, net, color_model, color_processor, settings
+            color_request,
+            net,
+            color_model,
+            color_processor,
+            settings,
+            url_source,
         )
 
     if color_request.annotation_type == 'internal':

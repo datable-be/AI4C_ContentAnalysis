@@ -22,25 +22,25 @@ def resize_image(image: ndarray, pixels: int):
 def download(url: str) -> bytes:
     try:
         with urlopen(url) as urlreader:
-            response = urlreader.read()
-            return response
+            return urlreader.read()
     except (HTTPError, URLError) as err:
         raise HTTPException(status_code=404, detail=str(err))
 
 
-def load_cv2_image_from_url(
-    url: str,
+def load_cv2_image_from_source(
+    source: str,
     resize_pixels: int | None,
+    url: bool,
     readFlag=IMREAD_COLOR,
 ) -> ndarray:
     """
-    Download an image, convert it to a NumPy array, and then read
+    Read or download an image, convert it to a NumPy array, and then read
     it into OpenCV format. Resize if necessary.
     """
 
-    response = download(url)
+    data = read_source(source, url=url)
 
-    image_array = asarray(bytearray(response), dtype='uint8')
+    image_array = asarray(bytearray(data), dtype='uint8')
     image = imdecode(image_array, readFlag)
 
     if resize_pixels:
@@ -49,45 +49,58 @@ def load_cv2_image_from_url(
     return image
 
 
-def url_to_temppath(url: str) -> str:
+def source_to_temppath(source: str) -> str:
     """
-    Transform a URL into a temporary file path
+    Transform a source into a temporary file path
     """
-    basename = hash_object(url) + extension_from_url(url)
+    basename = hash_object(source) + extension_from_source(source)
     temppath = join(TEMP_DIR, basename)
     return temppath
 
 
-def url_to_tempfile(
-    url: str,
-    resize_pixels: int | None,
+def read_source(source: str, url: bool) -> bytes:
+    """
+    Read the bytes from a source (either URL or filepath)
+    """
+    if url:
+        return download(source)
+    else:
+        with open(source, 'rb') as file:
+            return file.read()
+
+
+def source_to_tempfile(
+    source: str, resize_pixels: int | None, url: bool
 ) -> str:
     """
     Download an image and save it to a tempfile location. Resize if necessary.
     """
 
-    temppath = url_to_temppath(url)
+    temppath = source_to_temppath(source)
 
     if resize_pixels:
-        image = load_cv2_image_from_url(url, resize_pixels=resize_pixels)
+        image = load_cv2_image_from_source(
+            source, resize_pixels=resize_pixels, url=url
+        )
         imwrite(temppath, image)
     else:
-        response = download(url)
+        data = read_source(source, url=url)
+
         with open(temppath, 'wb') as file:
-            file.write(response)
+            file.write(data)
 
     return temppath
 
 
-def extension_from_url(url: str) -> str:
+def extension_from_source(source: str) -> str:
     """
-    Get an extension from a URL (including those with ?raw=true and such at the end))
+    Get an extension from a source (including URLs with ?raw=true and such at the end))
     """
 
     extension = ''
 
-    if '.' in url:
-        parts = url.split('.')
+    if '.' in source:
+        parts = source.split('.')
         extension = parts[-1]
         for sep in ['?']:
             extension = extension.partition(sep)[0]

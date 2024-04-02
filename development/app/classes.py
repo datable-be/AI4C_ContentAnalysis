@@ -91,7 +91,10 @@ class ObjectRequest(BaseModel):
         description='Maximum number of objects to retrieve (default=1)',
         default=1,
     )
-    source: HttpUrl = Field(title='source', description='HTTP(S) URL to image')
+    source: HttpUrl | str = Field(
+        title='source',
+        description='HTTP(S) URL to image or reference to file in local image directory',
+    )
     service: RequestService = Field(
         title='service',
         description='Name of the object detection service',
@@ -137,7 +140,10 @@ class ColorRequest(BaseModel):
         description='Name of the color detection service',
         default=RequestService.internal,
     )
-    source: HttpUrl = Field(title='source', description='HTTP(S) URL to image')
+    source: HttpUrl | str = Field(
+        title='source',
+        description='HTTP(S) URL to image or reference to file in local image directory',
+    )
     foreground_detection: bool = Field(
         title='foreground_detection',
         description='Whether the tool should apply foreground detection for the given area (default=True)',
@@ -161,7 +167,16 @@ class GoogleSource(BaseModel):
 
 class GoogleImage(BaseModel):
     source: GoogleSource = Field(
-        title='Google Image source', description='Source of the image'
+        title='Google Image source',
+        description='Source of the image',
+    )
+
+
+class GoogleContent(BaseModel):
+    content: str = Field(
+        title='Base64 encoded image',
+        description='The base64 representation (ASCII string) of your binary image data',
+        default='',
     )
 
 
@@ -175,8 +190,9 @@ class GoogleFeature(BaseModel):
 
 
 class GoogleVisionRequest(BaseModel):
-    image: GoogleImage = Field(
-        title='Google Image', description='Meta data of the image'
+    image: GoogleImage | GoogleContent = Field(
+        title='Google Image (URL) or base64 encoded image content',
+        description='Meta data of the image',
     )
     features: List[GoogleFeature] = Field(
         title='Features', description='Features to be applied'
@@ -226,7 +242,7 @@ class NtuaSelector(BaseModel):
 
 
 class NtuaTarget(BaseModel):
-    source: HttpUrl = Field(
+    source: HttpUrl | str = Field(
         title='source',
         description='URI of the object the annotation refers to',
     )

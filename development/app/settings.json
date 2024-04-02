@@ -1,12 +1,12 @@
 {
-    "object_detection": {
-        "URI_type": "wikidata"
-    },
-    "color_detection": {
-        "URI_type": "wikidata"
-    },
-    "debug": true,
-    "dummy": false,
-    "host": "http://localhost",
-    "port": 8000
+  "object_detection": {
+    "URI_type": "wikidata"
+  },
+  "color_detection": {
+    "URI_type": "wikidata"
+  },
+  "debug": true,
+  "dummy": false,
+  "host": "http://localhost",
+  "port": 8000
 }

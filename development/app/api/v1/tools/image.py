@@ -1,18 +1,23 @@
 from cv2 import imwrite, imread, grabCut, GC_INIT_WITH_RECT
 from cv2.dnn import Net
 import numpy as np
+import base64
 
 from classes import ColorRequest, ObjectRequest
-from api.v1.tools.url import (
-    url_to_tempfile,
-    url_to_temppath,
-    load_cv2_image_from_url,
+from api.v1.tools.source import (
+    source_to_tempfile,
+    source_to_temppath,
+    load_cv2_image_from_source,
 )
 from api.v1.object.internal import detection
 
 
 def determine_image(
-    color_request: ColorRequest, net: Net, settings: dict, resize: int | None
+    color_request: ColorRequest,
+    net: Net,
+    settings: dict,
+    resize: int | None,
+    url_source: bool,
 ) -> str:
     """
     Determine which image to use for color detection:
@@ -22,11 +27,11 @@ def determine_image(
     Returns a path to a temporary file where the image is saved
     """
 
-    url = str(color_request.source)
-
     if not color_request.foreground_detection:
         # No cropping needs to be applied
-        return url_to_tempfile(url, resize_pixels=resize)
+        return source_to_tempfile(
+            color_request.source, resize_pixels=resize, url=url_source
+        )
 
     else:
         if color_request.selector.value == 'xywh=percent:0,0,100,100':
@@ -37,13 +42,22 @@ def determine_image(
                 source=color_request.source,
                 min_confidence=0.5,
             )
-            result = detection(object_request, net, settings)
+            result = detection(object_request, net, settings, url_source)
             objects_found = result.get('data')
             if not objects_found:
-                return url_to_tempfile(url, resize_pixels=200)
+                return source_to_tempfile(
+                    color_request.source, resize_pixels=200, url=url_source
+                )
             else:
                 box = objects_found[0].get('box_px')
-                return crop_image(url, box, resize, mode='px', foreground=True)
+                return crop_image(
+                    color_request.source,
+                    box,
+                    resize,
+                    mode='px',
+                    foreground=True,
+                    url=url_source,
+                )
 
         else:
             # Use supplied box coordinates
@@ -53,22 +67,32 @@ def determine_image(
                     2
                 ].split(',')
             ]
-            return crop_image(url, box, resize, mode='pc', foreground=False)
+            return crop_image(
+                color_request.source,
+                box,
+                resize,
+                mode='pc',
+                foreground=False,
+                url=url_source,
+            )
 
 
 def crop_image(
-    url: str,
+    source: str,
     box: list[int],
     resize_pixels: int | None,
     mode: str,
     foreground: bool,
+    url: bool,
 ) -> str:
     """
-    Crop an image from URL using specified box coordinates
+    Crop an image from a source using specified box coordinates
     and return tempfile path to cropped image
     """
 
-    image = load_cv2_image_from_url(url, resize_pixels=resize_pixels)
+    image = load_cv2_image_from_source(
+        source, resize_pixels=resize_pixels, url=url
+    )
 
     # Convert box percentages to box coordinates
 
@@ -100,7 +124,16 @@ def crop_image(
         cropped_image = image[box[1] : box[3], box[0] : box[2]]
 
     # Save image
-    temppath = url_to_temppath(url)
+    temppath = source_to_temppath(source)
     imwrite(temppath, cropped_image)
 
     return temppath
+
+
+def encode_image(image):
+    """
+    Make a base64 encoded image
+    """
+    with open(image, 'rb') as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return encoded_string

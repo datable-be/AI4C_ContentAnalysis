@@ -11,9 +11,13 @@ from api.v1.tools.image import determine_image
 from classes import ColorRequest
 
 
-def detection(color_request: ColorRequest, net: Net, settings: dict) -> dict:
+def detection(
+    color_request: ColorRequest, net: Net, settings: dict, url_source: bool
+) -> dict:
     result = {}
-    temp_path = determine_image(color_request, net, settings, resize=200)
+    color_request.source = str(color_request.source)
+
+    temp_path = determine_image(color_request, net, settings, 200, url_source)
 
     # Detect colors
     if not temp_path:

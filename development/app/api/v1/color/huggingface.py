@@ -5,7 +5,7 @@ from cv2.dnn import Net
 import torch
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from api.v1.tools.image import url_to_tempfile, determine_image
+from api.v1.tools.image import source_to_tempfile, determine_image
 from api.v1.tools.color import extract_colors_from_sentence, add_URIs
 
 from classes import ColorRequest
@@ -17,10 +17,11 @@ def detection(
     model: BlipForQuestionAnswering,
     processor: BlipProcessor,
     settings: dict,
+    url_source: bool,
 ) -> dict:
     result = {}
 
-    temp_path = determine_image(color_request, net, settings, resize=None)
+    temp_path = determine_image(color_request, net, settings, None, url_source)
     if not temp_path:
         return result
 

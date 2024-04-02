@@ -1,10 +1,14 @@
 from os.path import join
+
 from cv2 import rectangle, putText, imwrite, FONT_HERSHEY_SIMPLEX
 from cv2.dnn import blobFromImage, Net
 
 from classes import ObjectRequest
 from constants import COCO_LABELS, COCO_2_WIKIDATA, TEMP_DIR
-from api.v1.tools.url import load_cv2_image_from_url, extension_from_url
+from api.v1.tools.source import (
+    load_cv2_image_from_source,
+    extension_from_source,
+)
 from api.v1.tools.path import housekeeping
 from api.v1.tools.tools import hash_object
 
@@ -54,16 +58,21 @@ MODEL_RESPONSE = {
 #      "source": "http://example.com/images/123.jpg",
 #      "service":"internal",
 #      "service_key":"****"
-def detection(request: ObjectRequest, net: Net, settings: dict) -> dict:
+def detection(
+    request: ObjectRequest, net: Net, settings: dict, url_source: bool
+) -> dict:
     if settings.get('dummy'):
         return MODEL_RESPONSE
+
+    request.source = str(request.source)
 
     # Request identifier
     identifier = hash_object(request)
 
     # Read image, resize (height value)
-    url = str(request.source)
-    image = load_cv2_image_from_url(url, resize_pixels=200)
+    image = load_cv2_image_from_source(
+        request.source, resize_pixels=200, url=url_source
+    )
     image_height = image.shape[0]
     image_width = image.shape[1]
 
@@ -167,7 +176,12 @@ def detection(request: ObjectRequest, net: Net, settings: dict) -> dict:
 
             # Save image
             housekeeping(TEMP_DIR)
-            basename = identifier + '_' + str(count) + extension_from_url(url)
+            basename = (
+                identifier
+                + '_'
+                + str(count)
+                + extension_from_source(request.source)
+            )
             filepath = join(TEMP_DIR, basename)
             print(filepath, ' saved')
             imwrite(filepath, annotated_image)

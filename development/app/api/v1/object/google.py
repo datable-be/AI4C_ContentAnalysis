@@ -5,18 +5,19 @@ from classes import (
     GoogleVisionRequest,
     GoogleFeatureType,
     GoogleImage,
+    GoogleContent,
     GoogleSource,
     GoogleFeature,
     RequestService,
 )
 from constants import GOOGLE_VISION_URL
+from api.v1.tools.image import encode_image
 
 
 def Object2GoogleVisionRequest(
-    object_request: ObjectRequest,
+    object_request: ObjectRequest, url_source: bool
 ) -> GoogleVisionRequest:
-    google_source = GoogleSource(imageUri=object_request.source)
-    google_image = GoogleImage(source=google_source)
+
     google_features = [
         GoogleFeature(
             maxResults=object_request.max_objects,
@@ -26,6 +27,16 @@ def Object2GoogleVisionRequest(
             maxResults=object_request.max_objects, type=GoogleFeatureType.label
         ),
     ]
+
+    if url_source:
+        google_image = GoogleImage(
+            source=GoogleSource(imageUri=object_request.source)
+        )
+    else:
+        google_image = GoogleContent(
+            content=encode_image(object_request.source)
+        )
+
     return GoogleVisionRequest(image=google_image, features=google_features)
 
 
@@ -62,7 +73,9 @@ def handle_google_response(
 #      "source": "https://cloud.google.com/vision/docs/images/bicycle_example.png",
 #      "service":"GoogleVision",
 #      "service_key":"****"
-def detection(request: ObjectRequest, settings: dict) -> dict:
+def detection(
+    request: ObjectRequest, settings: dict, url_source: bool
+) -> dict:
     result = {}
     result['data'] = []
     result['error'] = []
@@ -70,7 +83,7 @@ def detection(request: ObjectRequest, settings: dict) -> dict:
     url = GOOGLE_VISION_URL + request.service_key
     json_request = (
         '{"requests":['
-        + Object2GoogleVisionRequest(request).model_dump_json()
+        + Object2GoogleVisionRequest(request, url_source).model_dump_json()
         + ']}'
     )
     response = post(url, json_request, timeout=10)
