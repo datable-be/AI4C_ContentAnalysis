@@ -43,7 +43,7 @@ def detection(
 
     # make id if not provided
     if color_request.id == '':
-        color_request.id = APP_URL + '/object-annotations/' + str(uuid4())
+        color_request.id = APP_URL + '/color-annotations/' + str(uuid4())
 
     if color_request.service == RequestService.internal:
         result = internal_detection(color_request, net, settings)
