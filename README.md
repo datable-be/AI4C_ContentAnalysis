@@ -100,6 +100,8 @@ This is an example of the settings file for installation in a local testing envi
 }
 ```
 
+Note that the port you supply in this settings file should be the same as the one provided in the Docker files!
+
 ## Architecture
 
 ### Python virtual environment
@@ -570,6 +572,10 @@ Expected output:
 
 If, however, there is an error in generating the response, the client will receive an "Internal Server Error" with a HTTP status code 500. We do not catch these, as these are bugs in the code that would otherwise remain undetected. If you notice any such bug, please report it to us via the GitHub [issue tracker](https://github.com/datable-be/AI4C_ContentAnalysis/issues).
 
+### Web interface
+
+The API also comes with a basic web interface for both object and color requests, accessible via URL paths `/v1/ui/object` and/or `/v1/ui/color`.
+
 ## Benchmarks
 
 The following benchmarks were run with [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) on a local development machine with the following specifications:
@@ -743,6 +749,23 @@ The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/
 #### HuggingFace
 
 Alternatively, one can use the [HuggingFace blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specied region). Next, it determines the colors in the image.
+
+### Using local images
+
+By default the API expects the supplied `source` key to be a HTTP(S) URL. However both object and color detection can also be performed on local images, provided one has access to the local system the Docker container is running on.
+
+Local images should first be stored in the `images` directory (`development/app/images` relative to the root of the git repository) and then entered in the `source` key of the POST request parameters, e.g.:
+
+```json
+{
+  "id": "",
+  "min_confidence": 0.5,
+  "max_objects": 3,
+  "source": "example.jpg",
+  "service": "internal",
+  "service_key": ""
+}
+```
 
 ## Read more
 
