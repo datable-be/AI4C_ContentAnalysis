@@ -15,27 +15,25 @@ from api.v1.tools.image import encode_image
 
 
 def Object2GoogleVisionRequest(
-    object_request: ObjectRequest, url_source: bool
+    request: ObjectRequest, url_source: bool
 ) -> GoogleVisionRequest:
 
     google_features = [
         GoogleFeature(
-            maxResults=object_request.max_objects,
+            maxResults=request.max_objects,
             type=GoogleFeatureType.localization,
         ),
         GoogleFeature(
-            maxResults=object_request.max_objects, type=GoogleFeatureType.label
+            maxResults=request.max_objects, type=GoogleFeatureType.label
         ),
     ]
 
     if url_source:
         google_image = GoogleImage(
-            source=GoogleSource(imageUri=object_request.source)
+            source=GoogleSource(imageUri=request.source)
         )
     else:
-        google_image = GoogleContent(
-            content=encode_image(object_request.source)
-        )
+        google_image = GoogleContent(content=encode_image(request.source))
 
     return GoogleVisionRequest(image=google_image, features=google_features)
 

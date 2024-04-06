@@ -204,8 +204,8 @@ def detection(
         sorted_objects = sorted_objects[0 : request.max_objects]
 
     result = {}
-    result['detection_id'] = identifier
     result['request_id'] = request.id
+    result['source'] = request.source
     result['data'] = sorted_objects
 
     return result

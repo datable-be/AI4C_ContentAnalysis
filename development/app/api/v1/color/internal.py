@@ -12,12 +12,12 @@ from classes import ColorRequest
 
 
 def detection(
-    color_request: ColorRequest, net: Net, settings: dict, url_source: bool
+    request: ColorRequest, net: Net, settings: dict, url_source: bool
 ) -> dict:
     result = {}
-    color_request.source = str(color_request.source)
+    request.source = str(request.source)
 
-    temp_path = determine_image(color_request, net, settings, 200, url_source)
+    temp_path = determine_image(request, net, settings, 200, url_source)
 
     # Detect colors
     if not temp_path:
@@ -26,9 +26,9 @@ def detection(
     (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
     eft_colors = convert_colors_to_EFT(colors)
     percentages = merge_colors_with_threshold_and_max(
-        eft_colors, total_pixel_count, 5, color_request.max_colors
+        eft_colors, total_pixel_count, 5, request.max_colors
     )
-    result['colors'] = add_URIs(percentages)
+    result['data'] = {'colors': add_URIs(percentages)}
 
     # Remove tempfile
     if settings.get('debug'):
@@ -40,8 +40,11 @@ def detection(
             + '/image?img='
             + basename
         )
-        result['cropped_image'] = url
+        result['data']['cropped_image'] = url
     else:
         Path(temp_path).unlink(missing_ok=True)
+
+    result['request_id'] = request.id
+    result['source'] = request.source
 
     return result

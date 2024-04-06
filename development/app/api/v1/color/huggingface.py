@@ -5,14 +5,14 @@ from cv2.dnn import Net
 import torch
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from api.v1.tools.image import source_to_tempfile, determine_image
+from api.v1.tools.image import determine_image
 from api.v1.tools.color import extract_colors_from_sentence, add_URIs
 
 from classes import ColorRequest
 
 
 def detection(
-    color_request: ColorRequest,
+    request: ColorRequest,
     net: Net,
     model: BlipForQuestionAnswering,
     processor: BlipProcessor,
@@ -21,7 +21,10 @@ def detection(
 ) -> dict:
     result = {}
 
-    temp_path = determine_image(color_request, net, settings, None, url_source)
+    # Switch off foreground detection (is done by model)!
+    request.foreground_detection = False
+
+    temp_path = determine_image(request, net, settings, None, url_source)
     if not temp_path:
         return result
 
@@ -62,6 +65,7 @@ def detection(
                 'Which colors are the clothes of the model on the runway?'
             )
         else:
+            print('answer_object:', answer_object)
             question_color = 'Which colors has the ' + answer_object + '?'
 
         # Determine color
@@ -76,7 +80,10 @@ def detection(
         # HuggingFace does not allow to determine percentages
         colors_with_fake_percentages = {color: None for color in colors}
 
-        result['colors'] = add_URIs(colors_with_fake_percentages)
+        result['data'] = {'colors': add_URIs(colors_with_fake_percentages)}
+
+        result['request_id'] = request.id
+        result['source'] = request.source
 
     except Exception as e:
         # to do (see also object error handling?)
