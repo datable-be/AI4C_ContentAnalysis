@@ -138,15 +138,21 @@
           const jsonObject = { selector: {} };
           formData.forEach((value, key) => {
             if (
-              key == "selector.type" ||
-              key == "selector.conformsTo" ||
-              key == "selector.value"
+              key === "selector.type" ||
+              key === "selector.conformsto" ||
+              key === "selector.value"
             ) {
               jsonObject["selector"][key.split(".")[1]] = value;
+            } else if (key === "foreground_detection") {
+              jsonObject[key] = true;
             } else {
               jsonObject[key] = value;
             }
           });
+
+          // Unchecked checkbox is not present in object!
+          jsonObject["foreground_detection"] =
+            jsonObject["foreground_detection"] || false;
 
           console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging);
 
