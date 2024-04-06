@@ -161,11 +161,11 @@
             .then((response) => response.json())
             .then((data) => {
               // Display the result on the screen
-              document.getElementById("result").textContent = JSON.stringify(
-                data,
-                null,
-                2,
+              jsonstring = JSON.stringify(data, null, 2).replace(
+                /(https?:\/\/[^",]+)/g,
+                '<a href="$1" target="_blank">$1</a>',
               );
+              document.getElementById("result").innerHTML = jsonstring;
             })
             .catch((error) => {
               console.error("Error:", error);
