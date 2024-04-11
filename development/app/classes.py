@@ -108,7 +108,7 @@ class ObjectRequest(BaseModel):
     annotation_type: AnnotationType = Field(
         title='annotation_type',
         description='Type of annotation standard to be used',
-        default=AnnotationType.w3c,
+        default=AnnotationType.internal,
     )
 
 
@@ -155,7 +155,7 @@ class ColorRequest(BaseModel):
     annotation_type: AnnotationType = Field(
         title='annotation_type',
         description='Type of annotation standard to be used',
-        default=AnnotationType.w3c,
+        default=AnnotationType.internal,
     )
 
 
