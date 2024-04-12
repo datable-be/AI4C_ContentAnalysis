@@ -15,7 +15,7 @@ from classes import (
 
 from constants import GOOGLE_KG_URL
 
-from api.v1.annotation.tools import get_utc_timestamp
+from api.v1.annotation.tools import get_utc_timestamp, google_mid_to_wikidata
 
 
 def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
@@ -45,19 +45,23 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
             annotations.append(annotation)
 
     elif request.service == RequestService.googlevision:
-        for item in data['data'][0]['labelAnnotations']:
+        for item in data['data'][0]['localizedObjectAnnotations']:
 
             # to do: check selector (see 'box' key)
             selector = NtuaSelector()
             target = NtuaTarget(source=request.source, selector=selector)
+
+            wikidata_identifier = google_mid_to_wikidata(item['mid'])
+            if wikidata_identifier == '':
+                wikidata_identifier = GOOGLE_KG_URL + item['mid']
 
             annotation = NtuaAnnotation(
                 # to do: is this correct? always same id?
                 id=request.id,
                 created=get_utc_timestamp(),
                 creator=creator,
-                # to do: Datable docs conflict specification? + uri?
-                body=[GOOGLE_KG_URL + item['mid']],
+                # to do: Datable docs conflict specification?
+                body=[wikidata_identifier],
                 confidence=item['score'],
                 target=target,
                 review=NtuaValidationReview(),

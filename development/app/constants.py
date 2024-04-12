@@ -34,6 +34,10 @@ APP_URL = 'https://github.com/datable-be/AI4C_ContentAnalysis'
 
 GOOGLE_KG_URL = 'https://www.google.com/search?kgmid='
 
+# Wikidata SPARQL endpoint
+
+WIKIDATA_SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql'
+
 # Application system settings
 
 with open('settings.json', 'r') as f:
