@@ -65,7 +65,6 @@ def detection(
                 'Which colors are the clothes of the model on the runway?'
             )
         else:
-            print('answer_object:', answer_object)
             question_color = 'Which colors has the ' + answer_object + '?'
 
         # Determine color
