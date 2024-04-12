@@ -1,6 +1,8 @@
 from pathlib import Path
 from time import time
 
+from constants import SETTINGS
+
 
 def housekeeping(directory: str) -> None:
     """
@@ -18,7 +20,7 @@ def housekeeping(directory: str) -> None:
     now = time()
 
     # Return if check_file is younger than one day
-    if check_file.stat().st_mtime > now - 24 * 60 * 60:
+    if check_file.stat().st_mtime > now - SETTINGS['housekeeping_interval']:
         return None
 
     for filepath in directory_path.iterdir():
@@ -26,7 +28,7 @@ def housekeeping(directory: str) -> None:
             continue
 
         # Remove if the file is older than one day
-        if filepath.stat().st_mtime < now - 24 * 60 * 60:
+        if filepath.stat().st_mtime < now - SETTINGS['housekeeping_interval']:
             filepath.unlink()
             print(f'housekeeping: {filepath} removed')
 

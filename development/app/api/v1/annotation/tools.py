@@ -1,4 +1,10 @@
 import datetime
+import requests
+import sys
+
+# from constants import WIKIDATA_SPARQL_ENDPOINT
+
+WIKIDATA_SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql'
 
 
 def get_utc_timestamp():
@@ -9,3 +15,45 @@ def get_utc_timestamp():
     formatted_time = current_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
 
     return formatted_time
+
+
+def sparql(query: str, endpoint: str) -> requests.Response:
+    """
+    Execute a query to a SPARQL endpoint
+    """
+    try:
+        return requests.get(
+            endpoint, params={'format': 'json', 'query': query}
+        )
+    except Exception as e:
+        sys.exit(e)
+
+
+def google_mid_to_wikidata(mid: str) -> str:
+    """
+    Translate a Google "mid" (Freebase) identifier to Wikidata Q entity
+    """
+    query = f"""SELECT DISTINCT ?item ?itemLabel WHERE {{
+          SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+          {{
+            SELECT DISTINCT ?item WHERE {{
+              ?item p:P646 ?statement0.
+              ?statement0 ps:P646 "{mid}".
+            }}
+            LIMIT 1
+          }}
+        }}
+        """
+
+    sparql_response = sparql(query, WIKIDATA_SPARQL_ENDPOINT)
+    sparql_result = sparql_response.json()
+    if not 'bindings' in sparql_result['results']:
+        return ''
+    else:
+        q_entity = sparql_result['results']['bindings'][0]['item']['value']
+
+    return q_entity
+
+
+if __name__ == '__main__':
+    print(google_mid_to_wikidata('/m/07bgp'))

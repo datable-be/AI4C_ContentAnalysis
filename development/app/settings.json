@@ -8,5 +8,6 @@
   "debug": true,
   "dummy": false,
   "host": "http://localhost",
-  "port": 8000
+  "port": 8000,
+  "housekeeping_interval": 86400
 }
