@@ -19,3 +19,4 @@ extcolors==1.0.0
 Pillow==10.0.1
 transformers==4.38.1
 torch==2.2.1
+pytest==8.0.1
