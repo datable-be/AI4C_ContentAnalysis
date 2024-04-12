@@ -1,4 +1,4 @@
-from cv2 import imwrite, imread, grabCut, GC_INIT_WITH_RECT
+from cv2 import imwrite, grabCut, GC_INIT_WITH_RECT
 from cv2.dnn import Net
 import numpy as np
 import base64
@@ -130,10 +130,11 @@ def crop_image(
     return temppath
 
 
-def encode_image(image):
+def encode_image(image_path: str):
     """
-    Make a base64 encoded image
+    Make a base64 encoded image. First resize for performance.
     """
-    with open(image, 'rb') as image_file:
+    tempfile = source_to_tempfile(image_path, resize_pixels=400, url=False)
+    with open(tempfile, 'rb') as image_file:
         encoded_string = base64.b64encode(image_file.read())
     return encoded_string
