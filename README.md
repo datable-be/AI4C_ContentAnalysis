@@ -96,11 +96,14 @@ This is an example of the settings file for installation in a local testing envi
   "debug": true,
   "dummy": false,
   "host": "http://localhost",
-  "port": 8000
+  "port": 8000,
+  "housekeeping_interval": 86400
 }
 ```
 
 Note that the port you supply in this settings file should be the same as the one provided in the Docker files!
+
+The parameter for "housekeeping_interval" (value in seconds) determines how often the temporary storage of cropped and downloaded images is cleaned up (`development/app/images` relative to the root of the git repository). Default setting is one day (86,400 seconds).
 
 ## Architecture
 
@@ -110,7 +113,7 @@ This application is developed with a Python [virtual environment](https://docs.p
 
 A virtual environment is not considered as movable or copyable – you just recreate the same environment in the target location.
 
-To recreate this virtual environment, be sure to use Python 3.11 (preferably exactly [3.11.5](https://www.python.org/ftp/python/3.11.5/Python-3.11.5.tar.xz)) as the base installation.
+To recreate this virtual environment, be sure to use Python 3.12 (preferably exactly [3.12.2](https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tar.xz)) as the base installation.
 
 Create the virtual environment with the following command (from the project root directory):
 
@@ -547,21 +550,7 @@ Expected output:
   "detail": [
     {
       "type": "missing",
-      "loc": ["body", "id"],
-      "msg": "Field required",
-      "input": {},
-      "url": "https://errors.pydantic.dev/2.3/v/missing"
-    },
-    {
-      "type": "missing",
       "loc": ["body", "source"],
-      "msg": "Field required",
-      "input": {},
-      "url": "https://errors.pydantic.dev/2.3/v/missing"
-    },
-    {
-      "type": "missing",
-      "loc": ["body", "service_key"],
       "msg": "Field required",
       "input": {},
       "url": "https://errors.pydantic.dev/2.3/v/missing"
@@ -581,12 +570,13 @@ The API also comes with a basic web interface for both object and color requests
 The following benchmarks were run with [ApacheBench](https://httpd.apache.org/docs/2.4/programs/ab.html) on a local development machine with the following specifications:
 
 ```text
-Operating system:       Linux Mint 21.2 Cinnamon
-Linux Kernel:           5.15.0-78-generic
-Processor:              Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz x 4
-RAM memory:             15.3 GiB
-Hard Drives:            518.3 GB
-System:                 Dell XPS 13 9370
+Operating system:       Linux Mint 21.3 Cinnamon
+Linux Kernel:           6.5.0-27-generic
+CPU:                    13th Gen Intel i9-13900H (20) @ 5.200GHz
+GPU:                    Intel Device a7a0
+GPU:                    NVIDIA 01:00.0 NVIDIA Corporation Device 2820
+RAM memory:             31 GiB
+System:                 Dell XPS 15 9370
 ```
 
 The following command benchmarks 50,000 GET requests with 1,000 concurrent requests:
@@ -624,40 +614,40 @@ Document Path:          /?q=version
 Document Length:        19 bytes
 
 Concurrency Level:      1000
-Time taken for tests:   45.522 seconds
+Time taken for tests:   11.823 seconds
 Complete requests:      50000
 Failed requests:        0
 Keep-Alive requests:    0
 Total transferred:      8150000 bytes
 HTML transferred:       950000 bytes
-Requests per second:    1098.38 [#/sec] (mean)
-Time per request:       910.435 [ms] (mean)
-Time per request:       0.910 [ms] (mean, across all concurrent requests)
-Transfer rate:          174.84 [Kbytes/sec] received
+Requests per second:    4229.11 [#/sec] (mean)
+Time per request:       236.456 [ms] (mean)
+Time per request:       0.236 [ms] (mean, across all concurrent requests)
+Transfer rate:          673.19 [Kbytes/sec] received
 
 Connection Times (ms)
               min   avg   max
-Connect:        0    10   48
-Processing:    39   895 1510
-Waiting:        7   709 1404
-Total:         67   905 1511
+Connect:        0     4   16
+Processing:     3   231  439
+Waiting:        1   182  407
+Total:         10   235  443
 
 Percentage of the requests served within a certain time (ms)
-  50%    848
-  66%    883
-  75%    952
-  80%    981
-  90%   1115
-  95%   1252
-  98%   1410
-  99%   1464
- 100%   1511 (longest request)
+  50%    231
+  66%    247
+  75%    255
+  80%    259
+  90%    265
+  95%    274
+  98%    291
+  99%    439
+ 100%    443 (longest request)
 ```
 
-The following command benchmarks 1,000 POST requests with 10 concurrent requests.
+The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs object analysis of a local file (with debug=false in the settings) to limit the benchmark to the content analysis proper:
 
 ```bash
-echo '{"id":"http://example.com/images/123","min_confidence":0.4,"max_objects":10,"source":"https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true","service":"internal","service_key":"****"}' > post.txt
+echo '{"min_confidence":0.4,"max_objects":10,"source":"example.jpg","service":"internal"}' > post.txt
 ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/object"
 rm post.txt
 ```
@@ -688,40 +678,179 @@ Server Hostname:        0.0.0.0
 Server Port:            8000
 
 Document Path:          /v1/object
-Document Length:        1670 bytes
+Document Length:        490 bytes
 
 Concurrency Level:      10
-Time taken for tests:   653.520 seconds
+Time taken for tests:   65.047 seconds
 Complete requests:      1000
 Failed requests:        0
 Keep-Alive requests:    0
-Total transferred:      1816000 bytes
-Total body sent:        383000
-HTML transferred:       1670000 bytes
-Requests per second:    1.53 [#/sec] (mean)
-Time per request:       6535.197 [ms] (mean)
-Time per request:       653.520 [ms] (mean, across all concurrent requests)
-Transfer rate:          2.71 [Kbytes/sec] received
+Total transferred:      635000 bytes
+Total body sent:        250000
+HTML transferred:       490000 bytes
+Requests per second:    15.37 [#/sec] (mean)
+Time per request:       650.473 [ms] (mean)
+Time per request:       65.047 [ms] (mean, across all concurrent requests)
+Transfer rate:          9.53 [Kbytes/sec] received
+                        3.75 kb/s sent
+                        13.29 kb/s total
+
+Connection Times (ms)
+              min   avg   max
+Connect:        0     0    0
+Processing:    79   648  765
+Waiting:       65   425  745
+Total:         79   649  765
+
+Percentage of the requests served within a certain time (ms)
+  50%    644
+  66%    663
+  75%    671
+  80%    676
+  90%    694
+  95%    705
+  98%    715
+  99%    745
+ 100%    765 (longest request)
+```
+
+The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs color analysis (with debug=false in the settings) of a local file (to limit the benchmark to the content analysis proper), first with internal service, then with HuggingFace. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
+
+```bash
+echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"internal"}' > post.txt
+ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/color"
+rm post.txt
+```
+
+Output:
+
+```text
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 0.0.0.0 (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        uvicorn
+Server Hostname:        0.0.0.0
+Server Port:            8000
+
+Document Path:          /v1/color
+Document Length:        792 bytes
+
+Concurrency Level:      10
+Time taken for tests:   578.079 seconds
+Complete requests:      1000
+Failed requests:        804
+   (Connect: 0, Receive: 0, Length: 804, Exceptions: 0)
+Keep-Alive requests:    0
+Total transferred:      938291 bytes
+Total body sent:        335000
+HTML transferred:       793291 bytes
+Requests per second:    1.73 [#/sec] (mean)
+Time per request:       5780.786 [ms] (mean)
+Time per request:       578.079 [ms] (mean, across all concurrent requests)
+Transfer rate:          1.59 [Kbytes/sec] received
                         0.57 kb/s sent
-                        3.29 kb/s total
+                        2.15 kb/s total
+
+Connection Times (ms)
+              min   avg   max
+Connect:        0     0    0
+Processing:   588  5765 6370
+Waiting:      548  3941 6203
+Total:        588  5765 6370
+
+Percentage of the requests served within a certain time (ms)
+  50%   5757
+  66%   5840
+  75%   5886
+  80%   5945
+  90%   6028
+  95%   6128
+  98%   6164
+  99%   6204
+ 100%   6370 (longest request)
+```
+
+```bash
+echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"HuggingFace"}' > post.txt
+ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/color"
+rm post.txt
+```
+
+Output:
+
+```text
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 0.0.0.0 (be patient)
+Completed 100 requests
+Completed 200 requests
+Completed 300 requests
+Completed 400 requests
+Completed 500 requests
+Completed 600 requests
+Completed 700 requests
+Completed 800 requests
+Completed 900 requests
+Completed 1000 requests
+Finished 1000 requests
+
+
+Server Software:        uvicorn
+Server Hostname:        0.0.0.0
+Server Port:            8000
+
+Document Path:          /v1/color
+Document Length:        560 bytes
+
+Concurrency Level:      10
+Time taken for tests:   891.398 seconds
+Complete requests:      1000
+Failed requests:        0
+Keep-Alive requests:    0
+Total transferred:      705000 bytes
+Total body sent:        338000
+HTML transferred:       560000 bytes
+Requests per second:    1.12 [#/sec] (mean)
+Time per request:       8913.981 [ms] (mean)
+Time per request:       891.398 [ms] (mean, across all concurrent requests)
+Transfer rate:          0.77 [Kbytes/sec] received
+                        0.37 kb/s sent
+                        1.14 kb/s total
 
 Connection Times (ms)
               min   avg   max
 Connect:        0     0    1
-Processing:   613  6508 8410
-Waiting:      613  5012 8409
-Total:        613  6508 8410
+Processing:  1104  887313385
+Waiting:      733  7237 9821
+Total:       1104  887313385
 
 Percentage of the requests served within a certain time (ms)
-  50%   6492
-  66%   6659
-  75%   6725
-  80%   6857
-  90%   7139
-  95%   7272
-  98%   7763
-  99%   7902
- 100%   8410 (longest request)
+  50%   8893
+  66%   8953
+  75%   9012
+  80%   9040
+  90%   9182
+  95%   9325
+  98%   9792
+  99%   9996
+ 100%  13385 (longest request)
 ```
 
 ## Analysis
@@ -748,7 +877,7 @@ The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/
 
 #### HuggingFace
 
-Alternatively, one can use the [HuggingFace blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specied region). Next, it determines the colors in the image.
+Alternatively, one can use the [HuggingFace blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specified region). Next, it determines the colors in the image.
 
 ### Using local images
 
@@ -758,12 +887,10 @@ Local images should first be stored in the `images` directory (`development/app/
 
 ```json
 {
-  "id": "",
   "min_confidence": 0.5,
   "max_objects": 3,
   "source": "example.jpg",
-  "service": "internal",
-  "service_key": ""
+  "service": "internal"
 }
 ```
 
