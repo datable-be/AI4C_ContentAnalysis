@@ -25,8 +25,9 @@ def detection(
 
     (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
     eft_colors = convert_colors_to_EFT(colors)
+    threshold = request.min_area * 100
     percentages = merge_colors_with_threshold_and_max(
-        eft_colors, total_pixel_count, 5, request.max_colors
+        eft_colors, total_pixel_count, threshold, request.max_colors
     )
     result['data'] = {'colors': add_URIs(percentages)}
 

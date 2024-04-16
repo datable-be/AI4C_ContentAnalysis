@@ -64,7 +64,6 @@ def convert_colors_to_EFT(
 
 
 def merge_colors_with_threshold_and_max(
-    colors: List[Tuple[str, int]], total: int, threshold: int, max: int
 ) -> dict:
     """
     Merge colors with the same name and return the result as percentages,
