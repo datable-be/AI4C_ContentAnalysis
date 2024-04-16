@@ -53,7 +53,3 @@ def google_mid_to_wikidata(mid: str) -> str:
         q_entity = sparql_result['results']['bindings'][0]['item']['value']
 
     return q_entity
-
-
-if __name__ == '__main__':
-    print(google_mid_to_wikidata('/m/07bgp'))

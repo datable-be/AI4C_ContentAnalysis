@@ -37,6 +37,3 @@ def test_convert_colors_to_EFT():
     result = convert_colors_to_EFT(input_colors)
 
     assert result == [('red', 10), ('green', 20)]
-
-
-test_convert_colors_to_EFT()
