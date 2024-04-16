@@ -40,8 +40,14 @@ def load_cv2_image_from_source(
 
     data = read_source(source, url=url)
 
+    if not len(data):
+        raise HTTPException(status_code=500, detail='invalid image data')
+
     image_array = asarray(bytearray(data), dtype='uint8')
     image = imdecode(image_array, readFlag)
+
+    if not hasattr(image, 'resize'):
+        raise HTTPException(status_code=500, detail='invalid image format')
 
     if resize_pixels:
         image = resize_image(image, resize_pixels)
