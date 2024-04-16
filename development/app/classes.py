@@ -236,8 +236,8 @@ class NtuaSelector(BaseModel):
     # to do: this has more fields to implement, but unclear
     type: SelectorType = Field(
         title='type',
-        description="The rdf:type of the annotation object and should normally be 'Annotation'",
-        default='Annotation',
+        description='The rdf:type of the selector',
+        default='RDFPropertySelector',
     )
 
 

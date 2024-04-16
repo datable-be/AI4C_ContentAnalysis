@@ -6,7 +6,8 @@ from constants import SETTINGS
 
 def housekeeping(directory: str) -> None:
     """
-    Empty a directory of files older than one day
+    Empty a directory of files older than the configuration
+    defined in the application settings
     """
 
     directory_path = Path(directory)
