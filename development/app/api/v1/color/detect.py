@@ -44,7 +44,7 @@ def detection(
 
     # make id if not provided
     if color_request.id == '':
-        color_request.id = APP_URL + '/color-annotations/' + str(uuid4())
+        color_request.id = APP_URL + '/' + str(uuid4())
 
     # source to string
     color_request.source = str(color_request.source)

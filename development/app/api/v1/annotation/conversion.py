@@ -1,3 +1,7 @@
+from uuid import uuid4
+from pydantic import HttpUrl
+
+from constants import APP_URL
 from classes import (
     LDSource,
     AnnotationType,
@@ -32,11 +36,9 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
             target = NtuaTarget(source=request.source, selector=selector)
 
             annotation = NtuaAnnotation(
-                # to do: is this correct? always same id?
-                id=request.id,
+                id=HttpUrl(APP_URL + '/object-annotation/' + str(uuid4())),
                 created=get_utc_timestamp(),
                 creator=creator,
-                # to do: Datable docs conflict specification?
                 body=[item['wikidata']['wikidata_concepturi']],
                 confidence=item['confidence'],
                 target=target,
@@ -56,11 +58,9 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
                 wikidata_identifier = GOOGLE_KG_URL + item['mid']
 
             annotation = NtuaAnnotation(
-                # to do: is this correct? always same id?
-                id=request.id,
+                id=HttpUrl(APP_URL + '/color-annotation/' + str(uuid4())),
                 created=get_utc_timestamp(),
                 creator=creator,
-                # to do: Datable docs conflict specification?
                 body=[wikidata_identifier],
                 confidence=item['score'],
                 target=target,

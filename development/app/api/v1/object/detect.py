@@ -26,7 +26,7 @@ def detection(
 
     # make id if not provided
     if object_request.id == '':
-        object_request.id = APP_URL + '/object-annotations/' + str(uuid4())
+        object_request.id = APP_URL + '/' + str(uuid4())
 
     # source to string
     object_request.source = str(object_request.source)
