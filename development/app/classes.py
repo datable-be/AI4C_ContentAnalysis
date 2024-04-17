@@ -232,23 +232,10 @@ class NtuaBody(BaseModel):
     )
 
 
-class NtuaSelector(BaseModel):
-    # to do: this has more fields to implement, but unclear
-    type: SelectorType = Field(
-        title='type',
-        description='The rdf:type of the selector',
-        default='RDFPropertySelector',
-    )
-
-
 class NtuaTarget(BaseModel):
     source: HttpUrl | str = Field(
         title='source',
         description='URI of the object the annotation refers to',
-    )
-    selector: NtuaSelector = Field(
-        title='selector',
-        description='Selector to select a part of the source',
     )
 
 

@@ -7,7 +7,6 @@ from classes import (
     AnnotationType,
     NtuaAnnotation,
     NtuaCreator,
-    NtuaSelector,
     NtuaTarget,
     NtuaValidationReview,
     ObjectRequest,
@@ -31,9 +30,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
     if request.service == RequestService.internal:
         for item in data['data']:
 
-            # to do: check selector (see 'box' key)
-            selector = NtuaSelector()
-            target = NtuaTarget(source=request.source, selector=selector)
+            target = NtuaTarget(source=request.source)
 
             annotation = NtuaAnnotation(
                 id=HttpUrl(APP_URL + '/object-annotation/' + str(uuid4())),
@@ -49,9 +46,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
     elif request.service == RequestService.googlevision:
         for item in data['data'][0]['localizedObjectAnnotations']:
 
-            # to do: check selector (see 'box' key)
-            selector = NtuaSelector()
-            target = NtuaTarget(source=request.source, selector=selector)
+            target = NtuaTarget(source=request.source)
 
             wikidata_identifier = google_mid_to_wikidata(item['mid'])
             if wikidata_identifier == '':
@@ -76,7 +71,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
 def color_to_ntua(data: dict, request: ColorRequest) -> dict:
 
     creator = NtuaCreator(name='AI4C color detector')
-    target = NtuaTarget(source=request.source, selector=NtuaSelector())
+    target = NtuaTarget(source=request.source)
 
     body = []
 
@@ -94,9 +89,8 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
         created=get_utc_timestamp(),
         creator=creator,
         body=body,
-        # default confidence of 0.5 as this is not supplied by the APIs
+        # to do: default confidence of 0.5 as this is not supplied by the APIs
         confidence=0.5,
-        # to do: check selector
         target=target,
         review=review,
     )
