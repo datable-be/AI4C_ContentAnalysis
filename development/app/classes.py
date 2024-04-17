@@ -287,7 +287,7 @@ class NtuaAnnotation(BaseModel):
         title='body',
         description='Actual annotation value (either IRI or body object)',
     )
-    confidence: float = Field(
+    confidence: float | None = Field(
         title='confidence',
         description='Confidence of the annotation creator for the particular annotation(s)',
         ge=0,

@@ -89,8 +89,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
         created=get_utc_timestamp(),
         creator=creator,
         body=body,
-        # to do: default confidence of 0.5 as this is not supplied by the APIs
-        confidence=0.5,
+        confidence=None,
         target=target,
         review=review,
     )
