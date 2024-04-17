@@ -20,7 +20,7 @@ class AnnotationType(str, Enum):
 class RequestService(str, Enum):
     internal = 'internal'
     googlevision = 'GoogleVision'
-    huggingface = 'HuggingFace'
+    blipvqabase = 'blip-vqa-base'
 
 
 class SelectorType(str, Enum):

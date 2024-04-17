@@ -110,7 +110,7 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 def color_to_europeana(data: dict, request: ColorRequest) -> dict:
     if request.service == RequestService.internal:
         pass
-    elif request.service == RequestService.huggingface:
+    elif request.service == RequestService.blipvqabase:
         pass
     return data
 

@@ -21,7 +21,7 @@ REQUEST = """{
     "max_colors": 3,
     "min_area": 0.15,
     "foreground_detection": false,
-    "service": "HuggingFace",
+    "service": "blip-vqa-base",
     "selector" : {
       "type" : "FragmentSelector",
       "conformsTo" : "http://www.w3.org/TR/media-frags/",

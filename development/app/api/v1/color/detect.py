@@ -4,7 +4,7 @@ from transformers import BlipProcessor, BlipForQuestionAnswering
 
 from constants import APP_URL, IMAGE_DIR
 from api.v1.color.internal import detection as internal_detection
-from api.v1.color.huggingface import detection as huggingface_detection
+from api.v1.color.blipvqabase import detection as blipvqabase_detection
 from api.v1.annotation.conversion import convert
 from classes import (
     ColorRequest,
@@ -56,8 +56,8 @@ def detection(
     if color_request.service == RequestService.internal:
         result = internal_detection(color_request, net, settings, url_source)
 
-    elif color_request.service == RequestService.huggingface:
-        result = huggingface_detection(
+    elif color_request.service == RequestService.blipvqabase:
+        result = blipvqabase_detection(
             color_request,
             net,
             color_model,
