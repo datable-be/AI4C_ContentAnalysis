@@ -9,5 +9,6 @@
   "dummy": false,
   "host": "http://localhost",
   "port": 8000,
-  "housekeeping_interval": 86400
+  "housekeeping_interval": 86400,
+  "max_image_size": 3000000
 }

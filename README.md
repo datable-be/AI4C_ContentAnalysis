@@ -97,13 +97,16 @@ This is an example of the settings file for installation in a local testing envi
   "dummy": false,
   "host": "http://localhost",
   "port": 8000,
-  "housekeeping_interval": 86400
+  "housekeeping_interval": 86400,
+  "max_image_size": 3000000
 }
 ```
 
 Note that the port you supply in this settings file should be the same as the one provided in the Docker files!
 
 The parameter for "housekeeping_interval" (value in seconds) determines how often the temporary storage of cropped and downloaded images is cleaned up (`development/app/images` relative to the root of the git repository). Default setting is one day (86,400 seconds).
+
+The parameter for "max_image_size" (value in bytes) determines the maximum accepted file size of images (both local or remote via URL).
 
 ## Architecture
 

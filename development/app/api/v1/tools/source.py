@@ -6,7 +6,7 @@ from urllib.error import URLError, HTTPError
 from cv2 import imdecode, imwrite, resize, IMREAD_COLOR, INTER_LINEAR
 
 from api.v1.tools.tools import hash_object
-from constants import TEMP_DIR
+from constants import TEMP_DIR, SETTINGS
 
 
 def resize_image(image: ndarray, pixels: int):
@@ -42,6 +42,11 @@ def load_cv2_image_from_source(
 
     if not len(data):
         raise HTTPException(status_code=500, detail='invalid image data')
+
+    if len(data) > SETTINGS['max_image_size']:
+        raise HTTPException(
+            status_code=500, detail='file size exceeds maximum size'
+        )
 
     image_array = asarray(bytearray(data), dtype='uint8')
     image = imdecode(image_array, readFlag)
