@@ -2,10 +2,11 @@ from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from constants import APP_URL, IMAGE_DIR, NO_COLORS_WARNING
+from constants import APP_URL, IMAGE_DIR, NO_COLORS_WARNING, TEMP_DIR
 from api.v1.color.internal import detection as internal_detection
 from api.v1.color.blipvqabase import detection as blipvqabase_detection
 from api.v1.annotation.conversion import convert
+from api.v1.tools.path import housekeeping
 from classes import (
     ColorRequest,
     RequestService,
@@ -28,6 +29,7 @@ def detection(
 
         return MODEL_RESPONSE
 
+    housekeeping(TEMP_DIR)
     result = {}
 
     # make id if not provided

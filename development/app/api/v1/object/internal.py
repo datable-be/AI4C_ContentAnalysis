@@ -9,7 +9,7 @@ from api.v1.tools.source import (
     load_cv2_image_from_source,
     extension_from_source,
 )
-from api.v1.tools.path import housekeeping
+from api.v1.tools.path import filename_to_url
 from api.v1.tools.tools import hash_object
 
 
@@ -127,38 +127,29 @@ def detection(
             'wikidata': COCO_2_WIKIDATA.get(label),
         }
 
-        if settings.get('debug'):
-            # Draw the name of the predicted object together with the probability
-            prediction = f'{label} {confidence * 100:.2f}%'
-            annotated_image = putText(
-                img=annotated_image,
-                text=prediction,
-                org=(box[0], box[1] + 15),
-                fontFace=FONT_HERSHEY_SIMPLEX,
-                fontScale=0.5,
-                color=ANNOTATION_COLOR,
-                thickness=2,
-            )
+        # Draw the name of the predicted object together with the probability
+        prediction = f'{label} {confidence * 100:.2f}%'
+        annotated_image = putText(
+            img=annotated_image,
+            text=prediction,
+            org=(box[0], box[1] + 15),
+            fontFace=FONT_HERSHEY_SIMPLEX,
+            fontScale=0.5,
+            color=ANNOTATION_COLOR,
+            thickness=2,
+        )
 
-            # Save image
-            housekeeping(TEMP_DIR)
-            basename = (
-                identifier
-                + '_'
-                + str(count)
-                + extension_from_source(request.source)
-            )
-            filepath = join(TEMP_DIR, basename)
-            print(filepath, ' saved')
-            imwrite(filepath, annotated_image)
-            url = (
-                settings['host']
-                + ':'
-                + str(settings['port'])
-                + '/image?img='
-                + basename
-            )
-            detected_object['annotated_image'] = url
+        # Save image
+        basename = (
+            identifier
+            + '_'
+            + str(count)
+            + extension_from_source(request.source)
+        )
+        filepath = join(TEMP_DIR, basename)
+        imwrite(filepath, annotated_image)
+        print(filepath, ' saved')
+        detected_object['annotated_image'] = filename_to_url(basename)
 
         objects.append(detected_object)
 

@@ -4,6 +4,22 @@ from time import time
 from constants import SETTINGS
 
 
+def filename_to_url(basename: str) -> str:
+    """
+    Turn the name of a file saved in TEMP_DIR
+    into an image URL
+    """
+
+    url = (
+        SETTINGS['host']
+        + ':'
+        + str(SETTINGS['port'])
+        + '/image?img='
+        + basename
+    )
+    return url
+
+
 def housekeeping(directory: str) -> None:
     """
     Empty a directory of files older than the configuration

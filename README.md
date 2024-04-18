@@ -243,8 +243,6 @@ It also accepts requests to the `/image` path to show an annotated image:
 curl -O http://0.0.0.0:8000/image?img=4cc4ff8a39925002a25650a89c5de92fdbfeb011_2.png
 ```
 
-Please note that these are currently for debugging purposes only and will only be saved if `"debug": true` is set in the `settings.json` file.
-
 ![Object detection](/doc/img/object.png "Example of API object detection")
 
 ### POST requests
@@ -698,7 +696,7 @@ Percentage of the requests served within a certain time (ms)
  100%    443 (longest request)
 ```
 
-The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs object analysis of a local file (with debug=false in the settings) to limit the benchmark to the content analysis proper:
+The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs object analysis of a local file to limit the benchmark to the content analysis proper:
 
 ```bash
 echo '{"min_confidence":0.4,"max_objects":10,"source":"example.jpg","service":"internal"}' > post.txt
@@ -768,7 +766,7 @@ Percentage of the requests served within a certain time (ms)
  100%    765 (longest request)
 ```
 
-The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs color analysis (with debug=false in the settings) of a local file (to limit the benchmark to the content analysis proper), first with internal service, then with HuggingFace. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
+The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs color analysis of a local file (to limit the benchmark to the content analysis proper), first with internal service, then with HuggingFace. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
 
 ```bash
 echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"internal"}' > post.txt

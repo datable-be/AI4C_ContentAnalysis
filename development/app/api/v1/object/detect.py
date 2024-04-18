@@ -2,13 +2,14 @@ from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from constants import APP_URL, IMAGE_DIR, NO_OBJECTS_WARNING
+from constants import APP_URL, IMAGE_DIR, NO_OBJECTS_WARNING, TEMP_DIR
 from classes import (
     ObjectRequest,
     RequestService,
     EuropeanaResponse,
     NtuaResponse,
 )
+from api.v1.tools.path import housekeeping
 from api.v1.object.internal import detection as internal_detection
 from api.v1.object.google import detection as google_detection
 from api.v1.object.blipvqabase import detection as blip_detection
@@ -29,6 +30,7 @@ def detection(
 
         return MODEL_RESPONSE
 
+    housekeeping(TEMP_DIR)
     result = {}
 
     # make id if not provided

@@ -8,6 +8,7 @@ from api.v1.tools.color import (
     add_URIs,
 )
 from api.v1.tools.image import determine_image
+from api.v1.tools.path import filename_to_url
 from api.v1.tools.color import is_quasi_monochrome_with_rgb
 from classes import ColorRequest
 from constants import BW_WARNING
@@ -36,19 +37,9 @@ def detection(
     )
     result['data'] = {'colors': add_URIs(percentages)}
 
-    # Remove tempfile
-    if settings.get('debug'):
-        basename = Path(temp_path).name
-        url = (
-            settings['host']
-            + ':'
-            + str(settings['port'])
-            + '/image?img='
-            + basename
-        )
-        result['data']['cropped_image'] = url
-    else:
-        Path(temp_path).unlink(missing_ok=True)
+    # Add image link
+    basename = Path(temp_path).name
+    result['data']['cropped_image'] = filename_to_url(basename)
 
     result['request_id'] = request.id
     result['source'] = request.source
