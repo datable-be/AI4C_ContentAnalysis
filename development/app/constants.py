@@ -85,6 +85,11 @@ NET = _get_mobilenet_ssd()
 
 BLIB_MODEL, BLIB_PROCESSOR = _get_salseforce_blip_vqa_base()
 
+# WARNINGS
+
+BW_WARNING = 'image is in b/w or grayscale'
+NO_COLORS_WARNING = 'no colors detected with minimum area'
+NO_OBJECTS_WARNING = 'no objects detected with minimum confidence'
 
 GOOGLE_VISION_URL = 'https://vision.googleapis.com/v1/images:annotate?key='
 

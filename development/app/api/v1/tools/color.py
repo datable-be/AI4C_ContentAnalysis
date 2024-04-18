@@ -2,7 +2,6 @@ import string
 from extcolors import extract_from_path
 from typing import List, Tuple
 from PIL import Image
-import io
 
 from constants import EFT_COLORS, EFT_IDS
 
@@ -142,12 +141,12 @@ def extract_colors_from_sentence(sentence: str) -> List[str]:
     return result
 
 
-def is_quasi_monochrome_with_rgb(image_data: bytes) -> bool:
+def is_quasi_monochrome_with_rgb(image_path: str) -> bool:
     """
     Determine whether an image is monochrome with an RGB channel
     or a color image containing a black and white photo
     """
-    image = Image.open(io.BytesIO(image_data))
+    image = Image.open(image_path)
 
     # Check if the image has an RGB channel
     bands = image.getbands()

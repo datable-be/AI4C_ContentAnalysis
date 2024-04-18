@@ -2,7 +2,7 @@ from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from constants import APP_URL, IMAGE_DIR
+from constants import APP_URL, IMAGE_DIR, NO_COLORS_WARNING
 from api.v1.color.internal import detection as internal_detection
 from api.v1.color.blipvqabase import detection as blipvqabase_detection
 from api.v1.annotation.conversion import convert
@@ -13,19 +13,7 @@ from classes import (
     NtuaResponse,
 )
 
-#  ColorRequest =
-#  {
-#      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-#      "max_colors": 3,
-#      "min_area": 0.15,
-#      "foreground_detection": true,
-#      "selector" : {
-#        "type" : "FragmentSelector",
-#        "conformsTo" : "http://www.w3.org/TR/media-frags/",
-#        "value" : "xywh=percent:87,63,9,21"
-#      },
-#      "source": "http://example.com/images/123.jpg"
-#    }
+
 def detection(
     color_request: ColorRequest,
     net: Net,
@@ -64,6 +52,12 @@ def detection(
             color_processor,
             settings,
             url_source,
+        )
+
+    if not result['data']['colors']:
+        result.setdefault('warnings', [])
+        result['warnings'].append(
+            NO_COLORS_WARNING + f': {color_request.min_area}'
         )
 
     if color_request.annotation_type == 'internal':

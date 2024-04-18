@@ -6,9 +6,14 @@ import torch
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
 from api.v1.tools.image import determine_image
-from api.v1.tools.color import extract_colors_from_sentence, add_URIs
+from api.v1.tools.color import (
+    extract_colors_from_sentence,
+    add_URIs,
+    is_quasi_monochrome_with_rgb,
+)
 
 from classes import ColorRequest
+from constants import BW_WARNING
 
 
 def detection(
@@ -27,6 +32,10 @@ def detection(
     temp_path = determine_image(request, net, settings, None, url_source)
     if not temp_path:
         return result
+
+    if is_quasi_monochrome_with_rgb(temp_path):
+        result.setdefault('warnings', [])
+        result['warnings'].append(BW_WARNING)
 
     # Move the model to GPU if available
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')

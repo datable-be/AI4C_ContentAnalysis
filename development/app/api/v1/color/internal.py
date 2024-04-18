@@ -8,7 +8,9 @@ from api.v1.tools.color import (
     add_URIs,
 )
 from api.v1.tools.image import determine_image
+from api.v1.tools.color import is_quasi_monochrome_with_rgb
 from classes import ColorRequest
+from constants import BW_WARNING
 
 
 def detection(
@@ -18,6 +20,9 @@ def detection(
     request.source = str(request.source)
 
     temp_path = determine_image(request, net, settings, 200, url_source)
+    if is_quasi_monochrome_with_rgb(temp_path):
+        result.setdefault('warnings', [])
+        result['warnings'].append(BW_WARNING)
 
     # Detect colors
     if not temp_path:

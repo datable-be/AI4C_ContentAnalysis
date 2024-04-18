@@ -2,7 +2,7 @@ from uuid import uuid4
 from cv2.dnn import Net
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
-from constants import APP_URL, IMAGE_DIR
+from constants import APP_URL, IMAGE_DIR, NO_OBJECTS_WARNING
 from classes import (
     ObjectRequest,
     RequestService,
@@ -61,6 +61,12 @@ def detection(
         )
     else:
         result = internal_detection(object_request, net, settings, url_source)
+
+    if not result['data']:
+        result.setdefault('warnings', [])
+        result['warnings'].append(
+            NO_OBJECTS_WARNING + f': {object_request.min_confidence}'
+        )
 
     if object_request.annotation_type == 'internal':
         return result
