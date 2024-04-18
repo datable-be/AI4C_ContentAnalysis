@@ -1,3 +1,4 @@
+from os.path import join
 import json
 from cv2.dnn import readNetFromTensorflow
 from transformers import BlipProcessor, BlipForQuestionAnswering
@@ -61,6 +62,20 @@ TEMP_DIR = 'tmp'
 
 IMAGE_DIR = 'images'
 
+# Directory for application data
+
+DATA_DIR = 'data'
+
+# Wikidata URIs file
+
+WIKIDATA_URIS_FILE = join(DATA_DIR, 'wikidata_uris.json')
+
+# Wikidata Search API URL
+
+WIKIDATA_SEARCH_API = (
+    'https://www.wikidata.org/w/api.php?action=wbsearchentities&search='
+)
+
 
 # Object neural net
 
@@ -68,7 +83,7 @@ NET = _get_mobilenet_ssd()
 
 # Color model
 
-COLOR_MODEL, COLOR_PROCESSOR = _get_salseforce_blip_vqa_base()
+BLIB_MODEL, BLIB_PROCESSOR = _get_salseforce_blip_vqa_base()
 
 
 GOOGLE_VISION_URL = 'https://vision.googleapis.com/v1/images:annotate?key='

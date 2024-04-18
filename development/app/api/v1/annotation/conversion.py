@@ -27,23 +27,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
 
     annotations = []
 
-    if request.service == RequestService.internal:
-        for item in data['data']:
-
-            target = NtuaTarget(source=request.source)
-
-            annotation = NtuaAnnotation(
-                id=HttpUrl(APP_URL + '/object-annotation/' + str(uuid4())),
-                created=get_utc_timestamp(),
-                creator=creator,
-                body=[item['wikidata']['wikidata_concepturi']],
-                confidence=item['confidence'],
-                target=target,
-                review=NtuaValidationReview(),
-            )
-            annotations.append(annotation)
-
-    elif request.service == RequestService.googlevision:
+    if request.service == RequestService.googlevision:
         for item in data['data'][0]['localizedObjectAnnotations']:
 
             target = NtuaTarget(source=request.source)
@@ -58,6 +42,22 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
                 creator=creator,
                 body=[wikidata_identifier],
                 confidence=item['score'],
+                target=target,
+                review=NtuaValidationReview(),
+            )
+            annotations.append(annotation)
+
+    else:
+        for item in data['data']:
+
+            target = NtuaTarget(source=request.source)
+
+            annotation = NtuaAnnotation(
+                id=HttpUrl(APP_URL + '/object-annotation/' + str(uuid4())),
+                created=get_utc_timestamp(),
+                creator=creator,
+                body=[item['wikidata']['wikidata_concepturi']],
+                confidence=item['confidence'],
                 target=target,
                 review=NtuaValidationReview(),
             )

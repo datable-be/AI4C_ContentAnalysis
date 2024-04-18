@@ -1,5 +1,6 @@
 from uuid import uuid4
 from cv2.dnn import Net
+from transformers import BlipProcessor, BlipForQuestionAnswering
 
 from constants import APP_URL, IMAGE_DIR
 from classes import (
@@ -10,11 +11,17 @@ from classes import (
 )
 from api.v1.object.internal import detection as internal_detection
 from api.v1.object.google import detection as google_detection
+from api.v1.object.blipvqabase import detection as blip_detection
 from api.v1.annotation.conversion import convert
 
 
 def detection(
-    object_request: ObjectRequest, net: Net, settings: dict, url_source: bool
+    object_request: ObjectRequest,
+    net: Net,
+    object_model: BlipForQuestionAnswering,
+    object_processor: BlipProcessor,
+    settings: dict,
+    url_source: bool,
 ) -> dict:
 
     if settings.get('dummy'):
@@ -35,13 +42,23 @@ def detection(
     if not url_source:
         object_request.source = f'{IMAGE_DIR}/' + object_request.source
 
-    # internal service if key is invalid
-    if object_request.service_key == '' or not object_request.service_key:
-        object_request.service = RequestService.internal
-        result = internal_detection(object_request, net, settings, url_source)
-
     if object_request.service == RequestService.googlevision:
-        result = google_detection(object_request, settings, url_source)
+        # internal service if key is invalid
+        if object_request.service_key == '' or not object_request.service_key:
+            object_request.service = RequestService.internal
+            result = internal_detection(
+                object_request, net, settings, url_source
+            )
+        else:
+            result = google_detection(object_request, settings, url_source)
+    elif object_request.service == RequestService.blipvqabase:
+        result = blip_detection(
+            object_request,
+            object_model,
+            object_processor,
+            settings,
+            url_source,
+        )
     else:
         result = internal_detection(object_request, net, settings, url_source)
 

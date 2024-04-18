@@ -19,8 +19,8 @@ from constants import (
     DESCRIPTION,
     NET,
     TEMP_DIR,
-    COLOR_MODEL,
-    COLOR_PROCESSOR,
+    BLIB_MODEL,
+    BLIB_PROCESSOR,
 )
 from api.v1.object import detect as object_detect
 from api.v1.color import detect as color_detect
@@ -29,8 +29,8 @@ from api.v1.tools.tools import ui_template
 # Eagerly load models (once, at startup)
 
 net = NET
-color_model = COLOR_MODEL
-color_processor = COLOR_PROCESSOR
+blib_model = BLIB_MODEL
+blib_processor = BLIB_PROCESSOR
 
 # CREATE API
 
@@ -112,7 +112,12 @@ async def object_detection(
     """
     try:
         return object_detect.detection(
-            request, net, SETTINGS, isinstance(request.source, Url)
+            request,
+            net,
+            blib_model,
+            blib_processor,
+            SETTINGS,
+            isinstance(request.source, Url),
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=repr(e))
@@ -134,8 +139,8 @@ async def color_detection(
         return color_detect.detection(
             request,
             net,
-            color_model,
-            color_processor,
+            blib_model,
+            blib_processor,
             SETTINGS,
             isinstance(request.source, Url),
         )
