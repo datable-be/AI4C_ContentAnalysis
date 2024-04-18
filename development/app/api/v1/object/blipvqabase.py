@@ -33,10 +33,7 @@ def detection(
     # device = torch.device("cpu")
     model.to(device)
 
-    # to do: resize?
-    tempfile = source_to_tempfile(
-        request.source, resize_pixels=200, url=url_source
-    )
+    tempfile = source_to_tempfile(request.source, None, url=url_source)
     raw_image = Image.open(tempfile).convert('RGB')
 
     question = 'What is the main subject?'
