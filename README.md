@@ -410,6 +410,57 @@ RESPONSE =
 }
 ```
 
+Or (using blip-vqa-base object detection):
+
+```bash
+py3 development/app/examples/object_detect_blipvqabase.py
+```
+
+Expected output (_current output might differ!_):
+
+```text
+POST http://0.0.0.0:8000/v1/object
+REQUEST =
+{
+    "min_confidence": 0.5,
+    "max_objects": 3,
+    "source": "example.jpg",
+    "service": "blip-vqa-base",
+    "annotation_type": "internal"
+}
+RESPONSE =
+{
+    "request_id": "https://github.com/datable-be/AI4C_ContentAnalysis/d5cb55ee-cde4-4972-95a7-b69f29e75ab8",
+    "source": "images/example.jpg",
+    "data": [
+        {
+            "confidence": 0.8015745878219604,
+            "wikidata": {
+                "wikidata_concepturi": "http://www.wikidata.org/entity/Q7368",
+                "wikidata_label": "sheep",
+                "wikidata_concept": "Q7368"
+            }
+        },
+        {
+            "confidence": 0.8593069911003113,
+            "wikidata": {
+                "wikidata_concepturi": "http://www.wikidata.org/entity/Q4575936",
+                "wikidata_label": "lamb",
+                "wikidata_concept": "Q4575936"
+            }
+        },
+        {
+            "confidence": 0.8977700471878052,
+            "wikidata": {
+                "wikidata_concepturi": "http://www.wikidata.org/entity/Q729",
+                "wikidata_label": "animal",
+                "wikidata_concept": "Q729"
+            }
+        }
+    ]
+}
+```
+
 Or for color detection:
 
 ```bash
@@ -872,15 +923,22 @@ Alternatively, one can call the [Google Cloud Vision API](https://cloud.google.c
 
 If, however, the user uses this service, without supplying an API key, the internal service is called.
 
+#### blib-vqa-base
+
+Alternatively, one can use the [blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation".
+Given an image, this method uses the pretrained model to identify the main subject in the image and retrieves its corresponding Wikidata URI, if available. The script also maintains a JSON database to store previously retrieved Wikidata URIs for concepts, reducing the need for redundant API calls.
+
+Note that, other than the internal and Google Vision object detection, this method is not able to locate the detected objects on the image with specific coordinates.
+
 ### Color
 
 #### Internal
 
 The builtin-color analysis uses the Python [extcolors](https://pypi.org/project/extcolors/) library to extract colors, pixels and percentages from an image. If the request sets `foreground_detection` to true, the algorithm will either try to autodetermine the object (with `xywh=percent:0,0,100,100`) or crop to the specified region. In case of autodetection of the object, the model will also extract the foreground colors of the image, in case of user-specified cropping it makes more sense to just detect all colors in the supplied region.
 
-#### HuggingFace
+#### blib-vqa-base
 
-Alternatively, one can use the [HuggingFace blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specified region). Next, it determines the colors in the image.
+Alternatively, one can use the [blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". This performs two steps. It first determines the main foreground images (hence setting `foreground_detection` to true is only useful if you want to crop to a user-specified region). Next, it determines the colors in the image.
 
 ### Using local images
 
