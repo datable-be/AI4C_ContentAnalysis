@@ -28,7 +28,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
     annotations = []
 
     if request.service == RequestService.googlevision:
-        for item in data['data'][0]['localizedObjectAnnotations']:
+        for item in data['data']['objects'][0]['localizedObjectAnnotations']:
 
             target = NtuaTarget(source=request.source)
 
@@ -48,7 +48,7 @@ def object_to_ntua(data: dict, request: ObjectRequest) -> dict:
             annotations.append(annotation)
 
     else:
-        for item in data['data']:
+        for item in data['data']['objects']:
 
             target = NtuaTarget(source=request.source)
 

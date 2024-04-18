@@ -59,23 +59,16 @@ def handle_google_response(
                     if annotation.get('score') >= min_confidence:
                         keep_response[annotations_name].append(annotation)
         if not error:
-            result['data'].append(keep_response)
+            result['data']['objects'].append(keep_response)
 
     return result
 
 
-# ObjectRequest =
-#      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-#      "min_confidence": 0.8,
-#      "max_objects": 1,
-#      "source": "https://cloud.google.com/vision/docs/images/bicycle_example.png",
-#      "service":"GoogleVision",
-#      "service_key":"****"
 def detection(
     request: ObjectRequest, settings: dict, url_source: bool
 ) -> dict:
     result = {}
-    result['data'] = []
+    result['data'] = {'objects': []}
     result['error'] = []
 
     url = GOOGLE_VISION_URL + request.service_key

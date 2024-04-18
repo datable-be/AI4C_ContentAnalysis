@@ -64,7 +64,7 @@ def detection(
     else:
         result = internal_detection(object_request, net, settings, url_source)
 
-    if not result['data']:
+    if not result['data']['objects']:
         result.setdefault('warnings', [])
         result['warnings'].append(
             NO_OBJECTS_WARNING + f': {object_request.min_confidence}'

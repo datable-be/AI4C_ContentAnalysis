@@ -44,6 +44,7 @@ def determine_image(
             )
             result = detection(object_request, net, settings, url_source)
             objects_found = result.get('data')
+            objects_found = result['data'].get('objects')
             if not objects_found:
                 return source_to_tempfile(
                     color_request.source, resize_pixels=200, url=url_source

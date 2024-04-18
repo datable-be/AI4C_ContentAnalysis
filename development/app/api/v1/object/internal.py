@@ -15,13 +15,7 @@ from api.v1.tools.tools import hash_object
 
 ANNOTATION_COLOR = (0, 255, 0)  # bright green
 
-# ObjectRequest =
-#      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-#      "min_confidence": 0.8,
-#      "max_objects": 1,
-#      "source": "http://example.com/images/123.jpg",
-#      "service":"internal",
-#      "service_key":"****"
+
 def detection(
     request: ObjectRequest, net: Net, settings: dict, url_source: bool
 ) -> dict:
@@ -163,6 +157,6 @@ def detection(
     result = {}
     result['request_id'] = request.id
     result['source'] = request.source
-    result['data'] = sorted_objects
+    result['data'] = {'objects': sorted_objects}
 
     return result

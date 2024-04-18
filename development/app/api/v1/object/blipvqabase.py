@@ -7,13 +7,6 @@ from api.v1.tools.source import source_to_tempfile
 from api.v1.tools.wikidata import retrieve_concept_uri
 
 
-# ObjectRequest =
-#      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
-#      "min_confidence": 0.8,
-#      "max_objects": 1,
-#      "source": "http://example.com/images/123.jpg",
-#      "service":"blip-vqa-base",
-#      "service_key":"****"
 def detection(
     request: ObjectRequest,
     model: BlipForQuestionAnswering,
@@ -95,6 +88,6 @@ def detection(
     result = {}
     result['request_id'] = request.id
     result['source'] = request.source
-    result['data'] = objects
+    result['data'] = {'objects': objects}
 
     return result
