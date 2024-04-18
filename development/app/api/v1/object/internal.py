@@ -15,42 +15,6 @@ from api.v1.tools.tools import hash_object
 
 ANNOTATION_COLOR = (0, 255, 0)  # bright green
 
-MODEL_RESPONSE = {
-    '@context': {},
-    '@graph': [
-        {
-            'id': 'http://datable.be/color-annotations/123',
-            'type': 'Annotation',
-            'created': '2023-09-30',
-            'creator': {
-                'id': 'https://github.com/hvanstappen/AI4C_object-detector',
-                'type': 'Software',
-                'name': 'AI4C object detector',
-            },
-            'body': [
-                {'source': 'http://www.wikidata.org/entity/Q200539'},
-                {
-                    'type': 'TextualBody',
-                    'purpose': 'tagging',
-                    'value': 'dress',
-                    'language': 'en',
-                },
-            ],
-            'target': {
-                'source': 'http://mint-projects.image.ntua.gr/europeana-fashion/500208081',
-                'selector': {
-                    'type': 'FragmentSelector',
-                    'conformsTo': 'http://www.w3.org/TR/media-frags/',
-                    'value': 'xywh=percent:87,63,9,21',
-                },
-            },
-            'confidence': 0.8,
-        },
-        {},
-    ],
-}
-
-
 # ObjectRequest =
 #      "id": "http://mint-projects.image.ntua.gr/europeana-fashion/500208081",
 #      "min_confidence": 0.8,
@@ -62,6 +26,8 @@ def detection(
     request: ObjectRequest, net: Net, settings: dict, url_source: bool
 ) -> dict:
     if settings.get('dummy'):
+        from constants import MODEL_RESPONSE
+
         return MODEL_RESPONSE
 
     request.source = str(request.source)
