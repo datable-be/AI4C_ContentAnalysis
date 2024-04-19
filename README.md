@@ -696,11 +696,11 @@ Percentage of the requests served within a certain time (ms)
  100%    443 (longest request)
 ```
 
-The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs object analysis of a local file to limit the benchmark to the content analysis proper:
+The following command benchmarks 100 POST requests with 10 concurrent requests. It performs object analysis of a local file to limit the benchmark to the content analysis proper. It first uses the internal detection algorithm, and then the blip-vqa-base model. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
 
 ```bash
 echo '{"min_confidence":0.4,"max_objects":10,"source":"example.jpg","service":"internal"}' > post.txt
-ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/object"
+ab -k -p post.txt -T application/json -c10 -n100 -S "http://0.0.0.0:8000/v1/object"
 rm post.txt
 ```
 
@@ -711,18 +711,7 @@ This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
-Benchmarking 0.0.0.0 (be patient)
-Completed 100 requests
-Completed 200 requests
-Completed 300 requests
-Completed 400 requests
-Completed 500 requests
-Completed 600 requests
-Completed 700 requests
-Completed 800 requests
-Completed 900 requests
-Completed 1000 requests
-Finished 1000 requests
+Benchmarking 0.0.0.0 (be patient).....done
 
 
 Server Software:        uvicorn
@@ -730,47 +719,104 @@ Server Hostname:        0.0.0.0
 Server Port:            8000
 
 Document Path:          /v1/object
-Document Length:        490 bytes
+Document Length:        582 bytes
 
 Concurrency Level:      10
-Time taken for tests:   65.047 seconds
-Complete requests:      1000
+Time taken for tests:   3.235 seconds
+Complete requests:      100
 Failed requests:        0
 Keep-Alive requests:    0
-Total transferred:      635000 bytes
-Total body sent:        250000
-HTML transferred:       490000 bytes
-Requests per second:    15.37 [#/sec] (mean)
-Time per request:       650.473 [ms] (mean)
-Time per request:       65.047 [ms] (mean, across all concurrent requests)
-Transfer rate:          9.53 [Kbytes/sec] received
-                        3.75 kb/s sent
-                        13.29 kb/s total
+Total transferred:      72700 bytes
+Total body sent:        25000
+HTML transferred:       58200 bytes
+Requests per second:    30.92 [#/sec] (mean)
+Time per request:       323.465 [ms] (mean)
+Time per request:       32.347 [ms] (mean, across all concurrent requests)
+Transfer rate:          21.95 [Kbytes/sec] received
+                        7.55 kb/s sent
+                        29.50 kb/s total
 
 Connection Times (ms)
               min   avg   max
 Connect:        0     0    0
-Processing:    79   648  765
-Waiting:       65   425  745
-Total:         79   649  765
+Processing:    31   313  344
+Waiting:       30   225  341
+Total:         31   313  344
 
 Percentage of the requests served within a certain time (ms)
-  50%    644
-  66%    663
-  75%    671
-  80%    676
-  90%    694
-  95%    705
-  98%    715
-  99%    745
- 100%    765 (longest request)
+  50%    313
+  66%    328
+  75%    335
+  80%    336
+  90%    341
+  95%    341
+  98%    344
+  99%    344
+ 100%    344 (longest request)
 ```
 
-The following command benchmarks 1,000 POST requests with 10 concurrent requests. It performs color analysis of a local file (to limit the benchmark to the content analysis proper), first with internal service, then with HuggingFace. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
+```bash
+echo '{"min_confidence":0.4,"max_objects":10,"source":"example.jpg","service":"blip-vqa-base"}' > post.txt
+ab -k -p post.txt -T application/json -c10 -n100 -S "http://0.0.0.0:8000/v1/object"
+rm post.txt
+```
+
+Output:
+
+```text
+This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
+Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
+Licensed to The Apache Software Foundation, http://www.apache.org/
+
+Benchmarking 0.0.0.0 (be patient).....done
+
+
+Server Software:        uvicorn
+Server Hostname:        0.0.0.0
+Server Port:            8000
+
+Document Path:          /v1/object
+Document Length:        638 bytes
+
+Concurrency Level:      10
+Time taken for tests:   120.596 seconds
+Complete requests:      100
+Failed requests:        0
+Keep-Alive requests:    0
+Total transferred:      78300 bytes
+Total body sent:        25500
+HTML transferred:       63800 bytes
+Requests per second:    0.83 [#/sec] (mean)
+Time per request:       12059.602 [ms] (mean)
+Time per request:       1205.960 [ms] (mean, across all concurrent requests)
+Transfer rate:          0.63 [Kbytes/sec] received
+                        0.21 kb/s sent
+                        0.84 kb/s total
+
+Connection Times (ms)
+              min   avg   max
+Connect:        0     0    0
+Processing:  1190 1184212305
+Waiting:     1141  749112305
+Total:       1190 1184212305
+
+Percentage of the requests served within a certain time (ms)
+  50%  12056
+  66%  12104
+  75%  12171
+  80%  12171
+  90%  12249
+  95%  12305
+  98%  12305
+  99%  12305
+ 100%  12305 (longest request)
+```
+
+The following command benchmarks 100 POST requests with 10 concurrent requests. It performs color analysis of a local file (to limit the benchmark to the content analysis proper), first with internal service, then with the blip-vqa-base model. Bear in mind that the performance of the latter depends greatly on available hardware (CPU/GPU).
 
 ```bash
 echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"internal"}' > post.txt
-ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/color"
+ab -k -p post.txt -T application/json -c10 -n100 -S "http://0.0.0.0:8000/v1/color"
 rm post.txt
 ```
 
@@ -781,18 +827,7 @@ This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
-Benchmarking 0.0.0.0 (be patient)
-Completed 100 requests
-Completed 200 requests
-Completed 300 requests
-Completed 400 requests
-Completed 500 requests
-Completed 600 requests
-Completed 700 requests
-Completed 800 requests
-Completed 900 requests
-Completed 1000 requests
-Finished 1000 requests
+Benchmarking 0.0.0.0 (be patient).....done
 
 
 Server Software:        uvicorn
@@ -800,46 +835,46 @@ Server Hostname:        0.0.0.0
 Server Port:            8000
 
 Document Path:          /v1/color
-Document Length:        792 bytes
+Document Length:        663 bytes
 
 Concurrency Level:      10
-Time taken for tests:   578.079 seconds
-Complete requests:      1000
-Failed requests:        804
-   (Connect: 0, Receive: 0, Length: 804, Exceptions: 0)
+Time taken for tests:   58.781 seconds
+Complete requests:      100
+Failed requests:        77
+   (Connect: 0, Receive: 0, Length: 77, Exceptions: 0)
 Keep-Alive requests:    0
-Total transferred:      938291 bytes
-Total body sent:        335000
-HTML transferred:       793291 bytes
-Requests per second:    1.73 [#/sec] (mean)
-Time per request:       5780.786 [ms] (mean)
-Time per request:       578.079 [ms] (mean, across all concurrent requests)
-Transfer rate:          1.59 [Kbytes/sec] received
-                        0.57 kb/s sent
-                        2.15 kb/s total
+Total transferred:      86485 bytes
+Total body sent:        33500
+HTML transferred:       71985 bytes
+Requests per second:    1.70 [#/sec] (mean)
+Time per request:       5878.115 [ms] (mean)
+Time per request:       587.812 [ms] (mean, across all concurrent requests)
+Transfer rate:          1.44 [Kbytes/sec] received
+                        0.56 kb/s sent
+                        1.99 kb/s total
 
 Connection Times (ms)
               min   avg   max
 Connect:        0     0    0
-Processing:   588  5765 6370
-Waiting:      548  3941 6203
-Total:        588  5765 6370
+Processing:   590  5723 6253
+Waiting:      509  3849 6253
+Total:        590  5723 6253
 
 Percentage of the requests served within a certain time (ms)
-  50%   5757
-  66%   5840
-  75%   5886
-  80%   5945
-  90%   6028
-  95%   6128
-  98%   6164
-  99%   6204
- 100%   6370 (longest request)
+  50%   5819
+  66%   5990
+  75%   6022
+  80%   6049
+  90%   6241
+  95%   6241
+  98%   6253
+  99%   6253
+ 100%   6253 (longest request)
 ```
 
 ```bash
-echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"HuggingFace"}' > post.txt
-ab -k -p post.txt -T application/json -c10 -n1000 -S "http://0.0.0.0:8000/v1/color"
+echo '{"source":"example.jpg","selector":{"type":"FragmentSelector","conformsTo":"http://www.w3.org/TR/media-frags/","value":"xywh=percent:0,0,100,100"},"service":"blip-vqa-base"}' > post.txt
+ab -k -p post.txt -T application/json -c10 -n100 -S "http://0.0.0.0:8000/v1/color"
 rm post.txt
 ```
 
@@ -850,18 +885,7 @@ This is ApacheBench, Version 2.3 <$Revision: 1879490 $>
 Copyright 1996 Adam Twiss, Zeus Technology Ltd, http://www.zeustech.net/
 Licensed to The Apache Software Foundation, http://www.apache.org/
 
-Benchmarking 0.0.0.0 (be patient)
-Completed 100 requests
-Completed 200 requests
-Completed 300 requests
-Completed 400 requests
-Completed 500 requests
-Completed 600 requests
-Completed 700 requests
-Completed 800 requests
-Completed 900 requests
-Completed 1000 requests
-Finished 1000 requests
+Benchmarking 0.0.0.0 (be patient).....done
 
 
 Server Software:        uvicorn
@@ -869,40 +893,40 @@ Server Hostname:        0.0.0.0
 Server Port:            8000
 
 Document Path:          /v1/color
-Document Length:        560 bytes
+Document Length:        681 bytes
 
 Concurrency Level:      10
-Time taken for tests:   891.398 seconds
-Complete requests:      1000
+Time taken for tests:   83.480 seconds
+Complete requests:      100
 Failed requests:        0
 Keep-Alive requests:    0
-Total transferred:      705000 bytes
-Total body sent:        338000
-HTML transferred:       560000 bytes
-Requests per second:    1.12 [#/sec] (mean)
-Time per request:       8913.981 [ms] (mean)
-Time per request:       891.398 [ms] (mean, across all concurrent requests)
-Transfer rate:          0.77 [Kbytes/sec] received
-                        0.37 kb/s sent
-                        1.14 kb/s total
+Total transferred:      82600 bytes
+Total body sent:        34000
+HTML transferred:       68100 bytes
+Requests per second:    1.20 [#/sec] (mean)
+Time per request:       8348.045 [ms] (mean)
+Time per request:       834.804 [ms] (mean, across all concurrent requests)
+Transfer rate:          0.97 [Kbytes/sec] received
+                        0.40 kb/s sent
+                        1.36 kb/s total
 
 Connection Times (ms)
               min   avg   max
-Connect:        0     0    1
-Processing:  1104  887313385
-Waiting:      733  7237 9821
-Total:       1104  887313385
+Connect:        0     0    0
+Processing:   793  8077 9030
+Waiting:      735  6088 9030
+Total:        793  8077 9030
 
 Percentage of the requests served within a certain time (ms)
-  50%   8893
-  66%   8953
-  75%   9012
-  80%   9040
-  90%   9182
-  95%   9325
-  98%   9792
-  99%   9996
- 100%  13385 (longest request)
+  50%   8418
+  66%   8648
+  75%   8713
+  80%   8763
+  90%   9024
+  95%   9030
+  98%   9030
+  99%   9030
+ 100%   9030 (longest request)
 ```
 
 ## Analysis
@@ -919,12 +943,11 @@ Our implementation is inspired by [https://github.com/zafarRehan/object_detectio
 
 Alternatively, one can call the [Google Cloud Vision API](https://cloud.google.com/vision), which actually combines two services, namely [label detection](https://cloud.google.com/vision/docs/labels) and [object localization](https://cloud.google.com/vision/docs/object-localizer).
 
-If, however, the user uses this service, without supplying an API key, the internal service is called.
+If, however, one uses this service without supplying an API key, the internal service is called.
 
 #### blib-vqa-base
 
-Alternatively, one can use the [blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation".
-Given an image, this method uses the pretrained model to identify the main subject in the image and retrieves its corresponding Wikidata URI, if available. The script also maintains a JSON database to store previously retrieved Wikidata URIs for concepts, reducing the need for redundant API calls.
+Alternatively, one can use the [blip-vqa-base model](https://huggingface.co/Salesforce/blip-vqa-base), aka "BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation". Given an image, this method uses the pretrained model to identify the main subject in the image and retrieves its corresponding Wikidata URI, if available. The script also maintains a JSON database to store previously retrieved Wikidata URIs for concepts, reducing the need for redundant API calls.
 
 Note that, other than the internal and Google Vision object detection, this method is not able to locate the detected objects on the image with specific coordinates.
 
