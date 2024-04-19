@@ -58,7 +58,6 @@ def detection(
     for i, sequence in enumerate(output.sequences):
         label = processor.decode(sequence, skip_special_tokens=True)
         label = label.strip().lower()
-        # to do: moeten we die labels niet splitten? (of gebeurt dat al bij decode?)
         if label in not_recognized:
             continue
         try:
@@ -81,13 +80,18 @@ def detection(
         }
         objects.append(detected_object)
 
+    # Sort result on confidence
+    sorted_objects = sorted(
+        objects, key=lambda x: x['confidence'], reverse=True
+    )
+
     # Filter max_objects
-    if len(objects) > request.max_objects:
-        objects = objects[0 : request.max_objects]
+    if len(sorted_objects) > request.max_objects:
+        sorted_objects = sorted_objects[0 : request.max_objects]
 
     result = {}
     result['request_id'] = request.id
     result['source'] = request.source
-    result['data'] = {'objects': objects}
+    result['data'] = {'objects': sorted_objects}
 
     return result
