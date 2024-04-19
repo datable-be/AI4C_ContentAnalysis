@@ -24,8 +24,6 @@ REQUEST = f"""{{
 }}
 """
 
-# to do: local image does not work with ntua annotation type
-
 
 def json_pretty_print(json_string: str):
     print(json.dumps(json.loads(json_string), indent=4))
