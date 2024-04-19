@@ -1,6 +1,6 @@
-import datetime
-import requests
-import sys
+from datetime import datetime, timezone
+from requests import get, Response
+from sys import exit
 
 # from constants import WIKIDATA_SPARQL_ENDPOINT
 
@@ -9,7 +9,7 @@ WIKIDATA_SPARQL_ENDPOINT = 'https://query.wikidata.org/sparql'
 
 def get_utc_timestamp():
     # Get the current UTC time
-    current_time = datetime.datetime.now(tz=datetime.timezone.utc)
+    current_time = datetime.now(tz=timezone.utc)
 
     # Format the time as xsd:dateTime with "Z" for UTC timezone
     formatted_time = current_time.strftime('%Y-%m-%dT%H:%M:%S') + 'Z'
@@ -17,16 +17,14 @@ def get_utc_timestamp():
     return formatted_time
 
 
-def sparql(query: str, endpoint: str) -> requests.Response:
+def sparql(query: str, endpoint: str) -> Response:
     """
     Execute a query to a SPARQL endpoint
     """
     try:
-        return requests.get(
-            endpoint, params={'format': 'json', 'query': query}
-        )
+        return get(endpoint, params={'format': 'json', 'query': query})
     except Exception as e:
-        sys.exit(e)
+        exit(str(e))
 
 
 def google_mid_to_wikidata(mid: str) -> str:

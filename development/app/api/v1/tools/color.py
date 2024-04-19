@@ -1,4 +1,4 @@
-import string
+from string import punctuation
 from extcolors import extract_from_path
 from typing import List, Tuple
 from PIL import Image
@@ -131,7 +131,7 @@ def extract_colors_from_sentence(sentence: str) -> List[str]:
     result = []
 
     sentence = sentence.lower()
-    for char in string.punctuation:
+    for char in punctuation:
         sentence = sentence.replace(char, '')
 
     words = sentence.split(' ')

@@ -1,5 +1,6 @@
 from transformers import BlipProcessor, BlipForQuestionAnswering
-import torch
+from torch import device as torch_device
+from torch import cuda, softmax
 from PIL import Image
 
 from classes import ObjectRequest
@@ -22,8 +23,8 @@ def detection(
     request.source = str(request.source)
 
     # Move the model to GPU if available
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # device = torch.device("cpu")
+    device = torch_device('cuda' if cuda.is_available() else 'cpu')
+    # device = torch_device("cpu")
     model.to(device)
 
     tempfile = source_to_tempfile(request.source, None, url=url_source)
@@ -61,7 +62,7 @@ def detection(
         if label in not_recognized:
             continue
         try:
-            confidence = torch.softmax(output.scores[i], dim=-1).max().item()
+            confidence = softmax(output.scores[i], dim=-1).max().item()
         except IndexError:
             continue
         wikidata_uri = retrieve_concept_uri(label)

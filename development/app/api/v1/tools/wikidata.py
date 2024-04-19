@@ -1,7 +1,7 @@
 from constants import WIKIDATA_URIS_FILE, WIKIDATA_SEARCH_API
 from fastapi import HTTPException
-import requests
-import json
+from requests import get
+from json import load, dumps
 
 
 def check_for_concept(concept: str) -> str:
@@ -14,7 +14,7 @@ def check_for_concept(concept: str) -> str:
     )
     response = None
     try:
-        response = requests.get(url)
+        response = get(url)
     except Exception as e:
         if response:
             code = response.status_code
@@ -45,7 +45,7 @@ def retrieve_concept_uri(concept: str) -> str:
     """
 
     with open(WIKIDATA_URIS_FILE, 'r') as reader:
-        wikidata_uris = json.load(reader)
+        wikidata_uris = load(reader)
 
     if concept in wikidata_uris:
         return wikidata_uris[concept]
@@ -57,6 +57,6 @@ def retrieve_concept_uri(concept: str) -> str:
 
     wikidata_uris[concept] = uri
     with open(WIKIDATA_URIS_FILE, 'w') as writer:
-        writer.write(json.dumps(wikidata_uris))
+        writer.write(dumps(wikidata_uris))
 
     return uri

@@ -1,7 +1,8 @@
 from cv2 import imwrite, grabCut, GC_INIT_WITH_RECT
 from cv2.dnn import Net
 import numpy as np
-import base64
+from base64 import b64encode
+
 
 from classes import ColorRequest, ObjectRequest
 from api.v1.tools.source import (
@@ -43,7 +44,6 @@ def determine_image(
                 min_confidence=0.5,
             )
             result = detection(object_request, net, settings, url_source)
-            objects_found = result.get('data')
             objects_found = result['data'].get('objects')
             if not objects_found:
                 return source_to_tempfile(
@@ -137,5 +137,5 @@ def encode_image(image_path: str):
     """
     tempfile = source_to_tempfile(image_path, resize_pixels=400, url=False)
     with open(tempfile, 'rb') as image_file:
-        encoded_string = base64.b64encode(image_file.read())
+        encoded_string = b64encode(image_file.read())
     return encoded_string

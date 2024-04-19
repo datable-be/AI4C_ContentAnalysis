@@ -3,7 +3,8 @@
 from PIL import Image
 from pathlib import Path
 from cv2.dnn import Net
-import torch
+from torch import device as torch_device
+from torch import cuda
 from transformers import BlipProcessor, BlipForQuestionAnswering
 
 from api.v1.tools.image import determine_image
@@ -40,8 +41,8 @@ def detection(
         result['warnings'].append(BW_WARNING)
 
     # Move the model to GPU if available
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    # device = torch.device("cpu")
+    device = torch_device('cuda' if cuda.is_available() else 'cpu')
+    # device = torch_device("cpu")
     model.to(device)
 
     image = Image.open(temp_path).convert('RGB')
