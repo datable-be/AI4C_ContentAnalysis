@@ -21,13 +21,14 @@ def detection(
     request.source = str(request.source)
 
     temp_path = determine_image(request, net, settings, 200, url_source)
+    if not temp_path:
+        return result
+
     if is_quasi_monochrome_with_rgb(temp_path):
         result.setdefault('warnings', [])
         result['warnings'].append(BW_WARNING)
 
     # Detect colors
-    if not temp_path:
-        return result
 
     (colors, total_pixel_count) = detect_main_colors(temp_path, 10)
     eft_colors = convert_colors_to_EFT(colors)
