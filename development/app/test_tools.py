@@ -1,10 +1,14 @@
 from pytest import mark
+from os import listdir
+from os.path import join
 
 from api.v1.tools.source import extension_from_source
 from api.v1.tools.color import (
     convert_colors_to_EFT,
     getColorName,
+    is_image_monochrome,
 )
+from constants import TEST_DIR
 
 
 @mark.parametrize(
@@ -37,3 +41,13 @@ def test_convert_colors_to_EFT():
     result = convert_colors_to_EFT(input_colors)
 
     assert result == [('red', 10), ('green', 20)]
+
+
+def test_is_image_monochrome():
+    for file_name in listdir(TEST_DIR):
+        if file_name.startswith('color'):
+            expected = False
+        else:
+            expected = True
+        file_path = join(TEST_DIR, file_name)
+        assert is_image_monochrome(file_path) == expected

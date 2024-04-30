@@ -1,7 +1,7 @@
 from string import punctuation
 from extcolors import extract_from_path
 from typing import List, Tuple
-from PIL import Image
+from PIL import Image, ImageStat
 
 from constants import EFT_COLORS, EFT_IDS
 
@@ -141,53 +141,38 @@ def extract_colors_from_sentence(sentence: str) -> List[str]:
     return result
 
 
-def is_quasi_monochrome_with_rgb(image_path: str) -> bool:
-    """
-    Determine whether an image is monochrome with an RGB channel
-    or a color image containing a black and white photo
-    """
-    image = Image.open(image_path)
+def is_image_monochrome(
+    file_path: str,
+    thumb_size: int = 40,
+    MSE_cutoff: int = 22,
+    adjust_color_bias: bool = True,
+):
 
-    # Check if the image has an RGB channel
-    bands = image.getbands()
-    if (
-        len(bands) != 3
-        or 'R' not in bands
-        or 'G' not in bands
-        or 'B' not in bands
-    ):
-        return False
+    pil_img = Image.open(file_path).convert('RGB')
+    bands = pil_img.getbands()
 
-    # Check if the image contains a black and white photo
-    num_pixels = 0
-    if image.mode == 'RGBA':
-        # Split image into separate channels
-        r, g, b, a = image.split()
+    if bands == ('R', 'G', 'B') or bands == ('R', 'G', 'B', 'A'):
+        thumb = pil_img.resize((thumb_size, thumb_size))
+        SSE, bias = 0, [0, 0, 0]
 
-        # Check if the alpha channel is mostly white
-        alpha_pixels = a.getdata()
-        num_white_pixels = sum(1 for pixel in alpha_pixels if pixel == 255)
-        num_pixels = len(alpha_pixels)
-        if num_white_pixels / num_pixels > 0.99:
-            return True
+        if adjust_color_bias:
+            bias = ImageStat.Stat(thumb).mean[:3]
+            bias = [b - sum(bias) / 3 for b in bias]
 
-    # Check if the image is monochrome
-    if image.mode == 'L':
-        return True
+        for pixel in thumb.getdata():
+            mu = sum(pixel) / 3
+            SSE += sum(
+                (pixel[i] - mu - bias[i]) * (pixel[i] - mu - bias[i])
+                for i in [0, 1, 2]
+            )
 
-    # Check if the image is RGB but with only one color channel
-    if image.mode == 'RGB':
-        r, g, b = image.split()
-        if r.getextrema() == g.getextrema() == b.getextrema():
-            return True
-        # Check if the image has very low color saturation
-        hsv_image = image.convert('HSV')
-        h, s, v = hsv_image.split()
-        s_pixels = s.getdata()
-        if num_pixels == 0:
-            num_pixels = len(s_pixels)
-        num_low_sat_pixels = sum(1 for pixel in s_pixels if pixel < 32)
-        if num_low_sat_pixels / num_pixels > 0.95:
-            return True
+        MSE = float(SSE) / (thumb_size * thumb_size)
 
-    return False
+        if MSE <= MSE_cutoff:
+            return True  # Grayscale
+        else:
+            return False  # Color
+    elif len(bands) == 1:
+        return True  # Black and white
+    else:
+        return False  # Unknown

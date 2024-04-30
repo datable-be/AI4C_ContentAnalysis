@@ -3,7 +3,7 @@ doc/google-api
 venv/*
 **/__pycache__/*
 development/app/images/*
-!development/app/images/example.jpg
+!development/app/images/example*
 development/app/tmp/*
 !development/app/tmp/.housekeeping
 

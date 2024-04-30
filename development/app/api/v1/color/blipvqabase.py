@@ -12,7 +12,7 @@ from api.v1.tools.path import filename_to_url
 from api.v1.tools.color import (
     extract_colors_from_sentence,
     add_URIs,
-    is_quasi_monochrome_with_rgb,
+    is_image_monochrome,
 )
 
 from classes import ColorRequest
@@ -28,6 +28,7 @@ def detection(
     url_source: bool,
 ) -> dict:
     result = {}
+    request.source = str(request.source)
 
     # Switch off foreground detection (is done by model)!
     request.foreground_detection = False
@@ -36,7 +37,7 @@ def detection(
     if not temp_path:
         return result
 
-    if is_quasi_monochrome_with_rgb(temp_path):
+    if is_image_monochrome(temp_path):
         result.setdefault('warnings', [])
         result['warnings'].append(BW_WARNING)
 

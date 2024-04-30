@@ -28,7 +28,7 @@ REQUEST = """{
       "value" : "xywh=percent:0,0,100,100"
     },
     "ld_source": "Wikidata",
-    "source":"https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg",
+    "source":"example.jpg",
     "annotation_type": "internal"
 }"""
 

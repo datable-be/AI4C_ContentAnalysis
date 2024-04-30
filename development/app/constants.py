@@ -66,6 +66,10 @@ IMAGE_DIR = 'images'
 
 DATA_DIR = 'data'
 
+# Directory for test data
+
+TEST_DIR = 'test'
+
 # Wikidata URIs file
 
 WIKIDATA_URIS_FILE = join(DATA_DIR, 'wikidata_uris.json')
