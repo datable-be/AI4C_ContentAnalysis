@@ -1858,6 +1858,11 @@ EFT_COLORS = [
     },
 ]
 
+EUROPEANA_CONTEXT = [
+    'http://www.w3.org/ns/anno.jsonld',
+    'https://www.europeana.eu/schemas/context/edm.jsonld',
+]
+
 NTUA_CONTEXT = {
     'as': 'https://www.w3.org/ns/activitystreams#',
     'dc': 'http://purl.org/dc/terms/',

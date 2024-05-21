@@ -2,7 +2,7 @@ from typing import List, Dict
 from enum import Enum
 from pydantic import BaseModel, Field, HttpUrl
 
-from constants import NTUA_CONTEXT
+from constants import NTUA_CONTEXT, EUROPEANA_CONTEXT
 
 
 class LDSource(str, Enum):
@@ -322,6 +322,125 @@ class NtuaResponse(BaseModel):
     )
 
 
-class EuropeanaResponse(BaseModel):
-    # to do when API response has definite form
+class EuropeanaCreator(NtuaCreator):
     ...
+
+
+class EuropeanaValidationReview(NtuaValidationReview):
+    ...
+
+
+class EuropeanaAnnotation(BaseModel):
+    id: HttpUrl = Field(
+        title='id',
+        description='Annotation IRI',
+    )
+    type: str = Field(
+        title='type',
+        description="The rdf:type of the annotation object and should normally be 'Annotation'",
+        default='Annotation',
+    )
+    created: str = Field(
+        title='created',
+        description="The date on which the annotation was created by a tool or a human, format = '2024-01-31T14:08:07Z'",
+    )
+    creator: EuropeanaCreator = Field(
+        title='creator', description='Annotation creator'
+    )
+    motivation: str = Field(
+        title='motivation',
+        description='',
+        default='tagging',
+    )
+    body: HttpUrl | str = Field(
+        title='body',
+        description='Body is the actual annotation value. It can be either a iri or a literal',
+    )
+    confidence: float | None = Field(
+        title='confidence',
+        description='Confidence of the annotation creator for the particular annotation(s)',
+        ge=0,
+        le=1,
+    )
+    review: EuropeanaValidationReview = Field(
+        title='review',
+        description='Provides information about the annotation validation status',
+    )
+
+
+class EuropeanaTarget(BaseModel):
+    # to do: what is this?
+    scope: HttpUrl | str = Field(
+        title='scope',
+        description='',
+    )
+    source: HttpUrl | str = Field(
+        title='source',
+        description='URI of the object the annotation refers to',
+    )
+
+
+class EuropeanaStatement(BaseModel):
+    id: HttpUrl = Field(
+        title='id',
+        description='Statement IRI',
+    )
+    dctformat: List[HttpUrl | str] = Field(
+        title='dct:format',
+        description='dct:format statements',
+    )
+
+
+class EuropeanaBody(BaseModel):
+    type: str = Field(title='type', description='', default='GraphBody')
+    purpose: str = Field(title='purpose', description='', default='asserting')
+    statements: EuropeanaStatement = Field(
+        title='statements',
+        description='statement object',
+    )
+
+
+class EuropeanaResponse(BaseModel):
+    context: Dict = Field(
+        title='context',
+        serialization_alias='@context',
+        description='Context',
+        default=EUROPEANA_CONTEXT,
+    )
+    id: HttpUrl = Field(
+        title='id',
+        description='Annotation IRI',
+    )
+    type: str = Field(
+        title='type',
+        description='Annotation type is the rdf:type of the annotation object and should normally be "Annotation"',
+        default='Annotation',
+    )
+    created: str = Field(
+        title='created',
+        description="The date on which the annotation was created by a tool or a human, format = '2024-01-30T14:09:00Z'",
+    )
+    creator: EuropeanaCreator = Field(
+        title='creator', description='Annotation creator'
+    )
+    # to do: what is the difference with created/creator?
+    generated: str = Field(
+        title='generated',
+        description='',
+    )
+    generator: EuropeanaCreator = Field(title='generator', description='')
+    motivation: str = Field(
+        title='motivation',
+        description='',
+        default='describing',
+    )
+    derivedFrom: List[EuropeanaAnnotation] = Field(
+        title='derivedFrom',
+        description='derivedFrom objects',
+    )
+    body: EuropeanaBody = Field(title='body', description='Annotation body')
+    # to do: what is this?
+    target: HttpUrl | str = Field(
+        title='target',
+        description='',
+    )
