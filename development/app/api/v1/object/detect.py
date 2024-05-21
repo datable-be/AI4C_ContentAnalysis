@@ -14,6 +14,7 @@ from api.v1.object.internal import detection as internal_detection
 from api.v1.object.google import detection as google_detection
 from api.v1.object.blipvqabase import detection as blip_detection
 from api.v1.annotation.conversion import convert
+from api.v1.annotation.tools import get_utc_timestamp
 
 
 def detection(
@@ -69,6 +70,8 @@ def detection(
         result['warnings'].append(
             NO_OBJECTS_WARNING + f': {object_request.min_confidence}'
         )
+
+    result['data']['created'] = get_utc_timestamp()
 
     if object_request.annotation_type == 'internal':
         return result

@@ -7,6 +7,7 @@ from api.v1.color.internal import detection as internal_detection
 from api.v1.color.blipvqabase import detection as blipvqabase_detection
 from api.v1.annotation.conversion import convert
 from api.v1.tools.path import housekeeping
+from api.v1.annotation.tools import get_utc_timestamp
 from classes import (
     ColorRequest,
     RequestService,
@@ -61,6 +62,8 @@ def detection(
         result['warnings'].append(
             NO_COLORS_WARNING + f': {color_request.min_area}'
         )
+
+    result['data']['created'] = get_utc_timestamp()
 
     if color_request.annotation_type == 'internal':
         return result
