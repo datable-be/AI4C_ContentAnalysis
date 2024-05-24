@@ -1,8 +1,7 @@
 from os.path import join
 from fastapi import HTTPException
 from numpy import asarray, ndarray
-from urllib.request import urlopen
-from urllib.error import URLError, HTTPError
+from requests import get, RequestException
 from cv2 import imdecode, imwrite, resize, IMREAD_COLOR, INTER_LINEAR
 
 from api.v1.tools.tools import hash_object
@@ -21,9 +20,11 @@ def resize_image(image: ndarray, pixels: int):
 
 def download(url: str) -> bytes:
     try:
-        with urlopen(url) as urlreader:
-            return urlreader.read()
-    except (HTTPError, URLError) as err:
+        response = get(url, timeout=5)
+        # Raise an exception if the status code is not 200
+        response.raise_for_status()
+        return response.content
+    except RequestException as err:
         raise HTTPException(status_code=404, detail=str(err))
 
 
