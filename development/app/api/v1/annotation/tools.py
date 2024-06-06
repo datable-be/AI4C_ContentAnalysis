@@ -1,6 +1,5 @@
 from datetime import datetime, timezone
 from requests import get, Response
-from sys import exit
 
 # from constants import WIKIDATA_SPARQL_ENDPOINT
 
@@ -24,7 +23,7 @@ def sparql(query: str, endpoint: str) -> Response:
     try:
         return get(endpoint, params={'format': 'json', 'query': query})
     except Exception as e:
-        exit(str(e))
+        raise e
 
 
 def google_mid_to_wikidata(mid: str) -> str:

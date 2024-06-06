@@ -86,7 +86,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
         body.append(url)
 
     annotation = NtuaAnnotation(
-        id=request.id,
+        id=HttpUrl(request.id),
         created=data['data']['created'],
         creator=creator,
         body=body,
@@ -103,7 +103,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
 def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 
     creator = EuropeanaCreator(name='AI4C color detector')
-    target = NtuaTarget(source=request.source)
+    target = EuropeanaTarget(source=request.source)
 
     derivedFrom_objects, statement_objects = [], []
     index = 0
@@ -119,7 +119,7 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
             identifier = request.id + '.' + str(index)
 
             derivedFrom = EuropeanaAnnotation(
-                id=identifier,
+                id=HttpUrl(identifier),
                 created=data['data']['created'],
                 creator=creator,
                 body=wikidata_identifier,
@@ -139,7 +139,7 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
             identifier = request.id + '.' + str(index)
 
             derivedFrom = EuropeanaAnnotation(
-                id=identifier,
+                id=HttpUrl(identifier),
                 created=data['data']['created'],
                 creator=creator,
                 body=url,
@@ -178,7 +178,7 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 def color_to_europeana(data: dict, request: ColorRequest) -> dict:
 
     creator = EuropeanaCreator(name='AI4C color detector')
-    target = NtuaTarget(source=request.source)
+    target = EuropeanaTarget(source=request.source)
 
     derivedFrom_objects, statement_objects = [], []
 
@@ -212,7 +212,7 @@ def color_to_europeana(data: dict, request: ColorRequest) -> dict:
     target = '???'
 
     result = EuropeanaResponse(
-        id=request.id,
+        id=HttpUrl(request.id),
         created=data['data']['created'],
         creator=creator,
         generated=get_utc_timestamp(),
@@ -239,5 +239,4 @@ def convert(data: dict, request: ObjectRequest | ColorRequest) -> dict:
         elif request.annotation_type == AnnotationType.europeana:
             return color_to_europeana(data, request)
 
-    else:
-        return data
+    return data

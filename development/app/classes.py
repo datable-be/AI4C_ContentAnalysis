@@ -423,7 +423,6 @@ class EuropeanaResponse(BaseModel):
     creator: EuropeanaCreator = Field(
         title='creator', description='Annotation creator'
     )
-    # to do: what is the difference with created/creator?
     generated: str = Field(
         title='generated',
         description='',
