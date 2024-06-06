@@ -3,6 +3,8 @@ from cv2.dnn import Net
 import numpy as np
 from base64 import b64encode
 
+from pydantic import HttpUrl
+
 
 from classes import ColorRequest, ObjectRequest
 from api.v1.tools.source import (
@@ -30,9 +32,10 @@ def determine_image(
 
     if not color_request.foreground_detection:
         # No cropping needs to be applied
-        return source_to_tempfile(
+        image_path, _ = source_to_tempfile(
             color_request.source, resize_pixels=resize, url=url_source
         )
+        return image_path
 
     else:
         if color_request.selector.value == 'xywh=percent:0,0,100,100':
@@ -46,9 +49,10 @@ def determine_image(
             result = detection(object_request, net, settings, url_source)
             objects_found = result['data'].get('objects')
             if not objects_found:
-                return source_to_tempfile(
+                image_path, _ = source_to_tempfile(
                     color_request.source, resize_pixels=200, url=url_source
                 )
+                return image_path
             else:
                 box = objects_found[0].get('box_px')
                 return crop_image(
@@ -79,7 +83,7 @@ def determine_image(
 
 
 def crop_image(
-    source: str,
+    source: str | HttpUrl,
     box: list[int],
     resize_pixels: int | None,
     mode: str,
@@ -91,8 +95,9 @@ def crop_image(
     and return tempfile path to cropped image
     """
 
+    temppath, data = source_to_temppath(source, url=url)
     image = load_cv2_image_from_source(
-        source, resize_pixels=resize_pixels, url=url
+        data, resize_pixels=resize_pixels, url=url
     )
 
     # Convert box percentages to box coordinates
@@ -125,7 +130,6 @@ def crop_image(
         cropped_image = image[box[1] : box[3], box[0] : box[2]]
 
     # Save image
-    temppath = source_to_temppath(source)
     imwrite(temppath, cropped_image)
 
     return temppath
@@ -135,7 +139,5 @@ def encode_image(image_path: str):
     """
     Make a base64 encoded image. First resize for performance.
     """
-    tempfile = source_to_tempfile(image_path, resize_pixels=400, url=False)
-    with open(tempfile, 'rb') as image_file:
-        encoded_string = b64encode(image_file.read())
-    return encoded_string
+    _, data = source_to_tempfile(image_path, resize_pixels=400, url=False)
+    return b64encode(data)

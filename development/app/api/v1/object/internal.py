@@ -7,7 +7,7 @@ from classes import ObjectRequest
 from constants import COCO_LABELS, COCO_2_WIKIDATA, TEMP_DIR
 from api.v1.tools.source import (
     load_cv2_image_from_source,
-    extension_from_source,
+    identify_image_type,
 )
 from api.v1.tools.path import filename_to_url
 from api.v1.tools.tools import hash_object
@@ -30,9 +30,8 @@ def detection(
     identifier = hash_object(request)
 
     # Read image, resize (height value)
-    image = load_cv2_image_from_source(
-        request.source, resize_pixels=200, url=url_source
-    )
+    extension, data = identify_image_type(request.source, url=url_source)
+    image = load_cv2_image_from_source(data, resize_pixels=200, url=url_source)
     image_height = image.shape[0]
     image_width = image.shape[1]
 
@@ -134,12 +133,7 @@ def detection(
         )
 
         # Save image
-        basename = (
-            identifier
-            + '_'
-            + str(count)
-            + extension_from_source(request.source)
-        )
+        basename = identifier + '_' + str(count) + extension
         filepath = join(TEMP_DIR, basename)
         imwrite(filepath, annotated_image)
         print(filepath, ' saved')

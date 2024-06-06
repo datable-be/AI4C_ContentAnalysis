@@ -2,6 +2,7 @@ from transformers import BlipProcessor, BlipForQuestionAnswering
 from torch import device as torch_device
 from torch import cuda, softmax
 from PIL import Image
+from io import BytesIO
 
 from classes import ObjectRequest
 from api.v1.tools.source import source_to_tempfile
@@ -27,8 +28,8 @@ def detection(
     # device = torch_device("cpu")
     model.to(device)
 
-    tempfile = source_to_tempfile(request.source, None, url=url_source)
-    raw_image = Image.open(tempfile).convert('RGB')
+    _, data = source_to_tempfile(request.source, None, url=url_source)
+    raw_image = Image.open(BytesIO(data)).convert('RGB')
 
     question = 'What is the main subject?'
 

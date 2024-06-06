@@ -14,6 +14,7 @@ EXAMPLES = {
     'dog_and_horse': 'https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true',
     'sheep_in_a_meadow': 'https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg',
     'problem': 'https://repos.fashionheritage.eu/momu/images/MOMU_RS175314_hpr.jpg',
+    'problem2': 'https://digitalcollections.universiteitleiden.nl/view/item/360453/datastream/JPG/',
     'local_file': 'example.jpg',
 }
 
@@ -29,8 +30,8 @@ REQUEST = """{
       "value" : "xywh=percent:50,50,100,100"
     },
     "ld_source": "Wikidata",
-    "source":"https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg",
-    "annotation_type": "internal"
+    "source":"https://digitalcollections.universiteitleiden.nl/view/item/360453/datastream/JPG/",
+    "annotation_type": "europeana"
 }"""
 
 
