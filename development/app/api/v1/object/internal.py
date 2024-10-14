@@ -1,4 +1,4 @@
-from os.path import join
+efrom os.path import join
 
 from cv2 import rectangle, putText, imwrite, FONT_HERSHEY_SIMPLEX
 from cv2.dnn import blobFromImage, Net
@@ -90,59 +90,69 @@ def detection(
         size_height = box[3] - box[1]
         size = size_width * size_height
 
-        # Before altering image, make a deep copy,
-        # because cv2 uses pointers under the hood,
-        # so the original image is changed!
-        image_copy = image.copy()
-
-        # Draw the bounding box of the object
-        # pt1 represents the top-left corner, and pt2 represents the bottom-right corner of the rectangle.
-        annotated_image = rectangle(
-            img=image_copy,
-            pt1=box[:2],
-            pt2=box[2:],
-            color=ANNOTATION_COLOR,
-            thickness=2,
-        )
-
-        # Extract the ID of the detected object to get its name
-        class_id = int(detection[1])
-
-        label = COCO_LABELS[class_id - 1]
+        # Calculate relative box size
+        rel_size_width = horizontal_bottom_right - horizontal_top_left
+        rel_size_height = vertical_bottom_right - vertical_top_left
+        rel_size = rel_size_width * rel_size_height
+        rel_size = rel_size / 10000
 
         # Add data to result
-        detected_object = {
-            'confidence': confidence,
-            'size': size,
-            'box_px': box,
-            'box_%': percentages,
-            'coco_label': label,
-            'wikidata': COCO_2_WIKIDATA.get(label),
-        }
+        if rel_size > 0.2: #select only larger images
 
-        # Draw the name of the predicted object together with the probability
-        prediction = f'{label} {confidence * 100:.2f}%'
-        annotated_image = putText(
-            img=annotated_image,
-            text=prediction,
-            org=(box[0], box[1] + 15),
-            fontFace=FONT_HERSHEY_SIMPLEX,
-            fontScale=0.5,
-            color=ANNOTATION_COLOR,
-            thickness=2,
-        )
+            # Before altering image, make a deep copy,
+            # because cv2 uses pointers under the hood,
+            # so the original image is changed!
+            image_copy = image.copy()
 
-        # Save image
-        basename = identifier + '_' + str(count) + extension
-        filepath = join(TEMP_DIR, basename)
-        imwrite(filepath, annotated_image)
-        print(filepath, ' saved')
-        detected_object['annotated_image'] = filename_to_url(basename)
+            # Draw the bounding box of the object
+            # pt1 represents the top-left corner, and pt2 represents the bottom-right corner of the rectangle.
+            annotated_image = rectangle(
+                img=image_copy,
+                pt1=box[:2],
+                pt2=box[2:],
+                color=ANNOTATION_COLOR,
+                thickness=2,
+            )
 
-        objects.append(detected_object)
+            # Extract the ID of the detected object to get its name
+            class_id = int(detection[1])
+
+            label = COCO_LABELS[class_id - 1]
+
+
+            detected_object = {
+                'confidence': confidence,
+                'size': rel_size,
+                'box_px': box,
+                'box_%': percentages,
+                'coco_label': label,
+                'wikidata': COCO_2_WIKIDATA.get(label),
+            }
+
+            # Draw the name of the predicted object together with the probability
+            prediction = f'{label} {confidence * 100:.2f}%'
+            annotated_image = putText(
+                img=annotated_image,
+                text=prediction,
+                org=(box[0], box[1] + 15),
+                fontFace=FONT_HERSHEY_SIMPLEX,
+                fontScale=0.5,
+                color=ANNOTATION_COLOR,
+                thickness=2,
+            )
+
+            # Save image
+            basename = identifier + '_' + str(count) + extension
+            filepath = join(TEMP_DIR, basename)
+            imwrite(filepath, annotated_image)
+            print(filepath, ' saved')
+            detected_object['annotated_image'] = filename_to_url(basename)
+
+            objects.append(detected_object)
 
     # Sort result on object size
-    sorted_objects = sorted(objects, key=lambda x: x['size'], reverse=True)
+    sorted_objects = sorted(objects, key=lambda x: x['confidence'], reverse=True)
+
 
     # Filter max_objects
     if len(sorted_objects) > request.max_objects:
