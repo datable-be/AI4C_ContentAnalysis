@@ -77,7 +77,7 @@ def determine_image(
                 box,
                 resize,
                 mode='pc',
-                foreground=False,
+                foreground=True, #changed to True for images with box hint to allow foreground detection
                 url=url_source,
             )
 
