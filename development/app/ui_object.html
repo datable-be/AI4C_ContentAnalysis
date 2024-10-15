@@ -15,101 +15,123 @@
     <div class="container mt-4">
       <h1 class="mb-4">Object Detection Parameters</h1>
       <form id="objectForm">
-        <div class="form-group">
-          <label for="minConfidence">Min Confidence:</label>
-          <input
-            type="text"
-            id="minConfidence"
-            name="min_confidence"
-            value="0.8"
-            size="150"
-          /><br />
+        <div class="form-group row">
+          <label for="minConfidence" class="col-sm-2 col-form-label">Min Confidence:</label>
+          <div class="col-sm-10">
+            <input
+              type="text"
+              class="form-control"
+              id="minConfidence"
+              name="min_confidence"
+              value="0.6"
+              title="Set the minimum confidence level for object detection, between 0 and 1"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="maxObjects">Max Objects:</label>
-          <input
-            type="text"
-            id="maxObjects"
-            name="max_objects"
-            size="150"
-            value="1"
-          /><br />
+  
+        <div class="form-group row">
+          <label for="maxObjects" class="col-sm-2 col-form-label">Max Objects:</label>
+          <div class="col-sm-10">
+            <input
+              type="text"
+              class="form-control"
+              id="maxObjects"
+              name="max_objects"
+              value="1"
+              title="Specify the maximum number of objects to detect"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="service">Service:</label>
-          <select class="form-control" id="service" name="service">
-            <option value="internal">internal</option>
-            <option value="blip-vqa-base">blip-vqa-base</option>
-            <option value="GoogleVision">GoogleVision</option>
-          </select>
+  
+        <div class="form-group row">
+          <label for="service" class="col-sm-2 col-form-label">Service:</label>
+          <div class="col-sm-10">
+            <select class="form-control" id="service" name="service" title="Choose the object detection service to use">
+              <option value="internal">internal</option>
+              <option value="blip-vqa-base">blip-vqa-base</option>
+              <option value="GoogleVision">GoogleVision</option>
+            </select>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="service_key">Service Key:</label>
-          <input
-            type="text"
-            id="service_key"
-            name="service_key"
-            value=""
-            size="150"
-          /><br />
+  
+        <div class="form-group row">
+          <label for="service_key" class="col-sm-2 col-form-label">Service Key:</label>
+          <div class="col-sm-10">
+            <input
+              type="text"
+              class="form-control"
+              id="service_key"
+              name="service_key"
+              value=""
+              title="If you use the GoogleVision service, enter the API key"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="source">Source:</label>
-          <input
-            list="sourcedata"
-            id="source"
-            name="source"
-            value="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
-            size="150"
-            onchange="document.getElementById('preview').src = this.value"
-          /><br />
-          <datalist id="sourcedata">
-            <option></option>
-          </datalist>
-          <br />
-          <img
-            id="preview"
-            src="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
-            width="500"
-          />
+  
+        <div class="form-group row">
+          <label for="source" class="col-sm-2 col-form-label">Source:</label>
+          <div class="col-sm-10">
+            <input
+              list="sourcedata"
+              class="form-control"
+              id="source"
+              name="source"
+              value="https://raw.githubusercontent.com/datable-be/AI4C_ContentAnalysis/refs/heads/main/development/app/images/firetruck.jpg"
+              title="Specify the URL of the image to analyze"
+              onchange="document.getElementById('preview').src = this.value"
+            />
+            <datalist id="sourcedata">
+              <option></option>
+            </datalist>
+            <br />
+            <img
+              id="preview"
+              src="https://raw.githubusercontent.com/datable-be/AI4C_ContentAnalysis/refs/heads/main/development/app/images/firetruck.jpg"
+              width="300"
+              title="Preview of the selected image"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="annotationType">Annotation Type:</label>
-          <select
-            class="form-control"
-            id="annotationType"
-            name="annotation_type"
-          >
-            <option value="internal">internal</option>
-            <option value="ntua">NTUA</option>
-            <option value="europeana">Europeana</option>
-          </select>
+  
+        <div class="form-group row">
+          <label for="annotationType" class="col-sm-2 col-form-label">Annotation Type:</label>
+          <div class="col-sm-10">
+            <select
+              class="form-control"
+              id="annotationType"
+              name="annotation_type"
+              title="Choose the type of annotation format to use"
+            >
+              <option value="internal">internal</option>
+              <option value="ntua">NTUA</option>
+              <option value="europeana">Europeana</option>
+            </select>
+          </div>
         </div>
-
-        <button type="button" class="btn btn-primary" onclick="submitForm()">
-          Submit
-        </button>
+  
+        <div class="form-group row">
+          <div class="col-sm-10 offset-sm-2">
+            <button type="button" class="btn btn-primary" onclick="submitForm()" title="Submit the form to start the object detection process">
+              Submit
+            </button>
+          </div>
+        </div>
       </form>
-
+  
       <pre id="result"></pre>
       <script>
         function submitForm() {
           const form = document.getElementById("objectForm");
           const formData = new FormData(form);
-
+  
           // Convert FormData to a JSON object
           const jsonObject = {};
           formData.forEach((value, key) => {
             jsonObject[key] = value;
           });
-
+  
           console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging);
-
+  
           // Send the JSON object to your API
           fetch("/v1/object", {
             method: "POST",
@@ -134,4 +156,7 @@
       </script>
     </div>
   </body>
+  
+  
+  
 </html>
