@@ -15,132 +15,177 @@
     <div class="container mt-4">
       <h1 class="mb-4">Color Detection Parameters</h1>
       <form id="colorForm">
-        <div class="form-group">
-          <label for="maxColors">Max Colors:</label>
-          <input
-            type="text"
-            id="maxColors"
-            name="max_colors"
-            size="150"
-            value="3"
-          /><br />
+        <div class="form-group row">
+          <label for="maxColors" class="col-sm-3 col-form-label">Max Colors:</label>
+          <div class="col-sm-9">
+            <input
+              type="text"
+              id="maxColors"
+              name="max_colors"
+              class="form-control"
+              value="3"
+              title="Enter the maximum number of colors to detect"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="minArea">Min Area:</label>
-          <input
-            type="text"
-            id="minArea"
-            name="min_area"
-            value="0.15"
-            size="150"
-          /><br />
+  
+        <div class="form-group row">
+          <label for="minArea" class="col-sm-3 col-form-label">Min Area:</label>
+          <div class="col-sm-9">
+            <input
+              type="text"
+              id="minArea"
+              name="min_area"
+              class="form-control"
+              value="0.15"
+              title="Minimum area threshold for color detection (as a percentage)"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="foregroundDetection">Foreground Detection:</label>
-          <input
-            type="checkbox"
-            id="foregroundDetection"
-            name="foreground_detection"
-            checked
-          /><br />
+  
+        <div class="form-group row">
+          <label for="foregroundDetection" class="col-sm-3 col-form-label">Foreground Detection:</label>
+          <div class="col-sm-9">
+            <input
+              type="checkbox"
+              id="foregroundDetection"
+              name="foreground_detection"
+              class="form-check-input"
+              checked
+              title="Check to enable foreground color detection"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="service">Service:</label>
-          <select class="form-control" id="service" name="service">
-            <option value="internal">internal</option>
-            <option value="blip-vqa-base">blip-vqa-base</option>
-          </select>
+  
+        <div class="form-group row">
+          <label for="service" class="col-sm-3 col-form-label">Service:</label>
+          <div class="col-sm-9">
+            <select
+              class="form-control"
+              id="service"
+              name="service"
+              title="Select the service to use for color detection"
+            >
+              <option value="internal">internal</option>
+              <option value="blip-vqa-base">blip-vqa-base</option>
+            </select>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="selectorType">Selector Type:</label>
-          <input
-            type="text"
-            id="selectorType"
-            name="selector.type"
-            value="FragmentSelector"
-            size="150"
-          /><br />
+  
+        <div class="form-group row">
+          <label for="selectorType" class="col-sm-3 col-form-label">Selector type:</label>
+          <div class="col-sm-9">
+            <select
+              class="form-control"
+              id="selectorType"
+              name="selector.type"
+              title="Specify the type of selector used for annotation"
+            >
+              <option value="FragmentSelector">FragmentSelector</option>
+            </select>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="selectorConformsTo">Selector Conforms To:</label>
-          <input
-            type="text"
-            id="selectorConformsTo"
-            name="selector.conformsTo"
-            value="http://www.w3.org/TR/media-frags/"
-            size="150"
-          /><br />
+        
+        <div class="form-group row">
+          <label for="selectorConformsTo" class="col-sm-3 col-form-label">Selector Conforms To:</label>
+          <div class="col-sm-9">
+            <select
+              class="form-control"
+              id="selectorConformsTo"
+              name="selector.conformsTo"
+              title="The URL standard for media fragments"
+            >
+              <option value="http://www.w3.org/TR/media-frags/">http://www.w3.org/TR/media-frags/</option>
+            </select>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="selectorValue">Selector Value:</label>
-          <input
-            type="text"
-            id="selectorValue"
-            name="selector.value"
-            value="xywh=percent:0,0,100,100"
-            size="150"
-          /><br />
+  
+       
+        <div class="form-group row">
+          <label for="selectorValue" class="col-sm-3 col-form-label">Selector Value:</label>
+          <div class="col-sm-9">
+            <input
+              type="text"
+              id="selectorValue"
+              name="selector.value"
+              class="form-control"
+              value="xywh=percent:10,10,80,80"
+              title="Enter the value for the media fragment (xywh coordinates)"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="ldSource">LD Source:</label>
-          <select class="form-control" id="ldSource" name="ld_source">
-            <option value="Wikidata">Wikidata</option>
-            <option value="FT">Europeana Fashion Thesaurus</option>
-          </select>
+  
+        <div class="form-group row">
+          <label for="ldSource" class="col-sm-3 col-form-label">LD Source:</label>
+          <div class="col-sm-9">
+            <select
+              class="form-control"
+              id="ldSource"
+              name="ld_source"
+              title="Select the linked data source"
+            >
+              <option value="Wikidata">Wikidata</option>
+              <option value="FT">Europeana Fashion Thesaurus</option>
+            </select>
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="source">Source:</label>
-          <input
-            list="sourcedata"
-            id="source"
-            name="source"
-            value="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
-            size="150"
-            oninput="document.getElementById('preview').src = this.value"
-          /><br />
-          <datalist id="sourcedata">
-            <option></option>
-          </datalist>
-          <br />
-          <img
-            id="preview"
-            src="https://previews.123rf.com/images/goldika/goldika1310/goldika131000020/23257505-one-sheep-on-green-autumn-to-the-meadow.jpg"
-            width="500"
-          />
+  
+        <div class="form-group row">
+          <label for="source" class="col-sm-3 col-form-label">Source:</label>
+          <div class="col-sm-9">
+            <input
+              list="sourcedata"
+              id="source"
+              name="source"
+              class="form-control"
+              value="https://raw.githubusercontent.com/datable-be/AI4C_ContentAnalysis/refs/heads/main/development/app/images/firetruck.jpg"
+              oninput="document.getElementById('preview').src = this.value"
+              title="Enter the source URL of the image"
+            />
+            <datalist id="sourcedata">
+              <option></option>
+            </datalist>
+            <br />
+            <img
+              id="preview"
+              src="https://raw.githubusercontent.com/datable-be/AI4C_ContentAnalysis/refs/heads/main/development/app/images/firetruck.jpg"
+              width="300"
+            />
+          </div>
         </div>
-
-        <div class="form-group">
-          <label for="annotationType">Annotation Type:</label>
-          <select
-            class="form-control"
-            id="annotationType"
-            name="annotation_type"
-          >
-            <option value="internal">internal</option>
-            <option value="ntua">NTUA</option>
-            <option value="europeana">Europeana</option>
-          </select>
+  
+        <div class="form-group row">
+          <label for="annotationType" class="col-sm-3 col-form-label">Annotation Type:</label>
+          <div class="col-sm-9">
+            <select
+              class="form-control"
+              id="annotationType"
+              name="annotation_type"
+              title="Select the annotation type"
+            >
+              <option value="internal">internal</option>
+              <option value="ntua">NTUA</option>
+              <option value="europeana">Europeana</option>
+            </select>
+          </div>
         </div>
-
-        <button type="button" class="btn btn-primary" onclick="submitForm()">
-          Submit
-        </button>
+  
+        <div class="form-group row">
+          <div class="col-sm-9 offset-sm-3">
+            <button type="button" class="btn btn-primary" onclick="submitForm()">
+              Submit
+            </button>
+          </div>
+        </div>
       </form>
-
+  
       <pre id="result"></pre>
+  
       <script>
         function submitForm() {
           const form = document.getElementById("colorForm");
           const formData = new FormData(form);
-
+  
           // Convert FormData to a JSON object
           const jsonObject = { selector: {} };
           formData.forEach((value, key) => {
@@ -156,13 +201,13 @@
               jsonObject[key] = value;
             }
           });
-
+  
           // Unchecked checkbox is not present in object!
           jsonObject["foreground_detection"] =
             jsonObject["foreground_detection"] || false;
-
-          console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging);
-
+  
+          console.log(JSON.stringify(jsonObject)); // Log the JSON object for debugging
+  
           // Send the JSON object to your API
           fetch("/v1/color", {
             method: "POST",
@@ -187,4 +232,5 @@
       </script>
     </div>
   </body>
+  
 </html>
