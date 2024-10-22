@@ -688,6 +688,12 @@ EFT_IDS = {
         'europeana_concept': '10401',
         'europeana_concepturi': 'http://thesaurus.europeanafashion.eu/thesaurus/10401',
     },
+    'cyan': {
+        'wikidata_concept': 'Q180778',
+        'wikidata_concepturi': 'http://www.wikidata.org/entity/Q180778',
+        'europeana_concept': '11097',
+        'europeana_concepturi': 'http://thesaurus.europeanafashion.eu/thesaurus/11097',
+    },
     'purple': {
         'wikidata_concept': 'Q3257809',
         'wikidata_concepturi': 'http://www.wikidata.org/entity/Q3257809',
