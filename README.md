@@ -1,6 +1,8 @@
 # AI4C: Content Analysis Tools
 
-_This API and documentation are currently in development!_
+The Content Analysis toolset was developed as part of the The ‘’[AI4Culture - An AI platform for the cultural heritage data space](https://pro.europeana.eu/project/ai4culture-an-ai-platform-for-the-cultural-heritage-data-space)” project, co-funded under the EU’s [Digital Europe Programme](https://digital-strategy.ec.europa.eu/en/activities/digital-programme) runs from 1 April 2024 to 31 March 2025. The project is being implemented by partners from seven European countries, involving industry and academic partners from the ICT sector, cultural heritage (CH) stakeholders, and the Europeana Foundation. 
+
+The tool is listed on the [AI4Culture](https://ai4culture.eu/) platform, where more documentation and manuals can be found.
 
 ## Quickstart
 
