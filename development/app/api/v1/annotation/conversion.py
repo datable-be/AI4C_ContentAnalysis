@@ -102,7 +102,7 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
 
 def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 
-    creator = EuropeanaCreator(name='AI4C color detector')
+    creator = EuropeanaCreator(name='AI4C object detector')
     target = EuropeanaTarget(source=request.source)
 
     derivedFrom_objects, statement_objects = [], []
