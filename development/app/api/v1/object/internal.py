@@ -1,4 +1,4 @@
-efrom os.path import join
+from os.path import join
 
 from cv2 import rectangle, putText, imwrite, FONT_HERSHEY_SIMPLEX
 from cv2.dnn import blobFromImage, Net
