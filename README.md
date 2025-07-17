@@ -179,7 +179,7 @@ CONTAINER ID   IMAGE              COMMAND                  CREATED          STAT
 
 ### Uvicorn
 
-As seen in the above output, the Docker container now uses [uvicorn](https://www.uvicorn.org/) to serve the API. Uvicorn is an [ASGI](https://asgi.readthedocs.io/en/latest/) (Asynchronous Server Gateway Interface) web server implementation for Python. Alternatives are [Hypercorn](https://pgjones.gitlab.io/hypercorn/) or [Daphne](https://github.com/django/daphne).
+As seen in the above output, the Docker container now uses [uvicorn](https://www.uvicorn.org/) to serve the API. Uvicorn is an [ASGI](https://asgi.readthedocs.io/en/latest/) (Asynchronous Server Gateway Interface)  server implementation for Python. Alternatives are [Hypercorn](https://pgjones.gitlab.io/hypercorn/) or [Daphne](https://github.com/django/daphne).
 
 For deployment, one can also configure a web server like [Apache](https://httpd.apache.org/) or [NGINX](https://www.nginx.com/) to act as a reverse proxy for the Docker application. In simple terms, a reverse proxy is a server that sits between a client and one or more servers, forwarding client requests to the appropriate server. Using a reverse proxy can provide several benefits, such as improved security, load balancing, and caching.
 
@@ -617,7 +617,7 @@ If, however, there is an error in generating the response, the client will recei
 
 ### Web interface
 
-The API also comes with a basic web interface for both object and color requests, accessible via URL paths `/v1/ui/object` and/or `/v1/ui/color`.
+The API also comes with a basic web interface (GUI) for both object and color requests, accessible via URL paths `/ui/object` and/or `/ui/color`. This GUI only supports single requests and is intended for testing purposes.
 
 ## Benchmarks
 
