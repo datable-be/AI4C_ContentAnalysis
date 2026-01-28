@@ -10,7 +10,7 @@ EXAMPLES = {
 }
 
 with open(
-    '/home/tdeneire/Dropbox/code/python/AI4C/doc/google-api/key', 'r'
+    '/home/tdeneire/projects/code/python/AI4C/doc/google-api/key', 'r'
 ) as reader:
     KEY = reader.read().strip()
 
