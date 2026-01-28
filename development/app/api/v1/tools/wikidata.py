@@ -1,26 +1,42 @@
 from constants import WIKIDATA_URIS_FILE, WIKIDATA_SEARCH_API
 from fastapi import HTTPException
-from requests import get
+from requests import get, RequestException
 from json import load, dumps
+from urllib.parse import quote
 
 
 def check_for_concept(concept: str) -> str:
     """
     Check Wikidata API for URI
     """
-    url = (
-        WIKIDATA_SEARCH_API
-        + f'{concept}&format=json&language=en&uselang=en&type=item&limit=10'
-    )
-    response = None
+
+    headers = {'User-Agent': 'AI4C/0.1 (contact: info@datable.be)'}
+
+    params = {
+        'action': 'wbsearchentities',
+        'search': concept,
+        'format': 'json',
+        'language': 'en',
+        'uselang': 'en',
+        'type': 'item',
+        'limit': 10,
+    }
+
     try:
-        response = get(url)
-    except Exception as e:
-        if response:
-            code = response.status_code
-        else:
-            code = 404
-        raise HTTPException(status_code=code, detail=str(e))
+        response = get(
+            WIKIDATA_SEARCH_API,
+            params=params,
+            headers=headers,
+            timeout=10,
+        )
+        response.raise_for_status()
+    except RequestException as e:
+        status_code = e.response.status_code if e.response else 502
+        raise HTTPException(
+            status_code=status_code,
+            detail=f'Wikidata request failed: {str(e)}',
+        )
+
     data = response.json()
 
     search_info = data.get('searchinfo', {})
