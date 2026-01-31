@@ -10,6 +10,7 @@ from classes import (
     EuropeanaCreator,
     EuropeanaResponse,
     EuropeanaResponse,
+    EuropeanaTarget,
     EuropeanaStatement,
     EuropeanaValidationReview,
     LDSource,
@@ -103,7 +104,9 @@ def color_to_ntua(data: dict, request: ColorRequest) -> dict:
 def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 
     creator = EuropeanaCreator(name='AI4C object detector')
-    target = EuropeanaTarget(source=request.source)
+    target = EuropeanaTarget(
+        source=request.source,
+    )
 
     derivedFrom_objects, statement_objects = [], []
     index = 0
@@ -151,15 +154,10 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
             statement_objects.append(url)
 
     statements = EuropeanaStatement(
-        # to do: what should this be? perhaps UUID like above?
-        id=HttpUrl(APP_URL + '/object-annotation/' + str(uuid4())),
         dctformat=statement_objects,
     )
 
     body = EuropeanaBody(statements=statements)
-
-    # to do: what should this be?
-    target = '???'
 
     result = EuropeanaResponse(
         id=request.id,
@@ -178,7 +176,9 @@ def object_to_europeana(data: dict, request: ObjectRequest) -> dict:
 def color_to_europeana(data: dict, request: ColorRequest) -> dict:
 
     creator = EuropeanaCreator(name='AI4C color detector')
-    target = EuropeanaTarget(source=request.source)
+    target = EuropeanaTarget(
+        source=request.source,
+    )
 
     derivedFrom_objects, statement_objects = [], []
 
@@ -201,15 +201,14 @@ def color_to_europeana(data: dict, request: ColorRequest) -> dict:
         statement_objects.append(url)
 
     statements = EuropeanaStatement(
-        # to do: what should this be? perhaps UUID like above?
-        id=HttpUrl(APP_URL + '/color-annotation/' + str(uuid4())),
         dctformat=statement_objects,
     )
 
     body = EuropeanaBody(statements=statements)
 
-    # to do: what should this be?
-    target = '???'
+    target = EuropeanaTarget(
+        source=request.source,
+    )
 
     result = EuropeanaResponse(
         id=HttpUrl(request.id),

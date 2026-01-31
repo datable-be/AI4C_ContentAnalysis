@@ -322,12 +322,34 @@ class NtuaResponse(BaseModel):
     )
 
 
-class EuropeanaCreator(NtuaCreator):
-    ...
+class EuropeanaCreator(BaseModel):
+    id: HttpUrl | str = Field(
+        title='id',
+        description='The unique identifier of the user or software agent',
+        default=HttpUrl('https://github.com/datable-be/AI4C_ContentAnalysis'),
+    )
+    type: str = Field(
+        title='type',
+        description='The type of the resource. Either "Person" or "Software"',
+        default='Software',
+    )
+    name: str = Field(
+        title='name',
+        description='Creator name (optional)',
+    )
 
 
-class EuropeanaValidationReview(NtuaValidationReview):
-    ...
+class EuropeanaValidationReview(BaseModel):
+    type: str = Field(
+        title='type',
+        description='Review type',
+        default='Validation',
+    )
+    recommendation: str = Field(
+        title='recommendation',
+        description='Review recommendation (accept or reject)',
+        default='accept',
+    )
 
 
 class EuropeanaAnnotation(BaseModel):
@@ -369,10 +391,10 @@ class EuropeanaAnnotation(BaseModel):
 
 
 class EuropeanaTarget(BaseModel):
-    # to do: what is this?
-    scope: HttpUrl | str = Field(
+    scope: HttpUrl | None = Field(
         title='scope',
-        description='',
+        description='Target IRI (optional)',
+        default=None,
     )
     source: HttpUrl | str = Field(
         title='source',
@@ -381,9 +403,10 @@ class EuropeanaTarget(BaseModel):
 
 
 class EuropeanaStatement(BaseModel):
-    id: HttpUrl = Field(
+    id: HttpUrl | None = Field(
         title='id',
-        description='Statement IRI',
+        description='Statement IRI (optional)',
+        default=None,
     )
     dctformat: List[HttpUrl | str] = Field(
         title='dct:format',
@@ -438,8 +461,7 @@ class EuropeanaResponse(BaseModel):
         description='derivedFrom objects',
     )
     body: EuropeanaBody = Field(title='body', description='Annotation body')
-    # to do: what is this?
-    target: HttpUrl | str = Field(
+    target: EuropeanaTarget = Field(
         title='target',
-        description='',
+        description='Target IRI (optional)',
     )
