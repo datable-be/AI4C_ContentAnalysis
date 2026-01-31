@@ -30,7 +30,7 @@ REQUEST = """{
       "value" : "xywh=percent:2,2,98,98"
     },
     "ld_source": "Wikidata",
-    "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/M.PL.0047.01.jpg",
+    "source":"https://raw.githubusercontent.com/datable-be/AI4C_colordetector/main/examples/M.PL.0047.01.jpg",
     "annotation_type": "europeana"
 }"""
 
