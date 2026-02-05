@@ -1,6 +1,5 @@
 import json
 import requests
-import sys
 
 URL = 'http://0.0.0.0:8000/v1/object'
 
@@ -14,10 +13,16 @@ EXAMPLES = {
     'local_file': 'example.jpg',
 }
 
+SERVICES = [
+    'internal',
+    # If you want to use Google Vision, you need to get a service key
+    # 'GoogleVision',
+    'blip-vqa-base',
+]
+
 BASE_REQUEST = {
     'min_confidence': 0.4,
     'max_objects': 10,
-    'service': 'internal',
     'service_key': '****',
     'annotation_type': 'europeana',
 }
@@ -29,25 +34,31 @@ def json_pretty_print(data):
 
 print('POST', URL)
 
-for name, source in EXAMPLES.items():
-    print(f'\n=== Example: {name} ===')
+for service in SERVICES:
+    print(f'\n==============================')
+    print(f'=== Service: {service} ===')
+    print(f'==============================')
 
-    payload = {
-        **BASE_REQUEST,
-        'source': source,
-    }
+    for name, source in EXAMPLES.items():
+        print(f'\n--- Example: {name} ---')
 
-    print('REQUEST =')
-    json_pretty_print(payload)
+        payload = {
+            **BASE_REQUEST,
+            'service': service,
+            'source': source,
+        }
 
-    try:
-        response = requests.post(URL, json=payload, timeout=10)
-    except requests.RequestException as e:
-        print('REQUEST FAILED:', e)
-        continue
+        print('REQUEST =')
+        json_pretty_print(payload)
 
-    if response.status_code == 200:
-        print('RESPONSE =')
-        json_pretty_print(response.json())
-    else:
-        print(f'ERROR ({response.status_code}) = {response.text}')
+        try:
+            response = requests.post(URL, json=payload, timeout=10)
+        except requests.RequestException as e:
+            print('REQUEST FAILED:', e)
+            continue
+
+        if response.status_code == 200:
+            print('RESPONSE =')
+            json_pretty_print(response.json())
+        else:
+            print(f'ERROR ({response.status_code}) = {response.text}')
