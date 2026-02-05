@@ -1,10 +1,7 @@
 import json
 import requests
-import sys
-
 
 URL = 'http://0.0.0.0:8000/v1/color'
-
 
 EXAMPLES = {
     'airplane': 'https://github.com/zafarRehan/object_detection_COCO/blob/main/test_image.png?raw=true',
@@ -18,34 +15,46 @@ EXAMPLES = {
     'local_file': 'example.jpg',
 }
 
-
-REQUEST = """{
-    "max_colors": 3,
-    "min_area": 0.15,
-    "foreground_detection": true,
-    "service": "internal",
-    "selector" : {
-      "type" : "FragmentSelector",
-      "conformsTo" : "http://www.w3.org/TR/media-frags/",
-      "value" : "xywh=percent:2,2,98,98"
+BASE_REQUEST = {
+    'max_colors': 3,
+    'min_area': 0.15,
+    'foreground_detection': True,
+    'service': 'internal',
+    'selector': {
+        'type': 'FragmentSelector',
+        'conformsTo': 'http://www.w3.org/TR/media-frags/',
+        'value': 'xywh=percent:2,2,98,98',
     },
-    "ld_source": "Wikidata",
-    "source":"https://raw.githubusercontent.com/datable-be/AI4C_colordetector/main/examples/M.PL.0047.01.jpg",
-    "annotation_type": "europeana"
-}"""
+    'ld_source': 'Wikidata',
+    'annotation_type': 'europeana',
+}
 
 
-def json_pretty_print(json_string: str):
-    print(json.dumps(json.loads(json_string), indent=4))
+def json_pretty_print(data):
+    print(json.dumps(data, indent=4))
 
 
 print('POST', URL)
-print('REQUEST = ')
-json_pretty_print(REQUEST)
 
-response = requests.post(URL, REQUEST, timeout=30)
-if response.status_code == 200:
-    print('RESPONSE = ')
-    json_pretty_print(response.text)
-else:
-    sys.exit('ERROR = ' + response.text)
+for name, source in EXAMPLES.items():
+    print(f'\n=== Example: {name} ===')
+
+    payload = {
+        **BASE_REQUEST,
+        'source': source,
+    }
+
+    print('REQUEST =')
+    json_pretty_print(payload)
+
+    try:
+        response = requests.post(URL, json=payload, timeout=30)
+    except requests.RequestException as e:
+        print('REQUEST FAILED:', e)
+        continue
+
+    if response.status_code == 200:
+        print('RESPONSE =')
+        json_pretty_print(response.json())
+    else:
+        print(f'ERROR ({response.status_code}) = {response.text}')

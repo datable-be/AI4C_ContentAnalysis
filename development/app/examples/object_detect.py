@@ -14,28 +14,40 @@ EXAMPLES = {
     'local_file': 'example.jpg',
 }
 
-REQUEST = """{
-    "min_confidence": 0.4,
-    "max_objects": 10,
-    "source":"https://github.com/datable-be/AI4C_colordetector/blob/main/examples/image3.jpg?raw=true",
-    "service":"internal",
-    "service_key":"****",
-    "annotation_type": "ntua"
+BASE_REQUEST = {
+    'min_confidence': 0.4,
+    'max_objects': 10,
+    'service': 'internal',
+    'service_key': '****',
+    'annotation_type': 'europeana',
 }
-"""
 
 
-def json_pretty_print(json_string: str):
-    print(json.dumps(json.loads(json_string), indent=4))
+def json_pretty_print(data):
+    print(json.dumps(data, indent=4))
 
 
 print('POST', URL)
-print('REQUEST = ')
-json_pretty_print(REQUEST)
 
-response = requests.post(URL, REQUEST, timeout=10)
-if response.status_code == 200:
-    print('RESPONSE = ')
-    json_pretty_print(response.text)
-else:
-    sys.exit('ERROR = ' + response.text)
+for name, source in EXAMPLES.items():
+    print(f'\n=== Example: {name} ===')
+
+    payload = {
+        **BASE_REQUEST,
+        'source': source,
+    }
+
+    print('REQUEST =')
+    json_pretty_print(payload)
+
+    try:
+        response = requests.post(URL, json=payload, timeout=10)
+    except requests.RequestException as e:
+        print('REQUEST FAILED:', e)
+        continue
+
+    if response.status_code == 200:
+        print('RESPONSE =')
+        json_pretty_print(response.json())
+    else:
+        print(f'ERROR ({response.status_code}) = {response.text}')
